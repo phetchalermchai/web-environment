@@ -3,6 +3,7 @@ import "./globals.css";
 
 // import components
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,12 +16,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="garden">
-      <body
-        className={`antialiased h-[1500px]`}
-      >
-        <Navbar/>
-        {children}
+    <html lang="en" data-theme="light">
+      <body className={`antialiased h-[1500px]`}>
+        <div className="drawer">
+          <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content flex flex-col">
+            {/* Navbar */}
+            <Navbar />
+            {/* Page content here */}
+            {children}
+          </div>
+          <div className="drawer-side">
+            <label
+              htmlFor="my-drawer-3"
+              aria-label="close sidebar"
+              className="drawer-overlay"
+            ></label>
+
+            {/* Sidebar content here */}
+            <Sidebar/>
+          </div>
+        </div>
       </body>
     </html>
   );
