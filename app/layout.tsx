@@ -18,13 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body className={`antialiased h-[1500px]`}>
-        <div className="drawer">
+        <div className="drawer sticky top-0">
           <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col">
             {/* Navbar */}
             <Navbar />
             {/* Page content here */}
-            {children}
           </div>
           <div className="drawer-side">
             <label
@@ -32,11 +31,11 @@ export default function RootLayout({
               aria-label="close sidebar"
               className="drawer-overlay"
             ></label>
-
             {/* Sidebar content here */}
             <Sidebar/>
           </div>
         </div>
+        {children}
       </body>
     </html>
   );
