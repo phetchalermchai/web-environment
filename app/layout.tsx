@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="fantasy">
+    <html lang="en" data-theme="retro">
       <body className={`antialiased h-[1500px]`}>
         <Drawer/>
         {children}

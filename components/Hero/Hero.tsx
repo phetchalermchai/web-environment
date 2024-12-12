@@ -7,7 +7,7 @@ const Hero = () => {
                 <div className="skeleton w-3/4 h-4"></div>
                 <div className="skeleton w-4/5 h-4"></div>
             </div>
-            <div className="w-4/5 h-96">
+            <div className="w-4/5 h-96 md:h-[450px] xl:h-[600px]">
                 <div className="skeleton w-full h-full"></div>
             </div>
         </div>
