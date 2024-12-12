@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 // import components
-import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
+import Drawer from "@/components/Drawer";
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,25 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="light">
+    <html lang="en" data-theme="fantasy">
       <body className={`antialiased h-[1500px]`}>
-        <div className="drawer sticky top-0">
-          <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content flex flex-col">
-            {/* Navbar */}
-            <Navbar />
-            {/* Page content here */}
-          </div>
-          <div className="drawer-side">
-            <label
-              htmlFor="my-drawer-3"
-              aria-label="close sidebar"
-              className="drawer-overlay"
-            ></label>
-            {/* Sidebar content here */}
-            <Sidebar/>
-          </div>
-        </div>
+        <Drawer/>
         {children}
       </body>
     </html>
