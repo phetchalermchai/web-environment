@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 // import components
-import Drawer from "@/components/Drawer";
+import Drawer from "@/components/NavbarDrawer/Drawer";
 
 
 export const metadata: Metadata = {
@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="retro">
-      <body className={`antialiased h-[1500px]`}>
+    <html lang="en" data-theme="light">
+      <body className={`antialiased`}>
         <Drawer/>
         {children}
       </body>

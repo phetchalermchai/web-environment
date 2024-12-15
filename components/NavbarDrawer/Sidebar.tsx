@@ -15,7 +15,13 @@ const Sidebar = () => {
         <Link href={`/`} onClick={() => {closeSidebar()}}>หน้าแรก</Link>
       </li>
       <li>
-        <Link href={`/about`} onClick={() => {closeSidebar()}}>เกี่ยวกับเรา</Link>
+        <Link href={`/about`} onClick={() => {closeSidebar()}}>ข้อมูลหน่วยงาน</Link>
+      </li>
+      <li>
+        <Link href={`/about`} onClick={() => {closeSidebar()}}>ข่าวประชาสัมพันธ์</Link>
+      </li>
+      <li>
+        <Link href={`/about`} onClick={() => {closeSidebar()}}>กิจกรรมของสำนัก</Link>
       </li>
       <li>
         <Link href={`/contact`} onClick={() => {closeSidebar()}}>ติดต่อเรา</Link>

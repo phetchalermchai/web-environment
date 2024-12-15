@@ -1,6 +1,6 @@
 // import components
-import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/NavbarDrawer/Navbar";
+import Sidebar from "@/components/NavbarDrawer/Sidebar";
 
 const Drawer = () => {
     return (
