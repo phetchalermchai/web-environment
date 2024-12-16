@@ -7,52 +7,11 @@ import NavbarMenuItem from "./NavbarMenuItem";
 import NavbarDrawerButton from "./NavbarDrawerButton";
 import Theme from "../Theme";
 
-const Navbar = () => {
-  //รายการเมนู
-  const menuItems = [
-    { label: "หน้าแรก", href: "/", isDropdown: false },
-    {
-      label: "ข้อมูลหน่วยงาน",
-      isDropdown: true,
-      dropdownItems: [
-        {
-          label: "บุคลากร",
-          isDropdown: true,
-          dropdownItems: [
-            { label: "ผู้บริหาร", href: "/about/personnel/management" },
-            { label: "บุคลากรในสังกัด", href: "/about/personnel/staff" },
-          ],
-        },
-        { label: "โครงสร้างหน่วยงาน", href: "/about/structure" },
-        { label: "อำนาจหน้าที่", href: "/about/roles" },
-        { label: "วิสัยทัศน์", href: "/about/vision" },
-        { label: "พันธกิจ", href: "/about/mission" },
-      ],
-    },
-    {
-      label: "หน่วยงานภายใน",
-      isDropdown: true,
-      dropdownItems: [
-        { label: "ฝ่ายบริหารงานทั่วไป", href: "/departments/general" },
-        {
-          label: "ส่วนส่งเสริมสาธารณสุข",
-          href: "/departments/health-promotion",
-        },
-        {
-          label: "ส่วนบริการอนามัยสิ่งแวดล้อม",
-          href: "/departments/health-services",
-        },
-        {
-          label: "ส่วนส่งเสริมอนามัยสิ่งแวดล้อม",
-          href: "/departments/environment-promotion",
-        },
-      ],
-    },
-    { label: "ข่าวประชาสัมพันธ์", href: "/news", isDropdown: false },
-    { label: "กิจกรรมของสำนัก", href: "/activities", isDropdown: false },
-    { label: "ติดต่อเรา", href: "/contact", isDropdown: false },
-  ];
+interface NavbarProps {
+  menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[];
+}
 
+const Navbar:React.FC<NavbarProps> = ( {menu} ) => {
   return (
     <div className="navbar bg-base-100 w-full bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm">
       <div className="mx-2 flex-1 md:px-2 ">
@@ -63,7 +22,7 @@ const Navbar = () => {
       <div className="hidden flex-none lg:block">
         <ul className="menu menu-horizontal items-center">
           {/* Navbar menu content here */}
-          {menuItems.map((item, index) =>
+          {menu.map((item, index) =>
             item.isDropdown && item.dropdownItems ? (
               <Dropdown
                 key={index}
@@ -76,7 +35,7 @@ const Navbar = () => {
           )}
         </ul>
       </div>
-          <Theme />
+      <Theme />
       <NavbarDrawerButton />
     </div>
   );

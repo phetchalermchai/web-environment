@@ -2,13 +2,17 @@
 import Navbar from "@/components/NavbarDrawer/Navbar";
 import Sidebar from "@/components/NavbarDrawer/Sidebar";
 
-const Drawer = () => {
+interface DrawerProps {
+    menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[];
+}
+
+const Drawer:React.FC<DrawerProps> = ({ menu }) => {
     return (
-        <div className="drawer sticky top-0" style={{zIndex:100}}>
+        <div className="drawer sticky top-0" style={{ zIndex: 100 }}>
             <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content flex flex-col">
                 {/* Navbar */}
-                <Navbar />
+                <Navbar menu={menu}/>
                 {/* Page content here */}
             </div>
             <div className="drawer-side">
@@ -18,7 +22,7 @@ const Drawer = () => {
                     className="drawer-overlay"
                 ></label>
                 {/* Sidebar content here */}
-                <Sidebar />
+                <Sidebar menu={menu}/>
             </div>
         </div>
     )

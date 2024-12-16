@@ -36,7 +36,7 @@ const Carousel = () => {
     } = useCarousel({ slidesData });
 
     return (
-        <div className="relative w-full h-96 lg:min-h-[650px] overflow-hidden bg-neutral rounded-box" onTouchStart={handleTouchStart}
+        <div className="relative w-full h-96 lg:min-h-[650px] overflow-hidden bg-neutral" onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}>
             {/* Slides */}
