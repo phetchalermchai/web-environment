@@ -34,7 +34,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, items }) => {
       >
         {items.map((item, index) =>
           item.isDropdown ? (
-            <li>
+            <li key={index}>
               <details>
                 <summary>{item.label}</summary>
                 <ul>

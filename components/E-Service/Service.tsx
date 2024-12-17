@@ -59,7 +59,7 @@ const Service = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 items-center py-10">
+    <div className="flex flex-col gap-6 items-center py-5 xl:py-10">
       <div className="skeleton w-4/5 md:w-3/5 lg:w-2/5 h-10"></div>
       <div
         ref={carouselRef}

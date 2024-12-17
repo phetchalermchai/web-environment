@@ -46,7 +46,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalItems, itemsP
     }
 
     return (
-        <div className="join w-full justify-center py-7">
+        <div className="join w-full justify-center py-6">
             {pagesToShow.map((page, index) =>
                 typeof page === "number" ? (
                     <button

@@ -6,6 +6,7 @@ import { useState } from "react";
 // Component
 import Card from "../Card";
 import Pagination from "./Pagination";
+import Link from "next/link";
 
 // Data Type
 interface NewsItem {
@@ -20,11 +21,14 @@ interface NewsItem {
 interface NewsListProps {
     newsData: NewsItem[];
     itemsPerPage: number;
+    showPagination?: boolean;
+    showViewAll?: boolean;
+    viewAllLink?: string;
 }
 
 
 
-const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage }) => {
+const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPagination, showViewAll, viewAllLink }) => {
 
     // use react hook
     const [currentPage, setCurrentPage] = useState(1);
@@ -42,12 +46,19 @@ const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage }) => {
                     />
                 ))}
             </div>
-            <Pagination
-                currentPage={currentPage}
-                totalItems={newsData.length}
-                itemsPerPage={itemsPerPage}
-                onPageChange={(page) => setCurrentPage(page)}
-            />
+            {showPagination && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={newsData.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
+            )}
+            {showViewAll && (
+                <Link href={viewAllLink || ""} className="flex justify-center">
+                    <button className="btn btn-secondary my-6">ดูทั้งหมด</button>
+                </Link>
+            )}
         </>
     )
 }
