@@ -1,10 +1,10 @@
 const NavbarDrawerButton = () => {
   return (
-    <div className="flex-none lg:hidden">
+    <div className="flex-none me-2 lg:hidden">
       <label
         htmlFor="my-drawer-3"
         aria-label="open sidebar"
-        className="btn btn-square btn-ghost"
+        className="btn btn-sm btn-square btn-ghost"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

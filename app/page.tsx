@@ -3,6 +3,8 @@ import Service from "@/components/E-Service/Service";
 import Hero from "@/components/Hero/Hero";
 import News from "@/components/News/News";
 
+import { newsIcon , calendarIcon} from "@/config/iconConfig";
+
 // data
 import { newsData , activitiesData } from "@/config/newConfig";
 
@@ -14,9 +16,9 @@ export default function Home() {
       <Carousel/>
       <Hero/>
       <Service/>
-      <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news"/>
+      <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news" icon={newsIcon}/>
       <div className="divider"></div>
-      <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/activities"/>
+      <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/activities" icon={calendarIcon}/>
     </>
   );
 }

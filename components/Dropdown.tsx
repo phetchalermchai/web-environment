@@ -16,7 +16,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ label, items }) => {
   return (
     <div className="dropdown dropdown-end">
-      <div tabIndex={0} role="button" className="btn btn-ghost lg:px-3 xl:px-4 font-normal">
+      <div tabIndex={0} role="button" className="btn btn-ghost lg:px-2 xl:px-4 font-normal xl:text-base">
         {label}
         <svg
           width="12px"

@@ -1,5 +1,6 @@
 // import Next Components
 import Link from "next/link";
+import Image from "next/image";
 
 // import component
 import Dropdown from "../Dropdown";
@@ -11,16 +12,26 @@ interface NavbarProps {
   menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[];
 }
 
-const Navbar:React.FC<NavbarProps> = ( {menu} ) => {
+const Navbar: React.FC<NavbarProps> = ({ menu }) => {
   return (
     <div className="navbar bg-base-100 w-full bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm">
-      <div className="mx-2 flex-1 md:px-2 ">
-        <Link href={`/`} className="btn btn-ghost">
-          สำนักสาธารณสุขและสิ่งแวดล้อม
+      <div className="mx-2 flex-1 md:px-2">
+        <Link href={`/`} className="flex items-center gap-2 px-0 font-bold">
+          <Image
+            src="/mobile/mobile-logo.png"
+            width={48}
+            height={48}
+            alt="Picture of the author"
+            className="object-contain"
+          />
+          <div className="text-start text-xs md:text-sm xl:text-base">
+            <p>สำนักสาธารณสุขและสิ่งแวดล้อม</p>
+            <p>เทศบาลนครนนทบุรี</p>
+          </div>
         </Link>
       </div>
       <div className="hidden flex-none lg:block">
-        <ul className="menu menu-horizontal items-center">
+        <ul className="menu menu-horizontal items-center xl:textarea-md">
           {/* Navbar menu content here */}
           {menu.map((item, index) =>
             item.isDropdown && item.dropdownItems ? (
