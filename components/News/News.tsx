@@ -24,12 +24,12 @@ interface NewsProps {
 const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showViewAll, showBreadcrumbs = false, viewAllLink , icon}: NewsProps) => {
 
     return (
-        <div className="px-10 py-5 xl:p-20 ">
+        <div className="px-10 py-5 xl:px-20 xl:py-10">
             {/* <div className="skeleton mx-auto my-7 h-10 w-3/4 xl:w-2/5"></div> */}
             {showBreadcrumbs ? (
                 <div className="breadcrumbs max-w-xs">
                     <ul>
-                        <li><Link href={`/`}>หน้าแรก</Link></li>
+                        <li><Link href={`/`} className="opacity-65 hover:opacity-100">หน้าแรก</Link></li>
                         <li>{title}</li>
                     </ul>
                 </div>
