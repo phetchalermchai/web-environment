@@ -38,7 +38,7 @@ const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPaginat
 
     return (
         <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 lg:gap-9 my-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7 lg:gap-9 mb-3">
                 {paginatedNews.map((news) => (
                     <Card
                         key={String(news.id)}
