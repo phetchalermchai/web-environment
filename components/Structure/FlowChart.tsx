@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs"
 import { CustomNode, CustomLeftNode, CustomDubleLeftNode } from "@/components/Structure/CustomNodes";
 import { nodes, edges } from "@/config/nodesData";
@@ -29,7 +28,7 @@ const FlowChart = () => {
         <div className="flex flex-col px-10 py-5 xl:px-20 xl:py-10">
             <Breadcrumbs items={breadcrumbs} />
             <div className="mt-3">
-                <h1 className="text-3xl font-bold">โครงสร้างหน่วยงาน</h1>
+                <h1 className="sm:text-3xl text-2xl font-bold">โครงสร้างหน่วยงาน</h1>
                 <div className="flex w-full flex-col border-opacity-50">
                     <div className="divider"></div>
                 </div>

@@ -1,9 +1,8 @@
 import NewsList from "./NewsList"
 import Breadcrumbs from "../Breadcrumbs";
-import Link from "next/link";
 
 interface NewsItem {
-    id: Number;
+    id: number;
     image: string;
     title: string;
     description: string;
@@ -33,23 +32,26 @@ const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showVie
         <div className="px-10 py-5 xl:px-20 xl:py-10">
             {/* <div className="skeleton mx-auto my-7 h-10 w-3/4 xl:w-2/5"></div> */}
             {showBreadcrumbs ? (
-                <Breadcrumbs items={breadcrumbs} />
+                <>
+                    <Breadcrumbs items={breadcrumbs} />
+                    <div className="mt-3">
+                        <h1 className="sm:text-3xl text-2xl font-bold">{title}</h1>
+                        <div className="flex w-full flex-col border-opacity-50">
+                            <div className="divider"></div>
+                        </div>
+                    </div>
+                </>
             ) : (
-                <div className="flex justify-between">
-                    <p className="font-bold text-lg xl:text-xl mb-3 inline-flex items-center">
-                        <span className="pe-2">
-                            {icon}
-                        </span>
+                <div className="mt-3">
+                    <h1 className="sm:text-3xl text-2xl font-bold inline-flex items-center justify-center">
+                        <span className="pe-2">{icon}</span>
                         {title}
-                    </p>
+                    </h1>
+                    <div className="flex w-full flex-col border-opacity-50">
+                        <div className="divider"></div>
+                    </div>
                 </div>
             )}
-            <div className="mt-3">
-                <h1 className="text-3xl font-bold">{title}</h1>
-                <div className="flex w-full flex-col border-opacity-50">
-                    <div className="divider"></div>
-                </div>
-            </div>
             <NewsList newsData={newsData} itemsPerPage={itemsPerPage} showPagination={showPagination} showViewAll={showViewAll} viewAllLink={viewAllLink} />
         </div>
     )

@@ -1,3 +1,4 @@
+import Accordion from "@/components/Accordion";
 import Breadcrumbs from "@/components/Breadcrumbs"
 
 const page = () => {
@@ -8,12 +9,35 @@ const page = () => {
     { label: "อำนาจหน้าที่", isCurrent: true },
   ];
 
+  const accordionItems = [
+    {
+      title: "ฝ่ายบริหารงานทั่วไป",
+      content: "มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบาย การควบคุมกำกับดูแล และอำนวยการดำเนินงานของงานบริหารทั่วไป และงานการเงินและบัญชี",
+      link: { href: "/departments/general", label: "ไปยังฝ่ายบริหารงานทั่วไป" },
+    },
+    {
+      title: "ส่วนส่งเสริมสาธารณสุข",
+      content: "มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบาย การควบคุมกำกับดูแลและอำนวยการดำเนินงานของฝ่ายวิชาการและการประเมินผล ฝ่ายส่งเสริมสาธารณสุข",
+      link: { href: "/departments/health-promotion", label: "ไปยังส่วนส่งเสริมสาธารณสุข" },
+    },
+    {
+      title: "ส่วนบริการอนามัยสิ่งแวดล้อม",
+      content: "มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบายการควบคุมกำกับดูแล และอำนวยการดำเนินงานของฝ่ายจัดการมูลฝอยและสิ่งปฏิกูล",
+      link: { href: "/departments/health-services", label: "ไปยังส่วนบริการอนามัยสิ่งแวดล้อม" },
+    },
+    {
+      title: "ส่วนส่งเสริมอนามัยสิ่งแวดล้อม",
+      content: "มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบายการควบคุมกำกับดูแล และอำนวยการดำเนินงานของฝ่ายควบคุมและจัดการคุณภาพสิ่งแวดล้อม",
+      link: { href: "/departments/health-promotion", label: "ไปยังส่วนส่งเสริมอนามัยสิ่งแวดล้อม" },
+    },
+  ];
+
   return (
     <div className="flex flex-col px-10 py-5 xl:px-20 xl:py-10">
       <Breadcrumbs items={breadcrumbs} />
       <div>
         <div className="my-3">
-          <h1 className="text-3xl font-bold">อำนาจหน้าที่</h1>
+          <h1 className="sm:text-3xl text-2xl font-bold">อำนาจหน้าที่</h1>
           <div className="flex w-full flex-col border-opacity-50">
             <div className="divider"></div>
           </div>
@@ -29,35 +53,16 @@ const page = () => {
             งานวางแผนและจัดทำแผนดำเนินงานด้านการเฝ้าระวัง ควบคุมมลพิษทางน้ำ อากาศ และเสียง งานเฝ้าระวัง บำบัด ตรวจสอบคุณภาพน้ำ อากาศ ของเสียและสารอันตรายต่าง ๆ
             งานบริการข้อมูล สถิติ ช่วยเหลือให้คำแนะนำทางวิชาการ และงานอื่น ๆ ที่เกี่ยวข้องและที่ได้รับมอบหมาย  มีผู้อำนวยการสาธารณสุขและสิ่งแวดล้อมควบคุมการปฏิบัติงาน ดังนี้</p>
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="collapse collapse-plus bg-base-200">
-            <input type="radio" name="my-accordion-3" />
-            <div className="collapse-title text-xl font-medium">ฝ่ายบริหารงานทั่วไป</div>
-            <div className="collapse-content">
-              <p>มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบาย การควบคุมกำกับดูแล และอำนวยการดำเนินงานของงานบริหารทั่วไป และงานการเงินและบัญชี</p>
-            </div>
-          </div>
-          <div className="collapse collapse-plus bg-base-200">
-            <input type="radio" name="my-accordion-3" />
-            <div className="collapse-title text-xl font-medium">ส่วนส่งเสริมสาธารณสุข</div>
-            <div className="collapse-content">
-              <p>มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบาย การควบคุมกำกับดูแลและอำนวยการดำเนินงานของฝ่ายวิชาการและการประเมินผล ฝ่ายส่งเสริมสาธารณสุข</p>
-            </div>
-          </div>
-          <div className="collapse collapse-plus bg-base-200">
-            <input type="radio" name="my-accordion-3" />
-            <div className="collapse-title text-xl font-medium">ส่วนบริการอนามัยสิ่งแวดล้อม</div>
-            <div className="collapse-content">
-              <p>มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบายการควบคุมกำกับดูแล และอำนวยการดำเนินงานของฝ่ายจัดการมูลฝอยและสิ่งปฏิกูล</p>
-            </div>
-          </div>
-          <div className="collapse collapse-plus bg-base-200">
-            <input type="radio" name="my-accordion-3" />
-            <div className="collapse-title text-xl font-medium">ส่วนส่งเสริมอนามัยสิ่งแวดล้อม</div>
-            <div className="collapse-content">
-              <p>มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบายการควบคุมกำกับดูแล และอำนวยการดำเนินงานของฝ่ายควบคุมและจัดการคุณภาพสิ่งแวดล้อม</p>
-            </div>
-          </div>
+        <div className="flex flex-col gap-4 lg:gap-6 pt-4 lg:pt-6">
+          {accordionItems.map((item, index) => (
+            <Accordion
+              key={index}
+              title={item.title}
+              content={item.content}
+              link={item.link}
+              name="roles-accordion" // กำหนด group name เพื่อใช้ควบคุม radio
+            />
+          ))}
         </div>
       </div>
     </div>
