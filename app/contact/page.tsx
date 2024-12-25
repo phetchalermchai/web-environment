@@ -23,41 +23,128 @@ const page = () => {
               อำเภอเมืองนนทบุรี จังหวัดนนทบุรี 11000
             </div>
             <div>
-              <div>ผู้อำนวยการสำนักการสาธารณสุขฯ 0 2591 5180, 0 2589 0500 ต่อ 1219, 1220</div>
-              <div>สำนักการสาธารณสุขฯ 0 2580 0503, 0 2580 0867</div>
-              <div>ผู้อำนวยการส่วนบริการสาธารณสุขฯ 0 2589 0500 ต่อ 1204</div>
-              <div>ผู้อำนวยการส่วนบริการส่งเสริมอนามัยสิ่งแวดล้อม 0 2589 0500 ต่อ 1206</div>
-              <div>ส่วนบริการอนามัยสิ่งแวดล้อม 0 2589 0500 ต่อ 1202</div>
-              <div>สูบสิ่งปฏิกูล 0 2589 0503</div>
-              <div>กลุ่มงานบริการสูบสิ่งปฏิกูล 0 2589 0500 ต่อ 1203</div>
-              <div>งานวิชาการ 0 2589 0500 ต่อ 1218</div>
-              <div>งานสุขาภิบาล 0 2589 0500 ต่อ 1207</div>
-              <div>งานส่งเสริมสุขภาพ 0 2589 0500 ต่อ 1214</div>
-              <div>งานป้องกันและควบคุมโรค 0 2589 0500 ต่อ 1209</div>
-              <div>หัวหน้าฝ่ายสุขาภิบาลและคุณภาพสิ่งแวดล้อม 0 2589 0500 ต่อ 1212</div>
-              <div>งานทรัพยากรธรรมชาติ 0 2589 0500 ต่อ 1210</div>
-              <div>งานธุรการ 0 2589 0500 ต่อ 1223, 1225</div>
               <ul className="menu bg-base-200 rounded-box w-full">
-                <li><a>Item 1</a></li>
                 <li>
                   <details open>
-                    <summary>Parent</summary>
+                    <summary>เบอร์โทรศัพท์</summary>
                     <ul>
-                      <li><a>Submenu 1</a></li>
-                      <li><a>Submenu 2</a></li>
                       <li>
                         <details open>
-                          <summary>Parent</summary>
+                          <summary>ผู้อำนวยการสำนักการสาธารณสุขฯ</summary>
                           <ul>
-                            <li><a>Submenu 1</a></li>
-                            <li><a>Submenu 2</a></li>
+                            <li><a>02-591-5180</a></li>
+                            <li><a>02-589-0500 ต่อ 1219,1220</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>ผู้อำนวยการส่วนบริการสาธารณสุขฯ</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1204</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>ผู้อำนวยการส่วนบริการส่งเสริมอนามัยสิ่งแวดล้อม</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1206</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>สำนักการสาธารณสุขฯ</summary>
+                          <ul>
+                            <li><a>02-580-0503</a></li>
+                            <li><a>02-580-0867</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>ส่วนบริการอนามัยสิ่งแวดล้อม</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1202</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>สูบสิ่งปฏิกูล</summary>
+                          <ul>
+                            <li><a>02-589-0503</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>กลุ่มงานบริการสูบสิ่งปฏิกูล</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1203</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>งานวิชาการ</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1218</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>งานสุขาภิบาล</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1207</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>งานส่งเสริมสุขภาพ</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1214</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>งานป้องกันและควบคุมโรค</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1209</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>หัวหน้าฝ่ายสุขาภิบาลและคุณภาพสิ่งแวดล้อม</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1212</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>งานทรัพยากรธรรมชาติ</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1210</a></li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details open>
+                          <summary>งานธุรการ</summary>
+                          <ul>
+                            <li><a>02-589-0500 ต่อ 1223,1225</a></li>
                           </ul>
                         </details>
                       </li>
                     </ul>
                   </details>
                 </li>
-                <li><a>Item 3</a></li>
               </ul>
             </div>
             <div className="skeleton h-4 w-full"></div>
