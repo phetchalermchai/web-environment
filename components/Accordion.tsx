@@ -19,9 +19,8 @@ const Accordion = ({ title, content, link, name }: AccordionProps) => {
             <div className="collapse-content">
                 <p>{content}</p>
                 {link && (
-                    <Link href={link.href} className="link inline-flex text-primary gap-1">
+                    <Link href={link.href} className="link text-primary">
                         {link.label}
-                        <ArrowRightCircleIcon/>
                     </Link>
                 )}
             </div>

@@ -25,6 +25,7 @@ const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showVie
 
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
+        { label: "ข้อมูลข่าวสาร", href: "/news/news-updates" },
         { label: title, isCurrent: true },
     ];
 

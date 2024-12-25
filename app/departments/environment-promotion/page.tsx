@@ -1,14 +1,14 @@
 import Breadcrumbs from "@/components/Breadcrumbs"
 import Divider from "@/components/Divider";
 import DepartmentSection from "@/components/departments/DepartmentSection";
-import { wasteManagementDepartment } from "@/config/departmentsData";
+import { envQualityDept } from "@/config/departmentsData";
 
 const page = () => {
 
   const breadcrumbs = [
     { label: "หน้าแรก", href: "/" },
     { label: "หน่วยงานภายใน", href: "/departments/general" },
-    { label: "ส่วนบริการอนามัยสิ่งแวดล้อม", isCurrent: true },
+    { label: "ส่วนส่งเสริมอนามัยสิ่งแวดล้อม", isCurrent: true },
   ];
 
   return (
@@ -19,7 +19,7 @@ const page = () => {
         <Divider />
         <p>มีหน้าที่รับผิดชอบเกี่ยวกับการกำหนดนโยบายการควบคุมกำกับดูแล และอำนวยการดำเนินงานของฝ่ายควบคุมและจัดการคุณภาพสิ่งแวดล้อม ดังนี้</p>
       </div>
-      <DepartmentSection {...wasteManagementDepartment} />
+      <DepartmentSection {...envQualityDept} />
     </div>
 
   )

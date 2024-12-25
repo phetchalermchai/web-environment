@@ -1,7 +1,7 @@
 
 const page = () => {
   return (
-    <div>พันธกิจ</div>
+    <div>public-services page</div>
   )
 }
 

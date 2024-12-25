@@ -15,8 +15,6 @@ export const mainMenu = [
             },
             { label: "โครงสร้างหน่วยงาน", href: "/about/structure" },
             { label: "อำนาจหน้าที่", href: "/about/roles" },
-            { label: "วิสัยทัศน์", href: "/about/vision" },
-            { label: "พันธกิจ", href: "/about/mission" },
         ],
     },
     {
@@ -38,8 +36,18 @@ export const mainMenu = [
             },
         ],
     },
-    { label: "ข่าวประชาสัมพันธ์", href: "/news", isDropdown: false },
-    { label: "กิจกรรมของสำนัก", href: "/activities", isDropdown: false },
+    {
+        label: "ข้อมูลข่าวสาร",
+        isDropdown: true,
+        dropdownItems: [
+            { label: "ข่าวประชาสัมพันธ์", href: "/news/news-updates" },
+            {
+                label: "กิจกรรมของสำนัก",
+                href: "/news/activities",
+            },
+        ],
+    },
+    { label: "บริการประชาชน", href: "/public-services", isDropdown: false },
     { label: "ติดต่อเรา", href: "/contact", isDropdown: false },
 ];
 
