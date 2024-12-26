@@ -18,7 +18,7 @@ interface NewsProps {
     showViewAll?: boolean; // แสดงปุ่ม "ดูทั้งหมด"
     showBreadcrumbs?: boolean; // ควบคุมการแสดง Breadcrumbs
     viewAllLink?: string; // ลิงก์ที่ใช้สำหรับปุ่ม "ดูทั้งหมด"
-    icon?: React.ReactNode; // รับไอคอนเป็น React Node
+    icon?: React.ReactElement; // รับไอคอนเป็น React Node
 }
 
 const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showViewAll, showBreadcrumbs = false, viewAllLink, icon }: NewsProps) => {

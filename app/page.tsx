@@ -12,13 +12,12 @@ export default function Home() {
     
   return (
     <>
-      {/* Carousel */}
       <Carousel/>
       <Hero/>
       <Service/>
-      <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news" icon={newsIcon}/>
+      <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news" icon={newsIcon()}/>
       <div className="divider"></div>
-      <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/activities" icon={calendarIcon}/>
+      <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/activities" icon={calendarIcon()}/>
     </>
   );
 }
