@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 interface FormData {
@@ -65,7 +66,7 @@ export const FormContact = () => {
         return newErrors;
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
@@ -73,16 +74,36 @@ export const FormContact = () => {
             showAlert("กรุณากรอกข้อมูลให้ครบถ้วน!", "error");
         } else {
             setErrors({});
-            console.log("Form submitted:", formData);
-            showAlert("ส่งข้อมูลสำเร็จ!", "success");
-            setFormData({
-                fullName: "",
-                address: "",
-                phone: "",
-                email: "",
-                details: "",
-            });
+            console.log("Preparing to send data:", formData);
+
             // ส่งข้อมูลไปยัง backend หรือทำงานเพิ่มเติม
+            try {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+                if (!apiUrl) {
+                    throw new Error("API URL is not defined in the environment variables");
+                }
+
+                const response = await axios.post(`${apiUrl}/api/contact/`, formData);
+
+                if (response.status === 200) {
+                    console.log("Response from API:", response.data);
+                    showAlert("ส่งข้อมูลสำเร็จ!", "success");
+                    setFormData({
+                        fullName: "",
+                        address: "",
+                        phone: "",
+                        email: "",
+                        details: "",
+                    });
+                } else {
+                    console.error("Failed to send data. Status:", response.status);
+                    showAlert("การส่งข้อมูลล้มเหลว", "error");
+                }
+
+            } catch (error) {
+                console.error("An error occurred:", error);
+                showAlert("เกิดข้อผิดพลาดในการส่งข้อมูล", "error");
+            }
         }
     };
 
