@@ -177,7 +177,7 @@ export const FormContact = () => {
                         <div className="label">
                             <span className="label-text">เบอร์โทรศัพท์</span>
                         </div>
-                        <input type="text" name="phone" placeholder="เบอร์โทรศัพท์" className={`input input-bordered w-full ${errors.phone && 'input-error'}`} value={formData.phone} onChange={handleChange} />
+                        <input type="text" name="phone" placeholder="08xxxxxxxx" className={`input input-bordered w-full ${errors.phone && 'input-error'}`} value={formData.phone} onChange={handleChange} />
                         {errors.phone && (
                             <div className="label">
                                 <span className="label-text-alt text-error">{errors.phone}</span>
@@ -190,12 +190,30 @@ export const FormContact = () => {
                         <div className="label">
                             <span className="label-text">อีเมล</span>
                         </div>
-                        <input type="text" name="email" placeholder="อีเมล" className={`input input-bordered w-full ${errors.email && 'input-error'}`} value={formData.email} onChange={handleChange} />
+                        <input type="text" name="email" placeholder="example@gmail.com" className={`input input-bordered w-full ${errors.email && 'input-error'}`} value={formData.email} onChange={handleChange} />
                         {errors.email && (
                             <div className="label">
                                 <span className="label-text-alt text-error">{errors.email}</span>
                             </div>
                         )}
+                    </label>
+                </div>
+                <div>
+                    <label className="form-control w-full">
+                        <div className="label">
+                            <span className="label-text">เรื่องร้องเรียน</span>
+                        </div>
+                        <select className="select select-bordered">
+                            <option disabled selected>แจ้งเก็บขยะ</option>
+                            <option>แจ้งขอถังขยะ</option>
+                            <option>แจ้งเก็บกิ่งไม้ ใบไม้</option>
+                            <option>แจ้งเก็บโฟม</option>
+                            <option>แจ้งเก็บซากอิเล็กทรอนิกส์</option>
+                            <option>แจ้งเก็บเศษวัสดุ ตู้ เตียง ที่นอน</option>
+                        </select>
+                        <div className="label">
+                            <span className="label-text-alt">Alt label</span>
+                        </div>
                     </label>
                 </div>
                 <div>

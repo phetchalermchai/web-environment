@@ -10,15 +10,15 @@ export async function POST(req: Request) {
     const transporter = nodemailer.createTransport({
       service: "gmail", // หรือใช้ SMTP Server อื่น
       auth: {
-        user: process.env.EMAIL_USER, // อีเมลผู้ส่ง (เก็บไว้ใน .env)
-        pass: process.env.EMAIL_PASS, // รหัสผ่าน/แอปพาสเวิร์ด (เก็บไว้ใน .env)
+        user: "phetangelb123@gmail.com", // อีเมลผู้ส่ง (เก็บไว้ใน .env)
+        pass: "xheg xnvz rxul sxhh", // รหัสผ่าน/แอปพาสเวิร์ด (เก็บไว้ใน .env)
       },
     });
 
     // ตั้งค่าเนื้อหาอีเมล
     const mailOptions = {
-      from: process.env.EMAIL_USER, // อีเมลผู้ส่ง
-      to: "phetangelb123@gmail.com", // อีเมลผู้รับ (สามารถปรับให้เป็นค่าจาก `data`)
+      from: "phetangelb123@gmail.com", // อีเมลผู้ส่ง
+      to: "phetangelb@gmail.com", // อีเมลผู้รับ (สามารถปรับให้เป็นค่าจาก `data`)
       subject: `Contact Form Submission: ${data.fullName}`, // หัวข้ออีเมล
       text: `
           Name: ${data.fullName}
