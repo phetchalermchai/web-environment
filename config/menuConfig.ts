@@ -10,7 +10,6 @@ export const mainMenu = [
                 isDropdown: true,
                 dropdownItems: [
                     { label: "ผู้บริหาร", href: "/about/personnel/management" },
-                    { label: "บุคลากรในสังกัด", href: "/about/personnel/staff" },
                 ],
             },
             { label: "โครงสร้างหน่วยงาน", href: "/about/structure" },

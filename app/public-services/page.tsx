@@ -2,8 +2,7 @@ import Link from "next/link"
 
 const page = () => {
   return (
-      <div>public-services page
-        <a href={`/auth/secure/gateway/login`}>ล็อคอิน</a>
+      <div className="h-svh flex justify-center items-center"><h1 className="font-bold text-2xl">รอการเพิ่มข้อมูลครับ</h1>
       </div>
   )
 }

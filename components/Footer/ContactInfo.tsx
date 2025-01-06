@@ -7,7 +7,7 @@ const ContactInfo = () => {
     <aside className="flex flex-col sm:flex-row md:gap-4">
       <div className="hidden lg:flex flex-col">
         <p className="font-bold py-4">เทศบาลนครนนทบุรี</p>
-        <div className="self-center shadow-md rounded-box outline outline-base-content h-48 lg:w-96">
+        <div className="self-center shadow-md rounded-box overflow-hidden outline outline-base-content h-48 lg:w-96">
           <GoogleMapEmbed />
         </div>
         <p className="lg:hidden p-3 text-center">
