@@ -37,13 +37,13 @@ const authOptions: AuthOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                username: { label: "Username", type: "text" },
+                email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials): Promise<User | null> {
                 if (!credentials) return null;
 
-                const user = users.find(u => u.name === credentials.username);
+                const user = users.find(u => u.name === credentials.email);
 
                 if (user && (await bcrypt.compare(credentials.password, user.password))) {
                     return { id: user.id, name: user.name, email: user.email };

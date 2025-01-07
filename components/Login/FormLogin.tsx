@@ -1,21 +1,10 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import useFormLogin from "@/hooks/useFormLogin";
 
 const FormLogin = () => {
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const username = formData.get("username") as string;
-        const password = formData.get("password") as string;
-
-        await signIn("credentials", {
-            username,
-            password,
-            callbackUrl: "/admin",
-        });
-    };
+    const { formData, errors, handleChange, handleSubmit } = useFormLogin();
+    
     return (
         <div className="flex flex-col items-center justify-center min-h-svh lg:w-[40%] w-full">
             <div className="flex flex-col gap-2 justify-center items-center">
@@ -41,10 +30,10 @@ const FormLogin = () => {
                             <path
                                 d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
                         </svg>
-                        <input type="email" className="grow" placeholder="Example@gmail.com" />
+                        <input type="text" name="email" value={formData.email} onChange={handleChange} className="grow" placeholder="Example@gmail.com" />
                     </label>
                     <div className="label">
-                        {/* <span className="label-text-alt text-error">Error</span> */}
+                        {errors.email && <div className="label"><span className="label-text-alt text-error">{errors.email}</span></div>}
                     </div>
                 </label>
                 <label className="form-control w-full">
@@ -60,10 +49,10 @@ const FormLogin = () => {
                             <path
                                 d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
                         </svg>
-                        <input type="password" className="grow" placeholder="Password" />
+                        <input type="password" name="password" value={formData.password} onChange={handleChange} className="grow" placeholder="Password" />
                     </label>
                     <div className="label">
-                        {/* <span className="label-text-alt text-error">Error</span> */}
+                        {errors.password && <div className="label"><span className="label-text-alt text-error">{errors.password}</span></div>}
                     </div>
                 </label>
                 <button className="btn btn-primary" type="submit">Sign In</button>
