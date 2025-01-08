@@ -2,12 +2,12 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 
 const useFormLogin = () => {
-    const [errors, setErrors] = useState({ email: "", password: "" });
+    const [errors, setErrors] = useState({ email: "", password: "", general: "" });
     const [formData, setFormData] = useState({ email: "", password: "" });
 
     const validateForm = () => {
         let isValid = true;
-        const newErrors = { email: "", password: "" };
+        const newErrors = { email: "", password: "", general: "" };
 
         // Validate Email
         if (!formData.email) {
@@ -26,10 +26,10 @@ const useFormLogin = () => {
             newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
             isValid = false;
         } else if (
-            !/(?=.*[A-Z])/.test(formData.password) || 
-            !/(?=.*[a-z])/.test(formData.password) || 
-            !/(?=.*\d)/.test(formData.password) || 
-            !/(?=.*[@$!%*?&#])/ 
+            !/(?=.*[A-Z])/.test(formData.password) ||
+            !/(?=.*[a-z])/.test(formData.password) ||
+            !/(?=.*\d)/.test(formData.password) ||
+            !/(?=.*[@$!%*?&#])/
                 .test(formData.password)
         ) {
             newErrors.password =
@@ -50,11 +50,33 @@ const useFormLogin = () => {
         e.preventDefault();
         if (!validateForm()) return;
 
-        await signIn("credentials", {
-            email: formData.email,
-            password: formData.password,
-            callbackUrl: "/admin",
-        });
+        try {
+            const result = await signIn("credentials", {
+                email: formData.email,
+                password: formData.password,
+                callbackUrl: "/admin",
+                redirect: false, // Prevent automatic redirection
+            });
+
+            if (result?.error) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    general: "การเข้าสู่ระบบล้มเหลว กรุณาตรวจสอบข้อมูลอีกครั้ง",
+                }));
+            } else if (result?.url) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    general: "เข้าสู่ระบบสำเร็จ",
+                }));
+                window.location.href = result.url; // Redirect manually on success
+            }
+
+        } catch (error) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                general: "เกิดข้อผิดพลาดในระบบ กรุณาลองใหม่อีกครั้ง",
+            }));
+        }
     };
 
     return {

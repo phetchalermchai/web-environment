@@ -27,8 +27,8 @@ const users = [
     {
         id: "1",
         name: "Admin",
-        email: "admin@example.com",
-        password: await bcrypt.hash("password", 10), // เก็บรหัสผ่านที่แฮชแล้ว
+        email: "phetangelb@gmail.com",
+        password: await bcrypt.hash("Abc123456789@", 10), // เก็บรหัสผ่านที่แฮชแล้ว
     },
 ];
 
@@ -43,7 +43,7 @@ const authOptions: AuthOptions = {
             async authorize(credentials): Promise<User | null> {
                 if (!credentials) return null;
 
-                const user = users.find(u => u.name === credentials.email);
+                const user = users.find(u => u.email === credentials.email);
 
                 if (user && (await bcrypt.compare(credentials.password, user.password))) {
                     return { id: user.id, name: user.name, email: user.email };

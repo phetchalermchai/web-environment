@@ -4,7 +4,7 @@ import useFormLogin from "@/hooks/useFormLogin";
 
 const FormLogin = () => {
     const { formData, errors, handleChange, handleSubmit } = useFormLogin();
-    
+
     return (
         <div className="flex flex-col items-center justify-center min-h-svh lg:w-[40%] w-full">
             <div className="flex flex-col gap-2 justify-center items-center">
@@ -54,6 +54,15 @@ const FormLogin = () => {
                     <div className="label">
                         {errors.password && <div className="label"><span className="label-text-alt text-error">{errors.password}</span></div>}
                     </div>
+                    {errors.general && (
+                        <div
+                            role="alert"
+                            className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${errors.general === "success" ? "alert-success" : "alert-error"
+                                }`}
+                        >
+                            <span>{errors.general}</span>
+                        </div>
+                    )}
                 </label>
                 <button className="btn btn-primary" type="submit">Sign In</button>
             </form>

@@ -119,7 +119,7 @@ export const FormContact = () => {
         <div className="max-w-2xl w-full self-center">
             <h1 className="text-xl sm:text-2xl text-center font-bold mb-4">ติดต่อผ่านอีเมล</h1>
             {alertConfig && (
-                <div role="alert" className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${alertConfig.type === "success" ? "alert-success" : "alert-error"
+                <div role="alert" className={`fixed bottom-4 right-4 shadow-lg w-80 alert alert-error
                     }`}>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
