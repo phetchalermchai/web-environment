@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import bcrypt from "bcrypt";
 
 const page = async () => {
   const session = await getServerSession(authOptions);
@@ -14,7 +15,7 @@ const page = async () => {
   }
   return (
     <div>
-      <h1>สวัสดี {session.user?.name}</h1>
+      <h1>สวัสดี {session.user?.firstName}</h1>
     </div>
   )
 }

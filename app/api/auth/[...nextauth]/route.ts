@@ -1,36 +1,34 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-}
+import prisma from "@/lib/prisma";
 
 declare module "next-auth" {
     interface Session {
         user: {
             id: string;
-            name: string;
+            firstName: string;
+            lastName: string;
             email: string;
         };
     }
+
+    interface User {
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+    }
+
     interface JWT {
         id: string;
-        name: string;
+        firstName: string;
+        lastName: string;
         email: string;
+        exp?: number;
     }
 }
 
-const users = [
-    {
-        id: "1",
-        name: "Admin",
-        email: "phetangelb@gmail.com",
-        password: await bcrypt.hash("Abc123456789@", 10), // เก็บรหัสผ่านที่แฮชแล้ว
-    },
-];
 
 const authOptions: AuthOptions = {
     providers: [
@@ -40,16 +38,31 @@ const authOptions: AuthOptions = {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials): Promise<User | null> {
+            async authorize(credentials) {
                 if (!credentials) return null;
 
-                const user = users.find(u => u.email === credentials.email);
+                try {
 
-                if (user && (await bcrypt.compare(credentials.password, user.password))) {
-                    return { id: user.id, name: user.name, email: user.email };
+                    const user = await prisma.user.findUnique({ // ใช้ Prisma ดึงข้อมูลผู้ใช้จากฐานข้อมูล
+                        where: { email: credentials.email },
+                    });
+
+                    if (!user) {
+                        throw new Error("Invalid credentials");
+                    }
+
+                    const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+
+                    if (!passwordMatch) {
+                        throw new Error("Invalid credentials");
+                    }
+
+                    return { id: user.id.toString(), firstName: user.firstname, lastName: user.lastname, email: user.email };
+
+                } catch (error) {
+                    console.error("Authentication error:", error);
+                    throw new Error("Invalid credentials");
                 }
-
-                return null;
             },
         }),
     ],
@@ -57,8 +70,20 @@ const authOptions: AuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
-                token.name = user.name;
+                token.firstName = user.firstName;
+                token.lastName = user.lastName;
                 token.email = user.email;
+
+                // กำหนดเวลาหมดอายุของ JWT (6 ชั่วโมง)
+                const sixHoursInSeconds: number = 6 * 60 * 60;
+
+                if (typeof token.exp === "undefined" || typeof token.exp !== "number") {
+                    token.exp = 0; // ค่าเริ่มต้น เพื่อให้ TypeScript ยอมรับ
+                    console.log(typeof token.exp); // ควรแสดง 'number'
+                    console.log(typeof sixHoursInSeconds); // ควรแสดง 'number'
+                }
+
+                token.exp = Math.floor(Date.now() / 1000) + sixHoursInSeconds;
             }
             return token;
         },
@@ -66,9 +91,11 @@ const authOptions: AuthOptions = {
             if (token) {
                 session.user = {
                     id: token.id as string,
-                    name: token.name as string,
-                    email: token.email as string,
+                    firstName: token.firstName as string,
+                    lastName: token.lastName as string,
+                    email: token.email as string
                 };
+                session.expires = new Date(token.exp! * 1000).toISOString();
             }
             return session;
         },
