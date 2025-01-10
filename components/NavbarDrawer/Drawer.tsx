@@ -1,14 +1,13 @@
     // import components
     import Navbar from "@/components/NavbarDrawer/Navbar";
     import Sidebar from "@/components/NavbarDrawer/Sidebar";
-    import { usePathname } from "next/navigation";
 
     interface DrawerProps {
         menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[];
+        pathname: string;
     }
 
-    const Drawer:React.FC<DrawerProps> = ({ menu }) => {
-        const pathname = usePathname();
+    const Drawer:React.FC<DrawerProps> = ({ menu , pathname }) => {
         const isAdmin = pathname.startsWith("/admin");
         const drawerClass = isAdmin ? "lg:drawer-open" : ""
 

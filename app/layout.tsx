@@ -33,7 +33,7 @@ export default async function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body className={`antialiased`}>
-        {!isLoginPage && <Drawer menu={menu || []} />}
+        {!isLoginPage && <Drawer menu={menu || []} pathname={pathname}/>}
         {children}
         {!isLoginPage && <Footer />}
       </body>
