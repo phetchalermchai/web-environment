@@ -68,7 +68,8 @@ const useFormLogin = () => {
                     ...prevErrors,
                     general: "เข้าสู่ระบบสำเร็จ",
                 }));
-                window.location.href = result.url; // Redirect manually on success
+                // result.url
+                window.location.href = "http://10.2.2.52:3000/admin"; // Redirect manually on success
             }
 
         } catch (error) {

@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 
 const page = async () => {
   const session = await getServerSession(authOptions);
+  console.log(session?.user);
+  
 
   if (!session) {
     return (
@@ -15,7 +17,10 @@ const page = async () => {
   }
   return (
     <div>
-      <h1>สวัสดี {session.user?.firstName}</h1>
+      <h1>สวัสดี {session.user?.email}</h1>
+      <h1>สวัสดี {session.user?.firstname}</h1>
+      <h1>สวัสดี {session.user?.lastname}</h1>
+      <h1>สวัสดี {session.user?.id}</h1>
     </div>
   )
 }
