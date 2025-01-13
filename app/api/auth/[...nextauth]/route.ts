@@ -9,6 +9,7 @@ declare module "next-auth" {
         firstname: string;
         lastname: string;
         email: string;
+        role: string;
     }
 
     interface AdapterUser {
@@ -16,6 +17,7 @@ declare module "next-auth" {
         firstname: string;
         lastname: string;
         email: string;
+        role: string
     }
 
     interface Session {
@@ -24,6 +26,7 @@ declare module "next-auth" {
             firstname: string;
             lastname: string;
             email: string;
+            role: string
         };
     }
 
@@ -32,6 +35,7 @@ declare module "next-auth" {
         firstname: string;
         lastname: string;
         email: string;
+        role: string
     }
 }
 
@@ -61,6 +65,7 @@ const authOptions: AuthOptions = {
                     firstname: user.firstname,
                     lastname: user.lastname,
                     email: user.email,
+                    role: user.role,
                 };
             },
         }),
@@ -72,6 +77,7 @@ const authOptions: AuthOptions = {
                 token.firstname = user.firstname;
                 token.lastname = user.lastname;
                 token.email = user.email;
+                token.role = user.role;
             }
             return token;
         },
@@ -82,6 +88,7 @@ const authOptions: AuthOptions = {
                     firstname: token.firstname as string,
                     lastname: token.lastname as string,
                     email: token.email as string,
+                    role: token.role as string,
                 };
             }
             return session;
