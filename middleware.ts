@@ -53,5 +53,5 @@ export async function middleware(request: NextRequest) {
 
 // Matcher เพื่อระบุว่า Middleware นี้ทำงานกับเส้นทางใด
 export const config = {
-  matcher: ["/api/:path*", "/admin/:path*"],
+  matcher: ["/api/:path*", "/admin/:path*" , "/auth/secure/gateway/login"],
 };

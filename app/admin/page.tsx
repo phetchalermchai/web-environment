@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 
 const page = async () => {
   const session = await getServerSession(authOptions);
-  console.log(session?.user);
   
 
   if (!session) {

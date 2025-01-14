@@ -27,15 +27,18 @@ export default async function RootLayout({
   // ตรวจสอบว่าอยู่ในหน้า `/login` หรือไม่
   const isLoginPage = pathname === "/auth/secure/gateway/login";
 
+  // ตรวจสอบว่าอยู่ในหน้า `/admin` หรือไม่
+  const isAdminPage = pathname.startsWith("/admin");
+
   // ใช้ฟังก์ชัน Utility ดึงเมนูให้เหมาะสมกับ URL (เฉพาะหน้าอื่นที่ไม่ใช่ /login)
   const menu = isLoginPage ? null : getMenuForPath(pathname);
 
   return (
     <html lang="en" data-theme="light">
       <body className={`antialiased`}>
-        {!isLoginPage && <Drawer menu={menu || []} pathname={pathname}/>}
+        {!isLoginPage && <Drawer menu={menu || []} pathname={pathname} />}
         {children}
-        {!isLoginPage && <Footer />}
+        {!isLoginPage || isAdminPage && <Footer />}
       </body>
     </html>
   );
