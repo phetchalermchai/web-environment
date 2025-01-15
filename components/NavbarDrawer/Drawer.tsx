@@ -16,7 +16,7 @@
                 <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
                 <div className="drawer-content flex flex-col">
                     {/* Navbar */}
-                    <Navbar menu={menu}/>
+                    <Navbar menu={menu} pathname={isAdmin}/>
                     {/* Page content here */}
                 </div>
                 <div className="drawer-side">

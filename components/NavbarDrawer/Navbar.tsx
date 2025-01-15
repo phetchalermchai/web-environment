@@ -9,13 +9,15 @@ import NavbarDrawerButton from "./NavbarDrawerButton";
 import Theme from "../Theme";
 
 interface NavbarProps {
-  menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[];
+  menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[],
+  pathname: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ menu }) => {
+const Navbar: React.FC<NavbarProps> = ({ menu, pathname }) => {
+
   return (
-    <div className="navbar bg-base-100 w-full bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm">
-      <div className="mx-2 flex-1 md:px-2">
+    <div className={`navbar bg-base-100 ${pathname ? "justify-end" : ""} w-full bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm`}>
+      {!pathname && <div className="mx-2 flex-1 md:px-2">
         <Link href={`/`} className="flex items-center gap-2 px-0 font-bold">
           <Image
             src="/mobile/mobile-logo.png"
@@ -29,8 +31,8 @@ const Navbar: React.FC<NavbarProps> = ({ menu }) => {
             <p>เทศบาลนครนนทบุรี</p>
           </div>
         </Link>
-      </div>
-      <div className="hidden flex-none lg:block">
+      </div>}
+      {!pathname && <div className="hidden flex-none lg:block">
         <ul className="menu menu-horizontal items-center xl:textarea-md">
           {/* Navbar menu content here */}
           {menu.map((item, index) =>
@@ -45,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({ menu }) => {
             )
           )}
         </ul>
-      </div>
+      </div>}
       <Theme />
       <NavbarDrawerButton />
     </div>

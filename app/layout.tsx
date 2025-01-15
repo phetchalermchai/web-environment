@@ -25,10 +25,12 @@ export default async function RootLayout({
   const pathname = headersList.get("x-invoke-pathname") || "/"; // ค่าที่ Middleware ส่งมา (fallback เป็น "/")
 
   // ตรวจสอบว่าอยู่ในหน้า `/login` หรือไม่
+  // const isLoginPage = pathname === "/auth/secure/gateway/login";
   const isLoginPage = pathname === "/auth/secure/gateway/login";
 
   // ตรวจสอบว่าอยู่ในหน้า `/admin` หรือไม่
   const isAdminPage = pathname.startsWith("/admin");
+  
 
   // ใช้ฟังก์ชัน Utility ดึงเมนูให้เหมาะสมกับ URL (เฉพาะหน้าอื่นที่ไม่ใช่ /login)
   const menu = isLoginPage ? null : getMenuForPath(pathname);
@@ -36,9 +38,9 @@ export default async function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body className={`antialiased`}>
-        {!isLoginPage && <Drawer menu={menu || []} pathname={pathname} />}
+        {!isLoginPage && !isAdminPage && <Drawer menu={menu || []} pathname={pathname} />}
         {children}
-        {!isLoginPage || isAdminPage && <Footer />}
+        {!isLoginPage && !isAdminPage && <Footer />}
       </body>
     </html>
   );
