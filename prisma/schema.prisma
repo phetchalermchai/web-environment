@@ -14,18 +14,37 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  firstname   String
-  lastname    String
-  email       String   @unique @db.VarChar(255)
-  password    String
-  department  String?  // Nullable
-  role        Role     @default(USER)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  firstname  String
+  lastname   String
+  email      String   @unique @db.VarChar(255)
+  password   String
+  department String? // Nullable
+  role       Role     @default(USER)
+  avatar      String?   // เพิ่ม field นี้สำหรับเก็บ URL ของรูปภาพ
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  Post Post[]
 }
 
 enum Role {
   USER
   SUPERUSER
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(255) // URL slug สำหรับ SEO
+  content     String    @db.Text
+  excerpt     String?   @db.Text
+  coverImage  String?   // URL ของภาพหน้าปก
+  images      Json?     // เก็บ URL ของภาพประกอบในรูปแบบ JSON Array
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    Int
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

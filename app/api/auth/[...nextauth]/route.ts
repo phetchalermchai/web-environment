@@ -95,7 +95,7 @@ const authOptions: AuthOptions = {
         },
     },
     pages: {
-        signIn: "/auth/signin",
+        signIn: "/auth/secure/gateway/login",
     },
     session: {
         strategy: "jwt", // ใช้ JSON Web Token เป็นวิธีจัดการ session

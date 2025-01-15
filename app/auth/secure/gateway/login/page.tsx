@@ -12,7 +12,7 @@ const page = async () => {
   if (session) {
     redirect("/admin");
   }
-  
+
   return (
     <div className="flex">
       <ImageLogin />
