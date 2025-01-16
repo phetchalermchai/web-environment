@@ -1,4 +1,5 @@
 "use client";
+import { CpuIcon } from "@/config/iconConfig";
 import { useEffect, useRef } from "react";
 
 const Service = () => {
@@ -60,7 +61,12 @@ const Service = () => {
 
   return (
     <div className="flex flex-col gap-6 items-center py-5 xl:py-10">
-      <div className="skeleton w-4/5 md:w-3/5 lg:w-2/5 h-10"></div>
+      <div>
+        <h1 className="sm:text-3xl text-2xl font-bold inline-flex items-center justify-center gap-1">
+          <CpuIcon />
+          E-SERVICE
+        </h1>
+      </div>
       <div
         ref={carouselRef}
         className="carousel bg-base-300 space-x-4 p-4 w-full"

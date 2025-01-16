@@ -3,7 +3,7 @@ import NavbarDrawerButton from "@/components/NavbarDrawer/NavbarDrawerButton";
 import Theme from "@/components/Theme";
 import Link from "next/link";
 import Image from "next/image";
-import { SettingIcon, SignOutIcon, IdentificationIcon, NewspaperIcon, OfficeIcon, CpuIcon, UserGroupIcon, CalendarSolidIcon, BanknotesIcon, DocumentIcon } from "@/config/iconConfig";
+import { SettingIcon, SignOutIcon, IdentificationIcon, NewspaperIcon, OfficeIcon, CpuSolidIcon, UserGroupIcon, CalendarSolidIcon, BanknotesIcon, DocumentIcon } from "@/config/iconConfig";
 
 // import types
 import { getServerSession } from "next-auth/next";
@@ -97,7 +97,7 @@ export default async function AdminLayout({
                         </li>
                         <li>
                             <a>
-                                <CpuIcon />
+                                <CpuSolidIcon />
                                 จัดการระบบ E-Service
                             </a>
                         </li>

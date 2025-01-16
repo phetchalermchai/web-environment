@@ -5,7 +5,7 @@ activitiesData
 const page = () => {
 
   return (
-    <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={3} showPagination={true} showViewAll={false} showBreadcrumbs={true}/>
+    <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={3} showPagination={true} showViewAll={false} showBreadcrumbs={true} cardType="type2"/>
   )
 }
 

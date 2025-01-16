@@ -5,7 +5,7 @@ import { getNextIndex, getPrevIndex, handleSwipe } from "@/utils/carouselUtils";
 //set type slide data
 interface Slide {
   id: number;
-  image: string;
+  iframe: string;
   title: string;
   description: string;
 }
@@ -22,13 +22,13 @@ export const useCarousel = ({ slidesData }: UseCarouselProps) => {
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // validation Slide
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setActiveIndex((prevIndex) => getNextIndex(prevIndex, slidesData.length));
-    }, 3000); // Change slide every 3 seconds
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setActiveIndex((prevIndex) => getNextIndex(prevIndex, slidesData.length));
+  //   }, 30000); // Change slide every 3 seconds
 
-    return () => clearInterval(intervalId);
-  }, [slidesData.length]);
+  //   return () => clearInterval(intervalId);
+  // }, [slidesData.length]);
 
 
 

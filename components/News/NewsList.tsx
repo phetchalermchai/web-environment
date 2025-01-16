@@ -15,6 +15,7 @@ interface NewsItem {
     title: string;
     description: string;
     date: string;
+    author: string;
     link: string;
 }
 
@@ -24,11 +25,12 @@ interface NewsListProps {
     showPagination?: boolean;
     showViewAll?: boolean;
     viewAllLink?: string;
+    cardType:string
 }
 
 
 
-const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPagination, showViewAll, viewAllLink }) => {
+const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPagination, showViewAll, viewAllLink, cardType}) => {
 
     // use react hook
     const [currentPage, setCurrentPage] = useState(1);
@@ -43,6 +45,7 @@ const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPaginat
                     <Card
                         key={String(news.id)}
                         news={news}
+                        cardType={cardType}
                     />
                 ))}
             </div>
@@ -55,9 +58,9 @@ const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPaginat
                 />
             )}
             {showViewAll && (
-                <Link href={viewAllLink || ""} className="flex justify-center">
-                    <button className="btn btn-secondary my-6">ดูทั้งหมด</button>
-                </Link>
+                <div className="flex justify-center">
+                    <Link href={viewAllLink || ""} className="btn btn-secondary my-6">ดูทั้งหมด</Link>
+                </div>
             )}
         </>
     )

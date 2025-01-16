@@ -1,7 +1,7 @@
 interface SlideProps {
     slide: {
       id: number;
-      image: string;
+      iframe: string;
       title: string;
       description: string;
     };
@@ -21,10 +21,11 @@ interface SlideProps {
         }`}
       >
         <img
-          src={slide.image}
+          src={slide.iframe}
           alt={slide.title}
           className="w-full h-full object-cover"
         />
+        {/* <iframe className="w-full h-full object-cover" src={slide.iframe}></iframe> */}
         <div className="absolute bottom-0 left-0 right-0 flex flex-col justify-center items-center w-full text-white bg-black bg-opacity-50 p-4">
           <h1 className="text-6xl font-bold">{slide.title}</h1>
           <p className="text-xl">{slide.description}</p>

@@ -7,6 +7,7 @@ interface NewsItem {
     title: string;
     description: string;
     date: string;
+    author: string;
     link: string;
 }
 
@@ -17,11 +18,12 @@ interface NewsProps {
     showPagination?: boolean; // แสดงปุ่มเลขหน้า
     showViewAll?: boolean; // แสดงปุ่ม "ดูทั้งหมด"
     showBreadcrumbs?: boolean; // ควบคุมการแสดง Breadcrumbs
+    cardType:string
     viewAllLink?: string; // ลิงก์ที่ใช้สำหรับปุ่ม "ดูทั้งหมด"
     icon?: React.ReactElement; // รับไอคอนเป็น React Node
 }
 
-const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showViewAll, showBreadcrumbs = false, viewAllLink, icon }: NewsProps) => {
+const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showViewAll, showBreadcrumbs = false, viewAllLink, icon ,cardType = "type1"}: NewsProps) => {
 
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
@@ -53,7 +55,7 @@ const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showVie
                     </div>
                 </div>
             )}
-            <NewsList newsData={newsData} itemsPerPage={itemsPerPage} showPagination={showPagination} showViewAll={showViewAll} viewAllLink={viewAllLink} />
+            <NewsList newsData={newsData} itemsPerPage={itemsPerPage} showPagination={showPagination} showViewAll={showViewAll} viewAllLink={viewAllLink} cardType={cardType}/>
         </div>
     )
 }

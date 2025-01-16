@@ -69,7 +69,8 @@ const useFormLogin = () => {
                     general: "เข้าสู่ระบบสำเร็จ",
                 }));
                 // result.url
-                window.location.href = "http://192.168.1.37:3000/admin"; // Redirect manually on success
+                window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin`; // Redirect manually on success
+                console.log(`${process.env.NEXT_PUBLIC_API_URL}/admin`);
             }
 
         } catch (error) {
