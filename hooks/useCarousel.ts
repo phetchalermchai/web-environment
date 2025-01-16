@@ -22,13 +22,13 @@ export const useCarousel = ({ slidesData }: UseCarouselProps) => {
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // validation Slide
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     setActiveIndex((prevIndex) => getNextIndex(prevIndex, slidesData.length));
-  //   }, 30000); // Change slide every 3 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setActiveIndex((prevIndex) => getNextIndex(prevIndex, slidesData.length));
+    }, 20000); // Change slide every 20 seconds
 
-  //   return () => clearInterval(intervalId);
-  // }, [slidesData.length]);
+    return () => clearInterval(intervalId);
+  }, [slidesData.length]);
 
 
 

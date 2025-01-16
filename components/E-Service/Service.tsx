@@ -60,7 +60,7 @@ const Service = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 items-center py-5 xl:py-10">
+    <div className="flex flex-col gap-6 items-center py-5 xl:py-20">
       <div>
         <h1 className="sm:text-3xl text-2xl font-bold inline-flex items-center justify-center gap-1">
           <CpuIcon />

@@ -30,7 +30,7 @@ const Theme = () => {
       </div>
       <ul
         tabIndex={0}
-        className="dropdown-content bg-base-200 rounded-box z-[1] top-px h-[28.6rem] max-h-[calc(100vh-10rem)] mt-[60px] lg:mt-[67px] w-52 p-2 shadow-2xl"
+        className="dropdown-content bg-base-200 rounded-box z-[1] top-px h-[28.6rem] max-h-[calc(100vh-10rem)] mt-[60px] lg:mt-[67px] w-52 p-2 shadow-2xl overflow-y-auto"
       >
         <div className="grid grid-cols-1 gap-3 p-3">
           <li>
