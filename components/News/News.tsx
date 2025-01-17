@@ -1,5 +1,5 @@
 import NewsList from "./NewsList"
-import Breadcrumbs from "../Breadcrumbs";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface NewsItem {
     id: number;
@@ -33,7 +33,6 @@ const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showVie
 
     return (
         <div className="px-10 py-5 xl:px-20 xl:py-10">
-            {/* <div className="skeleton mx-auto my-7 h-10 w-3/4 xl:w-2/5"></div> */}
             {showBreadcrumbs ? (
                 <>
                     <Breadcrumbs items={breadcrumbs} />
