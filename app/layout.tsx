@@ -38,9 +38,9 @@ export default async function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body className={`antialiased`}>
-        {!isLoginPage && !isAdminPage && <Drawer menu={menu || []} pathname={pathname} />}
+        {/* {!isLoginPage && !isAdminPage && <Drawer menu={menu || []} pathname={pathname} />} */}
         {children}
-        {!isLoginPage && !isAdminPage && <Footer />}
+        {/* {!isLoginPage && !isAdminPage && <Footer />} */}
       </body>
     </html>
   );
