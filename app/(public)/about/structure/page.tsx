@@ -1,4 +1,4 @@
-import FlowChart from "@/components/Structure/FlowChart";
+import FlowChart from "@/features/users/components/Structure/FlowChart";
 
 const page = () => {
   return (

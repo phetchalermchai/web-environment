@@ -10,7 +10,7 @@ interface DepartmentSectionProps {
     items?: DepartmentSectionItem[];
 }
 
-const DepartmentSection = ({ title, content, items }: DepartmentSectionProps) => {
+const GenericList = ({ title, content, items }: DepartmentSectionProps) => {
     // ฟังก์ชันสำหรับแสดงรายการย่อย
     const renderSubItems = (subItems: DepartmentSectionItem[]) => {
         return (
@@ -47,9 +47,9 @@ const DepartmentSection = ({ title, content, items }: DepartmentSectionProps) =>
 };
 
 // Default props เพื่อป้องกันข้อผิดพลาดในกรณีที่ไม่ได้ส่งค่าบางส่วน
-DepartmentSection.defaultProps = {
+GenericList.defaultProps = {
     content: "",
     items: [],
 };
 
-export default DepartmentSection;
+export default GenericList

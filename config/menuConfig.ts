@@ -20,18 +20,18 @@ export const mainMenu = [
         label: "หน่วยงานภายใน",
         isDropdown: true,
         dropdownItems: [
-            { label: "ฝ่ายบริหารงานทั่วไป", href: "/departments/general" },
+            { label: "ฝ่ายบริหารงานทั่วไป", href: "/departments/general-affairs" },
             {
                 label: "ส่วนส่งเสริมสาธารณสุข",
-                href: "/departments/health-promotion",
+                href: "/departments/public-health-promotion",
             },
             {
                 label: "ส่วนบริการอนามัยสิ่งแวดล้อม",
-                href: "/departments/health-services",
+                href: "/departments/environmental-health-services",
             },
             {
                 label: "ส่วนส่งเสริมอนามัยสิ่งแวดล้อม",
-                href: "/departments/environment-promotion",
+                href: "/departments/environmental-health-promotion",
             },
         ],
     },
