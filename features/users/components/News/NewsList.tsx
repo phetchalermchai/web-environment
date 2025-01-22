@@ -4,9 +4,9 @@
 import { useState } from "react";
 
 // Component
-import Card from "../Card";
-import Pagination from "./Pagination";
 import Link from "next/link";
+import Card from "@/components/Card";
+import Pagination from "@/components/Pagination";
 
 // Data Type
 interface NewsItem {

@@ -1,6 +1,5 @@
-import News from "@/components/News/News"
 import { activitiesData } from "@/config/newConfig"
-activitiesData
+import News from "@/features/users/components/News/News"
 
 const page = () => {
 

@@ -3,10 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 // import component
-import Dropdown from "../Dropdown";
 import NavbarMenuItem from "./NavbarMenuItem";
 import NavbarDrawerButton from "./NavbarDrawerButton";
-import Theme from "../Theme";
+import Dropdown from "@/components/Dropdown";
+import Theme from "@/components/Theme";
 
 interface NavbarProps {
   menu: { label: string; href?: string; isDropdown?: boolean; dropdownItems?: any[] }[],

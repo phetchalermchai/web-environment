@@ -1,5 +1,4 @@
 // import components
-import NavbarDrawerButton from "@/components/NavbarDrawer/NavbarDrawerButton";
 import Theme from "@/components/Theme";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,6 +6,7 @@ import { SettingIcon, SignOutIcon, IdentificationIcon, NewspaperIcon, OfficeIcon
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import NavbarDrawerButton from "@/features/users/components/NavbarDrawer/NavbarDrawerButton";
 
 export default async function AdminLayout({
     children,

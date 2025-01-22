@@ -1,7 +1,7 @@
 import Breadcrumbs from "@/components/Breadcrumbs"
-import ContactList from "@/components/Contact/ContactList";
-import MapDetails from "@/components/Contact/MapDetails";
 import Divider from "@/components/Divider";
+import ContactList from "@/features/users/components/Contact/ContactList";
+import MapDetails from "@/features/users/components/Contact/MapDetails";
 
 const page = () => {
 
