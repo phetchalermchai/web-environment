@@ -1,8 +1,9 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import FormLogin from "@/components/Login/FormLogin"
-import ImageLogin from "@/components/Login/ImageLogin"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import ImageLogin from "@/features/admin/components/Login/ImageLogin";
+import FormLogin from "@/features/admin/components/Login/FormLogin";
+
 
 const page = async () => {
   // ดึงข้อมูลเซสชันจากเซิร์ฟเวอร์
@@ -10,7 +11,7 @@ const page = async () => {
 
   // ถ้าผู้ใช้มีเซสชันอยู่แล้ว ให้รีไดเรกต์ไปยัง `/admin`
   if (session) {
-    redirect("/admin");
+    redirect("/admin/dashboard");
   }
 
   return (

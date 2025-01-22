@@ -101,7 +101,7 @@ const authOptions: AuthOptions = {
         strategy: "jwt", // ใช้ JSON Web Token เป็นวิธีจัดการ session
         maxAge: 6 * 60 * 60, // กำหนดเวลา 6 ชั่วโมง (6 ชั่วโมง = 21600 วินาที)
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: process.env.AUTH_SECRET,
 };
 
 

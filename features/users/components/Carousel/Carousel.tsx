@@ -1,11 +1,10 @@
 "use client"
+import { useCarousel } from '../../hooks/useCarousel';
 // import component
 import NavigationButtons from './NavigationButtons';
 import Slide from './Slide';
 
 // import react hook
-import { useCarousel } from '@/hooks/useCarousel';
-
 // set type data
 interface Slide {
     id: number;

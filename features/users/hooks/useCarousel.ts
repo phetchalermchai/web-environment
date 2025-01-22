@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { getNextIndex, getPrevIndex, handleSwipe } from "@/utils/carouselUtils";
+import { getNextIndex, getPrevIndex, handleSwipe } from "../utils/carouselUtils";
 
 //set type slide data
 interface Slide {

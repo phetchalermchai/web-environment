@@ -54,7 +54,7 @@ const useFormLogin = () => {
             const result = await signIn("credentials", {
                 email: formData.email,
                 password: formData.password,
-                callbackUrl: "/admin",
+                callbackUrl: "/admin/dashboard",
                 redirect: false, // Prevent automatic redirection
             });
 
@@ -70,7 +70,6 @@ const useFormLogin = () => {
                 }));
                 // result.url
                 window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`; // Redirect manually on success
-                console.log(`${process.env.NEXT_PUBLIC_API_URL}/admin`);
             }
 
         } catch (error) {
