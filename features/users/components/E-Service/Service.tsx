@@ -8,8 +8,8 @@ const Service = () => {
 
   // Mock data slides
   const slides = [
-    "garbage payment system.webp",
-    "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
+    "ชำระค่าเก็บขยะ.png",
+    "test1.png",
     "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
     "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
     "https://img.daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.webp",
@@ -77,12 +77,12 @@ const Service = () => {
             key={index}
             className="carousel-item"
           >
-            <img
+            {/* <img
               src={slide}
               alt={`Slide ${index + 1}`}
               className="w-[300px] h-[400px] rounded-box"
-            />
-            {/* <Image src={`/${slide}`} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400}/> */}
+            /> */}
+            <Image src={`/E-Service/${slide}`} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400}/>
           </div>
         ))}
       </div>
