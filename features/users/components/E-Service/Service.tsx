@@ -1,5 +1,6 @@
 "use client";
 import { CpuIcon } from "@/config/iconConfig";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 const Service = () => {
@@ -7,7 +8,7 @@ const Service = () => {
 
   // Mock data slides
   const slides = [
-    "https://img.daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.webp",
+    "garbage payment system.webp",
     "https://img.daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.webp",
     "https://img.daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.webp",
     "https://img.daisyui.com/images/stock/photo-1494253109108-2e30c049369b.webp",
@@ -81,6 +82,7 @@ const Service = () => {
               alt={`Slide ${index + 1}`}
               className="w-[300px] h-[400px] rounded-box"
             />
+            {/* <Image src={`/${slide}`} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400}/> */}
           </div>
         ))}
       </div>
