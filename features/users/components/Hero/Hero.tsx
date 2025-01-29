@@ -29,6 +29,7 @@ const Hero = () => {
                         width={300} // กำหนดความกว้างของรูป (แก้ไขให้เหมาะสมกับดีไซน์)
                         height={300} // กำหนดความสูงของรูป
                         className="rounded-xl" // ใช้ Tailwind CSS ตกแต่งรูป
+                        style={{ width: "auto", height: "auto" }} 
                     />
                 </div>
 
