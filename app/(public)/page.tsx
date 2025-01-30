@@ -1,5 +1,6 @@
 import Divider from "@/components/Divider";
 import { newsIcon, calendarIcon } from "@/config/iconConfig";
+import CalendarSection from "@/features/users/components/Calendar/CalendarSection";
 import Carousel from "@/features/users/components/Carousel/Carousel";
 import Service from "@/features/users/components/E-Service/Service";
 import Hero from "@/features/users/components/Hero/Hero";
@@ -15,7 +16,7 @@ const page = () => {
             description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
             date: "Dec 12, 2024",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/news-updates/1",
         },
         {
             id: 2,
@@ -24,7 +25,7 @@ const page = () => {
             description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
             date: "Dec 12, 2024",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/news-updates/2",
         },
         {
             id: 3,
@@ -33,7 +34,7 @@ const page = () => {
             description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
             date: "Dec 12, 2024",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/news-updates/3",
         },
         {
             id: 4,
@@ -42,7 +43,7 @@ const page = () => {
             description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
             date: "Dec 12, 2024",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/news-updates/4",
         },
         {
             id: 5,
@@ -51,7 +52,7 @@ const page = () => {
             description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
             date: "Dec 12, 2024",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/news-updates/5",
         },
         {
             id: 6,
@@ -60,7 +61,7 @@ const page = () => {
             description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก แม้ขะเป็นวัสดุที่ย่อยสลายได้ยากแม้ขะเป็นวัสดุที่ย่อยสลายได้ยากแม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
             date: "Dec 12, 2024",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/news-updates/6",
         },
     ]
 
@@ -72,7 +73,7 @@ const page = () => {
             description: "",
             date: "14 มกราคม 2568",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/activities/1",
         },
         {
             id: 2,
@@ -81,7 +82,7 @@ const page = () => {
             description: "",
             date: "15 มกราคม 2568",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/activities/2",
         },
         {
             id: 3,
@@ -90,7 +91,7 @@ const page = () => {
             description: "",
             date: "15 มกราคม 2568",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/activities/3",
         },
         {
             id: 4,
@@ -99,7 +100,7 @@ const page = () => {
             description: "",
             date: "15 มกราคม 2568",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/activities/4",
         },
         {
             id: 5,
@@ -108,7 +109,7 @@ const page = () => {
             description: "",
             date: "16 มกราคม 2568",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/activities/5",
         },
         {
             id: 6,
@@ -117,7 +118,7 @@ const page = () => {
             description: "",
             date: "16 มกราคม 2568",
             author: "เฉลิมชัย เหว่าไว",
-            link: "/",
+            link: "/news/activities/6",
         },
     ]
 
@@ -127,8 +128,9 @@ const page = () => {
             <Hero />
             <Service />
             <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/news-updates" icon={newsIcon()} cardType="type1" />
-            <Divider/>
+            <Divider />
             <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/activities" icon={calendarIcon()} cardType="type2" />
+            <CalendarSection/>
         </>
     )
 }

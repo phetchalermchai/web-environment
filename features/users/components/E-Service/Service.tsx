@@ -1,6 +1,7 @@
 "use client";
 import { CpuIcon } from "@/config/iconConfig";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 const Service = () => {
@@ -8,13 +9,13 @@ const Service = () => {
 
   // Mock data slides
   const slides = [
-    "ชำระค่าเก็บขยะ.png",
-    "แจ้งดูดสิ่งปฏิกูล.png",
-    "จองคิวสุขาเคลื่อนที่.png",
-    "บริการรถลอกท่อระบายน้ำ.png",
-    "ระบบออกใบอนุญาตสถานประกอบการ.png",
-    "บริการภูมิสารสนเทศ GIS.png",
-    "ระบบคำนวณค่าขยะ.png",
+    { src: "ชำระค่าเก็บขยะ.png", href: "https://nakornnont.go.th/onestopservice/member/login_page?link=s_garbage" },
+    { src: "แจ้งดูดสิ่งปฏิกูล.png", href: "https://nakornnont.go.th/onestopservice/sewage_suction" },
+    { src: "จองคิวสุขาเคลื่อนที่.png", href: "https://nakornnont.go.th/onestopservice/toiletcar" },
+    { src: "บริการรถลอกท่อระบายน้ำ.png", href: "https://nakornnont.go.th/onestopservice/stripping_pipe" },
+    { src: "ระบบออกใบอนุญาตสถานประกอบการ.png", href: "/" },
+    { src: "บริการภูมิสารสนเทศ GIS.png", href: "https://nkndatamap.nakornnont.go.th/public" },
+    { src: "ระบบคำนวณค่าขยะ.png", href: "/" },
   ];
 
   useEffect(() => {
@@ -77,12 +78,9 @@ const Service = () => {
             key={index}
             className="carousel-item"
           >
-            {/* <img
-              src={slide}
-              alt={`Slide ${index + 1}`}
-              className="w-[300px] h-[400px] rounded-box"
-            /> */}
-            <Image src={`/E-Service/${slide}`} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400} style={{ width: "auto", height: "auto" }} />
+            <Link href={slide.href} target="_blank">
+              <Image src={`/E-Service/${slide.src}`} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400} style={{ width: "auto", height: "auto" }} />
+            </Link>
           </div>
         ))}
       </div>

@@ -10,7 +10,7 @@ const page = () => {
         description: "",
         date: "14 มกราคม 2568",
         author: "เฉลิมชัย เหว่าไว",
-        link: "/",
+        link: "/news/activities/1",
     },
     {
         id: 2,
@@ -19,7 +19,7 @@ const page = () => {
         description: "",
         date: "15 มกราคม 2568",
         author: "เฉลิมชัย เหว่าไว",
-        link: "/",
+        link: "/news/activities/2",
     },
     {
         id: 3,
@@ -28,7 +28,7 @@ const page = () => {
         description: "",
         date: "15 มกราคม 2568",
         author: "เฉลิมชัย เหว่าไว",
-        link: "/",
+        link: "/news/activities/3",
     },
     {
         id: 4,
@@ -37,7 +37,7 @@ const page = () => {
         description: "",
         date: "15 มกราคม 2568",
         author: "เฉลิมชัย เหว่าไว",
-        link: "/",
+        link: "/news/activities/4",
     },
     {
         id: 5,
@@ -46,7 +46,7 @@ const page = () => {
         description: "",
         date: "16 มกราคม 2568",
         author: "เฉลิมชัย เหว่าไว",
-        link: "/",
+        link: "/news/activities/5",
     },
     {
         id: 6,
@@ -55,7 +55,7 @@ const page = () => {
         description: "",
         date: "16 มกราคม 2568",
         author: "เฉลิมชัย เหว่าไว",
-        link: "/",
+        link: "/news/activities/6",
     },
 ]
 

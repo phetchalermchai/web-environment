@@ -27,7 +27,7 @@ const ContactDetails = () => {
             </a>
           </li>
           <li>
-            <a>อีเมล : Env.health.naKornnont@gmail.com</a>
+            <a>อีเมล : Env.health.nakornnont@gmail.com</a>
           </li>
         </ul>
       </li>
