@@ -13,9 +13,10 @@ function page() {
 
     const news = {
         id: 1,
-        image: [{src:'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg',caption:"เปิดโครงการพัฒนาชุมชน"},
-            {src:'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg',caption:"เปิดโครงการพัฒนาชุมชน"},
-            {src:'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg',caption:"เปิดโครงการพัฒนาชุมชน"}
+        image: [
+            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" },
+            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" },
+            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" }
         ],
         title: "ถังขยะรีไซเคิล (recycle)",
         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
@@ -23,7 +24,7 @@ function page() {
         author: "เฉลิมชัย เหว่าไว",
         link: "/news/news-updates/1",
     }
-
+ 
     return (
         <div className="px-10 py-5 xl:px-20 xl:py-10">
             <Breadcrumbs items={breadcrumbs} />
