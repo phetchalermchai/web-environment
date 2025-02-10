@@ -14,7 +14,7 @@ function page() {
     const news = {
         id: 1,
         image: [
-            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" },
+            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชน" },
             { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" },
             { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" }
         ],

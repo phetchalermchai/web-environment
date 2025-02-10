@@ -1,9 +1,7 @@
-// import components
+"use client"
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
-
-const Drawer = async ({ children }: { children: React.ReactNode }) => {
-
+const Drawer = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div className={`drawer lg:drawer-open sticky top-0`} style={{ zIndex: 100 }}>
@@ -15,7 +13,7 @@ const Drawer = async ({ children }: { children: React.ReactNode }) => {
                 {children}
             </div>
             {/* Sidebar content here */}
-            <Sidebar />
+                <Sidebar />
         </div>
     )
 }

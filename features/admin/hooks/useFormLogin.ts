@@ -29,7 +29,7 @@ const useFormLogin = () => {
             !/(?=.*[A-Z])/.test(formData.password) ||
             !/(?=.*[a-z])/.test(formData.password) ||
             !/(?=.*\d)/.test(formData.password) ||
-            !/(?=.*[@$!%*?&#])/
+            !/(?=.*[@$!%*?&#%+])/
                 .test(formData.password)
         ) {
             newErrors.password =

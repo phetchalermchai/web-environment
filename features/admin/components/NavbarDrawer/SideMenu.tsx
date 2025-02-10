@@ -1,12 +1,30 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SettingIcon, SignOutIcon, IdentificationIcon, NewspaperIcon, OfficeIcon, CpuSolidIcon, UserGroupIcon, CalendarSolidIcon, BanknotesIcon, DocumentIcon } from "@/config/iconConfig";
+import { 
+    SettingIcon, 
+    SignOutIcon, 
+    IdentificationIcon, 
+    NewspaperIcon, 
+    OfficeIcon, 
+    CpuSolidIcon, 
+    UserGroupIcon, 
+    CalendarSolidIcon, 
+    BanknotesIcon, 
+    DocumentIcon, 
+    Chartpie } from "@/config/iconConfig";
+// import { useSession } from "next-auth/react";
+// import { usePathname } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 const SideMenu = async () => {
 
+    // const pathname = usePathname();
+
     const session = await getServerSession(authOptions);
+    // const { data: session } = useSession();
+
+    // const isActive = (href: string) => (pathname === href ? "active" : "");
 
     return (
         <ul className="menu bg-base-200 min-h-full w-80 p-4 justify-between">
@@ -27,6 +45,12 @@ const SideMenu = async () => {
                     </Link>
 
                 </li>
+                <li >
+                    <a className="active">
+                        <Chartpie />
+                        แดชบอร์ด
+                    </a>
+                </li>
                 <li>
                     <a>
                         <BanknotesIcon />
@@ -40,14 +64,14 @@ const SideMenu = async () => {
                     </a>
                 </li>
                 <li>
-                    <details open>
+                    <details>
                         <summary>
                             <DocumentIcon />
                             จัดการข้อมูลข่าวสาร
                         </summary>
                         <ul className="py-2">
                             <li className="py-2">
-                                <a className="active">
+                                <a>
                                     <NewspaperIcon />
                                     ข่าวประชาสัมพันธ์
                                 </a>
@@ -77,11 +101,11 @@ const SideMenu = async () => {
                         </ul>
                     </details>
                 </li>
-                <li>
-                    <a>
+                <li className={`active`}>
+                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`}>
                         <IdentificationIcon />
                         จัดการระบบผู้ใช้งาน
-                    </a>
+                    </Link>
                 </li>
                 <li>
                     <a>

@@ -11,7 +11,7 @@ interface NewsImageProps {
 const NewsImage = ({ images, alt }: NewsImageProps) => {
   return (
     <div className="w-full sm:w-2/4">
-      <div className="w-full shadow-md rounded-2xl">
+      <div className="w-full rounded-2xl">
         <div className="grid grid-cols-1 gap-4">
           {images.map((image, index) => (
             <figure key={index}>
@@ -21,7 +21,7 @@ const NewsImage = ({ images, alt }: NewsImageProps) => {
                 className="rounded-2xl block w-full"
               />
               {image.caption && (
-                <figcaption className="mt-2 text-sm text-gray-600 text-center">
+                <figcaption className="mt-5 text-sm text-gray-600">
                   {image.caption}
                 </figcaption>
               )}
