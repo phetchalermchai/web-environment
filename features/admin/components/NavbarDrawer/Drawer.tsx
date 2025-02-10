@@ -1,6 +1,6 @@
-"use client"
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+
 const Drawer = ({ children }: { children: React.ReactNode }) => {
 
     return (

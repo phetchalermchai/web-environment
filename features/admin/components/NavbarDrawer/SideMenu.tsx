@@ -1,21 +1,10 @@
-import Link from "next/link";
-import Image from "next/image";
-import { 
-    SettingIcon, 
-    SignOutIcon, 
-    IdentificationIcon, 
-    NewspaperIcon, 
-    OfficeIcon, 
-    CpuSolidIcon, 
-    UserGroupIcon, 
-    CalendarSolidIcon, 
-    BanknotesIcon, 
-    DocumentIcon, 
-    Chartpie } from "@/config/iconConfig";
+import { SignOutIcon } from "@/config/iconConfig";
 // import { useSession } from "next-auth/react";
 // import { usePathname } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import Menu from "./Menu";
+import SignOut from "./SignOut";
 
 const SideMenu = async () => {
 
@@ -28,92 +17,7 @@ const SideMenu = async () => {
 
     return (
         <ul className="menu bg-base-200 min-h-full w-80 p-4 justify-between">
-            <div className="flex flex-col gap-4">
-                <li>
-                    <Link href={`/admin`} className="flex justify-center items-center gap-2 px-0 font-bold">
-                        <Image
-                            src="/mobile/mobile-logo.png"
-                            width={48}
-                            height={48}
-                            alt="Picture of the author"
-                            className="object-contain"
-                        />
-                        <div className="text-start text-xs">
-                            <p>สำนักสาธารณสุขและสิ่งแวดล้อม</p>
-                            <p>เทศบาลนครนนทบุรี</p>
-                        </div>
-                    </Link>
-
-                </li>
-                <li >
-                    <a className="active">
-                        <Chartpie />
-                        แดชบอร์ด
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <BanknotesIcon />
-                        จัดการแบนเนอร์
-                    </a>
-                </li>
-                <li>
-                    <a>
-                        <CpuSolidIcon />
-                        จัดการระบบ E-Service
-                    </a>
-                </li>
-                <li>
-                    <details>
-                        <summary>
-                            <DocumentIcon />
-                            จัดการข้อมูลข่าวสาร
-                        </summary>
-                        <ul className="py-2">
-                            <li className="py-2">
-                                <a>
-                                    <NewspaperIcon />
-                                    ข่าวประชาสัมพันธ์
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    <CalendarSolidIcon />
-                                    กิจกรรมของสำนัก
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-                <li>
-                    <details>
-                        <summary>
-                            <OfficeIcon />
-                            จัดการข้อมูลหน่วยงาน
-                        </summary>
-                        <ul className="py-2">
-                            <li className="py-2">
-                                <a className="">
-                                    <UserGroupIcon />
-                                    บุคลากร
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-                <li className={`active`}>
-                    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/admin/users`}>
-                        <IdentificationIcon />
-                        จัดการระบบผู้ใช้งาน
-                    </Link>
-                </li>
-                <li>
-                    <a>
-                        <SettingIcon />
-                        ตั้งค่า
-                    </a>
-                </li>
-            </div>
+            <Menu />
             <div className="flex flex-col gap-10 py-5">
                 <div className="flex flex-col items-center gap-2">
                     <div className="dropdown dropdown-end">
@@ -130,10 +34,8 @@ const SideMenu = async () => {
                     <p className="text-xs">{session?.user.role}</p>
                 </div>
                 <li>
-                    <a className="justify-center text-base">
-                        <SignOutIcon />
-                        Sign Out
-                    </a></li>
+                    <SignOut/>
+                </li>
             </div>
         </ul>
     )
