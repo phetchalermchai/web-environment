@@ -9,8 +9,8 @@ const Navbar = async () => {
     const session = await getServerSession(authOptions);
 
     return (
-        <div className={`navbar bg-base-100 w-full justify-end bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm`}>
-            <div className="mx-2 flex-1 md:px-2">
+        <div className={`navbar bg-base-100 w-full justify-end bg-opacity-90 backdrop-blur transition-shadow duration-100 [transform:translate3d(0,0,0)] shadow-sm sticky top-0`} style={{ zIndex: 100 }}>
+            <div className="mx-3 xl:mx-5 flex-1 md:px-2">
                 <TitleBar/>
             </div>
             <div className="dropdown dropdown-end">

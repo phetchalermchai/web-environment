@@ -3,7 +3,7 @@ import SideMenu from "./SideMenu";
 const Sidebar = async () => {
 
     return (
-        <div className="drawer-side">
+        <div className="drawer-side" style={{ zIndex: 200 }}>
             <label
                 htmlFor="my-drawer-3"
                 aria-label="close sidebar"
