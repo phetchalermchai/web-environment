@@ -1,6 +1,3 @@
-import { SignOutIcon } from "@/config/iconConfig";
-// import { useSession } from "next-auth/react";
-// import { usePathname } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Menu from "./Menu";
@@ -8,12 +5,7 @@ import SignOut from "./SignOut";
 
 const SideMenu = async () => {
 
-    // const pathname = usePathname();
-
     const session = await getServerSession(authOptions);
-    // const { data: session } = useSession();
-
-    // const isActive = (href: string) => (pathname === href ? "active" : "");
 
     return (
         <ul className="menu bg-base-200 min-h-full w-80 p-4 justify-between">
