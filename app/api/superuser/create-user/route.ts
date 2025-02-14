@@ -1,19 +1,21 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
-        const { firstname, lastname, email, password, department, role, currentUserRole } = body;
-
-        // ตรวจสอบสิทธิ์
-        if (!currentUserRole || currentUserRole.toUpperCase() !== "SUPERUSER") {
+        // ดึง session จาก NextAuth อย่างปลอดภัย
+        const session = await getServerSession(authOptions);
+        if (!session || session.user.role.toUpperCase() !== "SUPERUSER") {
             return NextResponse.json(
                 { error: "ไม่ได้รับอนุญาต มีเพียง SUPERUSER เท่านั้นที่สามารถสร้างผู้ใช้ได้" },
                 { status: 403 }
             );
         }
+        const body = await request.json();
+        const { firstname, lastname, email, password, department, role } = body;
 
         // Validation
         if (!firstname || !lastname) {
@@ -32,10 +34,10 @@ export async function POST(request: Request) {
         }
 
         if (
-            !/(?=.*[A-Z])/.test(password) || // ตรวจสอบตัวพิมพ์ใหญ่
-            !/(?=.*[a-z])/.test(password) || // ตรวจสอบตัวพิมพ์เล็ก
-            !/(?=.*\d)/.test(password) || // ตรวจสอบตัวเลข
-            !/(?=.*[@$!%*?&#])/.test(password) // ตรวจสอบอักขระพิเศษ
+            !/(?=.*[A-Z])/.test(password) ||
+            !/(?=.*[a-z])/.test(password) ||
+            !/(?=.*\d)/.test(password) ||
+            !/(?=.*[@$!%*?&#])/.test(password)
         ) {
             return NextResponse.json(
                 { error: "รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และอักขระพิเศษ" },
@@ -62,9 +64,8 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json(newUser, { status: 201 });
-
     } catch (error) {
-        console.error('Error creating user:', error);
-        return NextResponse.json({ error: 'เกิดข้อผิดพลาดในการสร้างบัญชีผู้ใช้งาน' }, { status: 500 });
+        console.error("Error creating user:", error);
+        return NextResponse.json({ error: "เกิดข้อผิดพลาดในการสร้างบัญชีผู้ใช้งาน" }, { status: 500 });
     }
 }

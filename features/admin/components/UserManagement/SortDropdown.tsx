@@ -1,9 +1,18 @@
 import { ArrowUpDownIcon } from "@/config/iconConfig";
 import { useState } from "react";
 
-const SortDropdown = () => {
+interface SortDropdownProps {
+    onSort: (option: string) => void;
+}
+
+const SortDropdown = ({ onSort }: SortDropdownProps) => {
 
     const [sortOption, setSortOption] = useState("Email");
+
+    const handleSortChange = (option: string) => {
+        setSortOption(option);
+        onSort(option);
+    };
 
     return (
         <div className="dropdown dropdown-end sm:mx-2">
@@ -13,16 +22,16 @@ const SortDropdown = () => {
             </div>
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li>
-                    <button onClick={() => setSortOption("Email")}>Email</button>
+                    <button onClick={() => handleSortChange("Email")}>Email</button>
                 </li>
                 <li>
-                    <button onClick={() => setSortOption("Department")}>Department</button>
+                    <button onClick={() => handleSortChange("Department")}>Department</button>
                 </li>
                 <li>
-                    <button onClick={() => setSortOption("Created")}>Created</button>
+                    <button onClick={() => handleSortChange("Created")}>Created</button>
                 </li>
                 <li>
-                    <button onClick={() => setSortOption("Updated")}>Updated</button>
+                    <button onClick={() => handleSortChange("Updated")}>Updated</button>
                 </li>
             </ul>
         </div>

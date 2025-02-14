@@ -26,7 +26,14 @@ const ManagementPage = () => {
             try {
                 // getUsers() ควรจะถูก type ใน usersAction.ts ให้ return Promise<User[]>
                 const fetchedUsers = await getUsers();
-                setUsers(fetchedUsers); // fetchedUsers ถูก type ให้เป็น User[] แล้ว
+
+                // เรียงลำดับข้อมูลตาม Email เป็นค่าเริ่มต้น
+                const sortedUsers = fetchedUsers.sort((a, b) =>
+                    a.email.localeCompare(b.email)
+                );
+
+                setUsers(sortedUsers); // fetchedUsers ถูก type ให้เป็น User[] แล้ว
+                setFilteredUsers(sortedUsers);
                 setLoading(false);
             } catch (error: any) { // กำหนด type ให้ error เป็น any หรือ Error ก็ได้ แล้วแต่กรณี
                 console.error("Fetching users failed:", error);
@@ -54,6 +61,32 @@ const ManagementPage = () => {
         setFilteredUsers(filtered);
     }, [users, searchQuery]);
 
+    // ฟังก์ชันเรียงลำดับข้อมูลผู้ใช้งานตามตัวเลือก
+    const handleSort = (option: string) => {
+        let sorted = [...users];
+        switch (option) {
+            case "Email":
+                sorted.sort((a, b) => a.email.localeCompare(b.email));
+                break;
+            case "Department":
+                sorted.sort((a, b) => {
+                    const depA = a.department || "";
+                    const depB = b.department || "";
+                    return depA.localeCompare(depB);
+                });
+                break;
+            case "Created":
+                sorted.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+                break;
+            case "Updated":
+                sorted.sort((a, b) => a.updatedAt.getTime() - b.updatedAt.getTime());
+                break;
+            default:
+                break;
+        }
+        setFilteredUsers(sorted);
+    };
+
     if (loading) {
         return <div>Loading users...</div>;
     }
@@ -67,7 +100,7 @@ const ManagementPage = () => {
             <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                     <SearchBar onSearch={handleSearch} />
-                    <SortDropdown />
+                    <SortDropdown onSort={handleSort} />
                 </div>
                 <CreateButton />
             </div>

@@ -1,12 +1,13 @@
 import { UserplusIcon } from "@/config/iconConfig";
+import Link from "next/link";
 
 const CreateButton = () => {
     return (
         <div>
-            <button className="btn btn-sm lg:btn-md btn-primary px-2">
+            <Link href={`/admin/users/create`} className="btn btn-sm lg:btn-md btn-primary px-2">
                 <span className='hidden lg:inline-flex'>สร้างผู้ใช้งาน</span>
                 <span className='inline-flex lg:hidden'><UserplusIcon /></span>
-            </button>
+            </Link>
         </div>
     )
 }

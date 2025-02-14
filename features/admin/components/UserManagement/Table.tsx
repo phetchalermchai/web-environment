@@ -1,5 +1,6 @@
 import { type User } from "@/features/admin/server/usersAction";
 import Row from "./Row";
+import { UserIcon, ArrowDownIcon } from "@/config/iconConfig";
 
 interface UserTableProps {
     users: User[];
@@ -10,7 +11,7 @@ const Table = ({ users }: UserTableProps) => {
         <table className="table table-xs md:table-md">
             <thead>
                 <tr>
-                    <th>User</th>
+                    <th className="flex gap-1">User <ArrowDownIcon/></th>
                     <th>Department</th>
                     <th>Created</th>
                     <th>Updated</th>
@@ -25,8 +26,11 @@ const Table = ({ users }: UserTableProps) => {
                 ) : (
                     <tr>
                         <td colSpan={5} className="text-center">
+                            <div className="mask mask-circle bg-base-300 w-11 h-11 rounded-full flex items-center justify-center mx-auto mt-16 mb-3">
+                                <UserIcon />
+                            </div>
                             <p className="text-lg py-2">ไม่พบข้อมูลผู้ใช้งาน</p>
-                            <p>ลองเปลี่ยนคำค้นหาของคุณ</p>
+                            <p className="mb-16">ลองเปลี่ยนคำค้นหาของคุณ</p>
                         </td>
                     </tr>
                 )}
