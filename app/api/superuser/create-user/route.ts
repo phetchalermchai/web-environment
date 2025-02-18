@@ -15,7 +15,7 @@ export async function POST(request: Request) {
             );
         }
         const body = await request.json();
-        const { firstname, lastname, email, password, department, role } = body;
+        const { firstname, lastname, email, password, department, role, avatar } = body;
 
         // Validation
         if (!firstname || !lastname) {
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 
         // สร้าง user ใหม่
         const newUser = await prisma.user.create({
-            data: { firstname, lastname, email, password: hashedPassword, department, role },
+            data: { firstname, lastname, email, password: hashedPassword, department, role, avatar },
         });
 
         return NextResponse.json(newUser, { status: 201 });

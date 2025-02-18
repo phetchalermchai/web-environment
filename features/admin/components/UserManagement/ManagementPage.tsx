@@ -13,6 +13,7 @@ const ManagementPage = () => {
     const [error, setError] = useState<Error | null>(null); // error เป็น Error object หรือ null
     const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
+    const [sort, setSort] = useState<string>("Email")
 
     // ฟังก์ชันรับ query จาก SearchBar
     const handleSearch = (query: string) => {
@@ -67,6 +68,7 @@ const ManagementPage = () => {
         switch (option) {
             case "Email":
                 sorted.sort((a, b) => a.email.localeCompare(b.email));
+                setSort('Email')
                 break;
             case "Department":
                 sorted.sort((a, b) => {
@@ -74,12 +76,15 @@ const ManagementPage = () => {
                     const depB = b.department || "";
                     return depA.localeCompare(depB);
                 });
+                setSort('Department')
                 break;
             case "Created":
                 sorted.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+                setSort('Created')
                 break;
             case "Updated":
                 sorted.sort((a, b) => a.updatedAt.getTime() - b.updatedAt.getTime());
+                setSort('Updated')
                 break;
             default:
                 break;
@@ -105,7 +110,7 @@ const ManagementPage = () => {
                 <CreateButton />
             </div>
             <div className="overflow-x-auto mt-6 grow">
-                <Table users={filteredUsers} />
+                <Table users={filteredUsers} sort={sort}/>
             </div>
         </div>
     )

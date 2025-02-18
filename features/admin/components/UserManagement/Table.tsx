@@ -4,17 +4,18 @@ import { UserIcon, ArrowDownIcon } from "@/config/iconConfig";
 
 interface UserTableProps {
     users: User[];
+    sort:string;
 }
 
-const Table = ({ users }: UserTableProps) => {
+const Table = ({ users , sort }: UserTableProps) => {
     return (
         <table className="table table-xs md:table-md">
             <thead>
                 <tr>
-                    <th className="flex gap-1">User <ArrowDownIcon/></th>
-                    <th>Department</th>
-                    <th>Created</th>
-                    <th>Updated</th>
+                    <th><span className="inline-flex gap-1">User {sort === "Email" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">Department {sort === "Department" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">Created {sort === "Created" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">Updated {sort === "Updated" ? <ArrowDownIcon/> : ""}</span></th>
                     <th></th>
                 </tr>
             </thead>

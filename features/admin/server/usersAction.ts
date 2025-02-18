@@ -9,7 +9,7 @@ export interface User {
     email: string;
     password?: string; // password อาจจะไม่ถูกส่งกลับมาใน response เสมอไป หรือขึ้นอยู่กับการ query ของคุณ
     department: string | null; // Nullable department
-    role: 'USER' | 'ADMIN' | 'SUPERADMIN'; // Role enum (ตาม schema ของคุณ)
+    role: "USER" | "SUPERUSER"; // Role enum (ตาม schema ของคุณ)
     avatar: string | null; // Nullable avatar URL
     createdAt: Date;
     updatedAt: Date;
@@ -24,6 +24,21 @@ export const getUsers = async (): Promise<User[]> => {
     } catch (error) {
         console.error("Error fetching users:", error);
         throw new Error("Failed to fetch users");
+    } finally {
+        await prisma.$disconnect();
+    }
+}
+
+// เพิ่ม action สำหรับลบผู้ใช้งาน
+export const deleteUser = async (userId: number): Promise<User> => {
+    try {
+        const deletedUser = await prisma.user.delete({
+            where: { id: userId },
+        });
+        return deletedUser;
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        throw new Error("Failed to delete user");
     } finally {
         await prisma.$disconnect();
     }
