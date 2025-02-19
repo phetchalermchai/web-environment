@@ -3,6 +3,7 @@ import { type User } from "@/features/admin/server/usersAction";
 import axios from "axios";
 import Link from "next/link";
 import { useState, useRef } from "react";
+import { deleteAvatar } from "../../server/uploadAction";
 
 interface UserRowProps {
     user: User;
@@ -16,6 +17,9 @@ const Row = ({ user }: UserRowProps) => {
     const handleDelete = async () => {
         setDeleting(true);
         try {
+            if (user.avatar) {
+                await deleteAvatar(user.avatar); // เรียก Server Action
+            }
             // ใช้ Axios ในการส่ง DELETE request
             await axios.delete(`/api/superuser/delete-user/${user.email}`);
             // รีเฟรชหน้าโดยใช้ router.push กับ current path
@@ -49,7 +53,7 @@ const Row = ({ user }: UserRowProps) => {
                             <div className="avatar">
                                 <div className="mask mask-circle h-12 w-12 bg-base-300">
                                     <img
-                                        src="https://img.daisyui.com/images/profile/demo/5@94.webp"
+                                        src={user.avatar}
                                         alt="Avatar Tailwind CSS Component" />
                                 </div>
                             </div> :

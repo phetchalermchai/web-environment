@@ -22,6 +22,7 @@ const ImageLogin = () => {
                 width={960}
                 height={720}
                 className="w-full"
+                priority
             />
         </div>
     )

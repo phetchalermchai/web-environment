@@ -12,6 +12,17 @@ export async function GET(req: NextRequest, { params }: { params: { email: strin
         // ค้นหา user ตาม email
         const user = await prisma.user.findUnique({
             where: { email },
+            select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                email: true,
+                department: true,
+                role: true,
+                avatar: true,
+                createdAt: true,
+                updatedAt: true,
+            },
         });
 
         if (!user) {

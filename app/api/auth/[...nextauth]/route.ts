@@ -10,6 +10,7 @@ declare module "next-auth" {
         lastname: string;
         email: string;
         role: string;
+        avatar: string | null;
     }
 
     interface AdapterUser {
@@ -17,7 +18,8 @@ declare module "next-auth" {
         firstname: string;
         lastname: string;
         email: string;
-        role: string
+        role: string;
+        avatar: string;
     }
 
     interface Session {
@@ -26,7 +28,8 @@ declare module "next-auth" {
             firstname: string;
             lastname: string;
             email: string;
-            role: string
+            role: string;
+            avatar: string;
         };
     }
 
@@ -35,7 +38,8 @@ declare module "next-auth" {
         firstname: string;
         lastname: string;
         email: string;
-        role: string
+        role: string;
+        avatar: string;
     }
 }
 
@@ -52,6 +56,7 @@ const authOptions: AuthOptions = {
 
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
+                    select: { id: true, firstname: true, lastname: true, email: true, password: true, role: true, avatar: true },
                 });
 
                 if (!user) throw new Error("Invalid credentials");
@@ -66,6 +71,7 @@ const authOptions: AuthOptions = {
                     lastname: user.lastname,
                     email: user.email,
                     role: user.role,
+                    avatar: user.avatar
                 };
             },
         }),
@@ -78,7 +84,9 @@ const authOptions: AuthOptions = {
                 token.lastname = user.lastname;
                 token.email = user.email;
                 token.role = user.role;
+                token.avatar = user.avatar;
             }
+            
             return token;
         },
         async session({ session, token }) {
@@ -89,6 +97,7 @@ const authOptions: AuthOptions = {
                     lastname: token.lastname as string,
                     email: token.email as string,
                     role: token.role as string,
+                    avatar: token.avatar as string
                 };
             }
             return session;

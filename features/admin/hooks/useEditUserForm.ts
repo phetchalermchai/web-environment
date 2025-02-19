@@ -1,14 +1,14 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { uploadAvatar, deleteAvatar } from "@/features/admin/server/uploadAction";
 import axios from "axios";
-import { uploadAvatar } from "@/features/admin/server/uploadAction";
+import { useParams, useRouter } from "next/navigation";
 
-interface CreateUserFormData {
+interface EditUserFormData {
+    id: number;
     firstname: string;
     lastname: string;
     email: string;
-    password: string;
     department: string;
     role: "USER" | "SUPERUSER";
     avatar: string;
@@ -18,17 +18,16 @@ interface FormErrors {
     firstname?: string;
     lastname?: string;
     email?: string;
-    password?: string;
     department?: string;
     avatar?: string;
 }
 
-const useCreateUserForm = () => {
-    const [formData, setFormData] = useState<CreateUserFormData>({
+const useEditUserForm = () => {
+    const [formData, setFormData] = useState<EditUserFormData>({
+        id: 0,
         firstname: "",
         lastname: "",
         email: "",
-        password: "",
         department: "",
         role: "USER",
         avatar: "",
@@ -37,6 +36,27 @@ const useCreateUserForm = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
+    const router = useRouter();
+    const { email } = useParams();
+
+    useEffect(() => {
+
+        const fetchUser = async () => {
+            try {
+                const res = await axios.get(`/api/superuser/get-user/${email}`);
+                setFormData(res.data);
+
+            } catch (err: any) {
+                setMessage(err.response?.data?.error || "Error fetching user data");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (email) {
+            fetchUser();
+        }
+    }, [email]);
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
@@ -53,20 +73,6 @@ const useCreateUserForm = () => {
             newErrors.email = "กรุณาระบุอีเมล";
         } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
             newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
-        }
-
-        if (!formData.password) {
-            newErrors.password = "กรุณาระบุพาสเวิร์ด";
-        } else if (formData.password.length < 12) {
-            newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
-        } else if (
-            !/(?=.*[A-Z])/.test(formData.password) ||
-            !/(?=.*[a-z])/.test(formData.password) ||
-            !/(?=.*\d)/.test(formData.password) ||
-            !/(?=.*[@$!%*?&#])/.test(formData.password)
-        ) {
-            newErrors.password =
-                "รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และอักขระพิเศษ";
         }
 
         if (!formData.department.trim()) {
@@ -115,6 +121,10 @@ const useCreateUserForm = () => {
         try {
             let avatarUrl = formData.avatar;
 
+            if (file && formData.avatar) {
+                await deleteAvatar(formData.avatar); // เรียก Server Action
+            }
+
             if (file) {
                 // อัปโหลดรูปภาพก่อนสร้างผู้ใช้
                 const uniqueFilename = `${Date.now()}-${file.name}`;
@@ -133,24 +143,21 @@ const useCreateUserForm = () => {
             const payload = { ...formData, avatar: avatarUrl };
 
             // ส่งข้อมูลไปยัง API route ที่จะสร้างผู้ใช้งานใหม่
-            const response = await axios.post("/api/superuser/create-user", payload, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            await axios.put(`/api/superuser/edit-user`, { ...payload });
 
-            setMessage("สร้างผู้ใช้สำเร็จแล้ว");
+            setMessage("แก้ไขผู้ใช้สำเร็จแล้ว");
             // Reset ฟอร์ม
             setFormData({
+                id: 0,
                 firstname: "",
                 lastname: "",
                 email: "",
-                password: "",
                 department: "",
                 role: "USER",
                 avatar: "",
             });
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
+            router.push("/admin/users");
+            // window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
         } catch (error: any) {
             // หากเกิด error, ตรวจสอบ error.response.data.error จาก axios
             if (error.response && error.response.data && error.response.data.error) {
@@ -163,15 +170,6 @@ const useCreateUserForm = () => {
         }
     };
 
-    useEffect(() => {
-        if (message) {
-            const timer = setTimeout(() => {
-                setMessage(null);
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [message]);
-
     return {
         formData,
         errors,
@@ -180,10 +178,8 @@ const useCreateUserForm = () => {
         handleChange,
         handleFileChange,
         handleSubmit,
-        setErrors,
-        setMessage,
-        validateForm
     };
-};
 
-export default useCreateUserForm;
+}
+
+export default useEditUserForm

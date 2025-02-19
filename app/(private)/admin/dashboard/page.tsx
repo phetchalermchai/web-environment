@@ -19,6 +19,7 @@ const page = async () => {
       <h1>สวัสดี {session.user?.firstname}</h1>
       <h1>สวัสดี {session.user?.lastname}</h1>
       <h1>สวัสดี {session.user?.id}</h1>
+      <h1>สวัสดี {session.user?.avatar}</h1>
     </div>
   )
 }
