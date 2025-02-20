@@ -15,7 +15,11 @@ import {
 } from "@/config/iconConfig";
 import { usePathname } from "next/navigation";
 
-const Menu = () => {
+interface MenuProps {
+    role: string
+}
+
+const Menu = ({ role }: MenuProps) => {
     const pathname = usePathname();
     const isActive = (href: string) => (pathname === href ? "active" : "");
 
@@ -92,12 +96,15 @@ const Menu = () => {
                     </ul>
                 </details>
             </li>
-            <li>
-                <Link href={`/admin/users`} className={isActive(`/admin/users`)}>
-                    <IdentificationIcon />
-                    จัดการระบบผู้ใช้งาน
-                </Link>
-            </li>
+            {role === "SUPERUSER"
+                &&
+                <li>
+                    <Link href={`/admin/users`} className={isActive(`/admin/users`)}>
+                        <IdentificationIcon />
+                        จัดการระบบผู้ใช้งาน
+                    </Link>
+                </li>
+            }
             <li>
                 <Link href={`/admin/setting`} className={isActive(`/admin/setting`)}>
                     <SettingIcon />

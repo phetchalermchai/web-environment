@@ -56,7 +56,14 @@ const useEditUserForm = () => {
         if (email) {
             fetchUser();
         }
-    }, [email]);
+
+        if (message) {
+            const timer = setTimeout(() => {
+                setMessage(null);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [email, message]);
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};

@@ -2,7 +2,7 @@ import { EllipsisHorizontalIcon } from "@/config/iconConfig";
 import { type User } from "@/features/admin/server/usersAction";
 import axios from "axios";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { deleteAvatar } from "../../server/uploadAction";
 
 interface UserRowProps {
@@ -12,6 +12,7 @@ interface UserRowProps {
 const Row = ({ user }: UserRowProps) => {
 
     const [deleting, setDeleting] = useState(false);
+    const [message, setMessage] = useState<string | null>(null);
     const modalRef = useRef<HTMLDialogElement>(null);
 
     const handleDelete = async () => {
@@ -25,8 +26,11 @@ const Row = ({ user }: UserRowProps) => {
             // รีเฟรชหน้าโดยใช้ router.push กับ current path
             window.location.reload();
         } catch (error: any) {
-            console.error("Error deleting user:", error);
-            alert(error.message || "An unexpected error occurred");
+            if (error.response && error.response.data && error.response.data.error) {
+                setMessage(error.response.data.error)
+            } else {
+                setMessage(error.message || "An unexpected error occurred");
+            }
         } finally {
             setDeleting(false);
         }
@@ -43,6 +47,15 @@ const Row = ({ user }: UserRowProps) => {
             modalRef.current.close();
         }
     };
+
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => {
+                setMessage(null);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
 
     return (
         <tr key={user.id}>
@@ -96,9 +109,17 @@ const Row = ({ user }: UserRowProps) => {
                                 </div>
                             </div>
                         </dialog>
-
                     </div>
                 </div>
+                {
+                    message && <div
+                        role="alert"
+                        className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างผู้ใช้สำเร็จแล้ว" ? "alert-success" : "alert-error"
+                            }`}
+                    >
+                        <span>{message}</span>
+                    </div>
+                }
             </td>
         </tr>
     )
