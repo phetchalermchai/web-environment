@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
                 updatedAt: true,
             },
         });
-
+        
         // ส่งข้อมูลผู้ใช้ทั้งหมด
         return NextResponse.json(users, { status: 200 });
     } catch (error) {

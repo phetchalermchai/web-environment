@@ -83,8 +83,10 @@ const Row = ({ user }: UserRowProps) => {
                 </div>
             </td>
             <td>{user.department}</td>
-            <td>{user.createdAt.toLocaleDateString("th-TH")}</td>
-            <td>{user.updatedAt.toLocaleDateString("th-TH")}</td>
+            <td>{user.createdAt && new Date(user.createdAt).toLocaleDateString("th-TH")}</td>
+            <td>{user.updatedAt && new Date(user.updatedAt).toLocaleDateString("th-TH")}</td>
+            {/* <td>{user.createdAt.toLocaleDateString("th-TH")}</td> */}
+            {/* <td>{user.updatedAt.toLocaleDateString("th-TH")}</td> */}
             <td>
                 <div className="dropdown dropdown-end">
                     <div tabIndex={0} role="button" className="btn btn-sm btn-ghost m-1"><EllipsisHorizontalIcon /></div>

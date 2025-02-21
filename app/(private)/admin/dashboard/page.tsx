@@ -1,36 +1,52 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import prisma from "@/lib/prisma";
+"use client"
 
-const page = async () => {
-  const session = await getServerSession(authOptions);
+import axios from "axios"
+import { useEffect, useState } from "react"
 
-  if (!session) {
-    return null; // ไม่แสดง Navbar ถ้าไม่มี Session
-  }
+const page = () => {
 
-  // ดึงข้อมูลผู้ใช้จากฐานข้อมูลโดยใช้ session.user.id
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    select: { firstname: true, lastname: true, email: true, role: true, avatar: true },
-  });
+  const [data, setData] = useState<any[]>([]); // เก็บข้อมูลผู้ใช้
+  const [loading, setLoading] = useState(true); // สถานะโหลดข้อมูล
+  const [error, setError] = useState<string | null>(null);
 
-  if (!session) {
-    return (
-      <div>
-        <h1>คุณไม่มีสิทธิ์เข้าถึงหน้านี้</h1>
-        <a href="/login">เข้าสู่ระบบ</a>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true); // เริ่มโหลดข้อมูล
+        const res = await axios.get(`/api/superuser/get-users`);
+        setData(res.data); // บันทึกข้อมูลผู้ใช้
+      } catch (err: any) {
+        // จัดการข้อผิดพลาด
+        setError(err.response?.data?.error || "Error fetching user data");
+      } finally {
+        setLoading(false); // หยุดสถานะโหลด
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <div>
-      <h1>สวัสดี {session.user?.email}</h1>
-      <h1>สวัสดี {session.user?.firstname}</h1>
-      <h1>สวัสดี {session.user?.lastname}</h1>
-      <h1>สวัสดี {session.user?.id}</h1>
-      <h1>สวัสดี {session.user?.avatar}</h1>
-    </div>
+    <h1>รายชื่อผู้ใช้</h1>
+
+    {/* แสดงสถานะโหลดข้อมูล */}
+    {loading && <p>กำลังโหลดข้อมูล...</p>}
+
+    {/* แสดงข้อความข้อผิดพลาดถ้ามี */}
+    {error && <p style={{ color: "red" }}>{error}</p>}
+
+    {/* แสดงข้อมูลผู้ใช้ถ้ามี */}
+    {data.length > 0 && (
+      <ul>
+        {data.map((user) => (
+          <li key={user.id}>
+            {user.firstname} {user.lastname} - {user.email} ({user.role})
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
   )
 }
 

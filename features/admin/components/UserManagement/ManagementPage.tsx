@@ -4,6 +4,7 @@ import SortDropdown from "./SortDropdown"
 import Table from "./Table"
 import { useState, useEffect } from 'react';
 import { getUsers, type User } from '@/features/admin/server/usersAction';
+import axios from "axios";
 
 const ManagementPage = () => {
 
@@ -26,10 +27,11 @@ const ManagementPage = () => {
             setError(null);
             try {
                 // getUsers() ควรจะถูก type ใน usersAction.ts ให้ return Promise<User[]>
-                const fetchedUsers = await getUsers();
+                // const fetchedUsers = await getUsers();
+                const fetchedUsers = await axios.get(`/api/superuser/get-users`);
 
                 // เรียงลำดับข้อมูลตาม Email เป็นค่าเริ่มต้น
-                const sortedUsers = fetchedUsers.sort((a, b) =>
+                const sortedUsers = fetchedUsers.data.sort((a: { email: string; }, b: { email: string; }) =>
                     a.email.localeCompare(b.email)
                 );
 

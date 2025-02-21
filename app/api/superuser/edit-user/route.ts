@@ -15,12 +15,10 @@ export async function PUT(req: NextRequest) {
         const body = await req.json();
         const { id, firstname, lastname, email, department, role, avatar } = body;
 
-        // ตรวจสอบว่าข้อมูลทุกฟิลด์ที่จำเป็นมีค่า
+        // ตรวจสอบว่ามีค่าที่จำเป็นหรือไม่
         if (!id || !firstname || !lastname || !email || !department) {
             return NextResponse.json({ error: "All required fields must be filled" }, { status: 400 });
         }
-
-        
 
         // ตรวจสอบรูปแบบอีเมล
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,7 +28,7 @@ export async function PUT(req: NextRequest) {
 
         // ตรวจสอบว่าอีเมลไม่ซ้ำ (ยกเว้นอีเมลเดิมของผู้ใช้)
         const existingUser = await prisma.user.findUnique({
-            where: { email: email },
+            where: { email },
         });
 
         if (existingUser && existingUser.id !== Number(id)) {
@@ -38,19 +36,30 @@ export async function PUT(req: NextRequest) {
         }
 
         // ตรวจสอบสิทธิ์ของผู้ที่ทำการร้องขอ
-        if (session.user.role !== "SUPERUSER" && Number(session.user.id) !== id) {
+        const isSuperuser = session.user.role === "SUPERUSER";
+        const isOwner = Number(session.user.id) === Number(id);
+
+        if (!isSuperuser && !isOwner) {
             return NextResponse.json({ error: "ไม่สามารถแก้ไขได้เนื่องจากสิทธิ์ของท่านไม่เพียงพอ" }, { status: 403 });
+        }
+
+        // สร้าง object สำหรับการอัปเดต
+        const updateData: any = { firstname, lastname, email, department, avatar };
+
+        // เฉพาะ SUPERUSER เท่านั้นที่แก้ไข role ได้
+        if (isSuperuser) {
+            updateData.role = role;
         }
 
         // ทำการอัปเดตข้อมูลผู้ใช้ในฐานข้อมูล
         const updatedUser = await prisma.user.update({
             where: { id: Number(id) },
-            data: { firstname, lastname, email, department, avatar },
+            data: updateData,
         });
 
         return NextResponse.json(updatedUser, { status: 200 });
+
     } catch (error) {
-        console.error("Error updating user:", error);
         return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
     }
 }

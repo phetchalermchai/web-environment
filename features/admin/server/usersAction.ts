@@ -20,6 +20,8 @@ export const getUsers = async (): Promise<User[]> => {
     try {
         // ใช้ prisma.user.findMany() เพื่อดึงข้อมูล Users จาก Database
         const users = await prisma.user.findMany() as User[]; // Type assertion เพื่อให้แน่ใจว่า Prisma return data ตรงกับ Interface User
+        console.log(users);
+        
         return users;
     } catch (error) {
         console.error("Error fetching users:", error);
