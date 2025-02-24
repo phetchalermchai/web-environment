@@ -8,6 +8,7 @@ interface CardProps {
         date: string;
         author: string;
         link: string;
+        slug: string;
     },
     cardType: string
 }
