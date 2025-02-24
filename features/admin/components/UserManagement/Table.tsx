@@ -1,6 +1,6 @@
-import { type User } from "@/features/admin/server/usersAction";
 import Row from "./Row";
 import { UserIcon, ArrowDownIcon } from "@/config/iconConfig";
+import { User } from "@/types/userTypes";
 
 interface UserTableProps {
     users: User[];

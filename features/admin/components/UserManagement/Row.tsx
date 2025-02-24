@@ -1,9 +1,9 @@
 import { EllipsisHorizontalIcon } from "@/config/iconConfig";
-import { type User } from "@/features/admin/server/usersAction";
 import axios from "axios";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { deleteAvatar } from "../../server/uploadAction";
+import { User } from "@/types/userTypes";
 
 interface UserRowProps {
     user: User;
