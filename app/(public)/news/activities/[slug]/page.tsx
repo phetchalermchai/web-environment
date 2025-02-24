@@ -32,11 +32,23 @@ function page() {
             <div className="flex items-center pb-5 px-2 sm:px-4 md:px-5 lg:px-6 xl:px-8">
                 <AuthorInfo name={news.author} department="ผู้ช่วยนักวิชาการคอมพิวเตอร์" date="16-1-2568" />
                 <div className="px-4">
-                    <ShareButton/>
+                    <ShareButton />
                 </div>
             </div>
             <div className="flex flex-col items-center justify-center gap-5">
-                <NewsImage src={news.image} alt={news.title} />
+                <div className="w-full sm:w-2/4">
+                    <div className="w-full rounded-2xl">
+                        <div className="grid grid-cols-1 gap-4">
+                            <figure key={news.link}>
+                                <img
+                                    src={news.image}
+                                    alt={`${news.description}`}
+                                    className="rounded-2xl block w-full"
+                                />
+                            </figure>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )

@@ -1,15 +1,6 @@
 import NewsList from "./NewsList"
 import Breadcrumbs from "@/components/Breadcrumbs";
-
-interface NewsItem {
-    id: number;
-    image: string;
-    title: string;
-    description: string;
-    date: string;
-    author: string;
-    link: string;
-}
+import { NewsItem } from "@/types/publicTypes";
 
 interface NewsProps {
     newsData: NewsItem[];

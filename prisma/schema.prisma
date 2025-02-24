@@ -21,16 +21,32 @@ model User {
   password   String
   department String? // Nullable
   role       Role     @default(USER)
-  avatar      String?   // เพิ่ม field นี้สำหรับเก็บ URL ของรูปภาพ
+  avatar     String? // เพิ่ม field นี้สำหรับเก็บ URL ของรูปภาพ
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  Post Post[]
+  activities Activity[]
+  Post       Post[]
 }
 
 enum Role {
   USER
   SUPERUSER
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique @db.VarChar(255) // Slug เพื่อให้ URL อ่านง่าย
+  description String?
+  date        DateTime
+  publishedAt DateTime
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId    Int?
+  images      String
+  link        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Post {
@@ -39,8 +55,8 @@ model Post {
   slug        String    @unique @db.VarChar(255) // URL slug สำหรับ SEO
   content     String    @db.Text
   excerpt     String?   @db.Text
-  coverImage  String?   // URL ของภาพหน้าปก
-  images      Json?     // เก็บ URL ของภาพประกอบในรูปแบบ JSON Array
+  coverImage  String? // URL ของภาพหน้าปก
+  images      Json? // เก็บ URL ของภาพประกอบในรูปแบบ JSON Array
   author      User      @relation(fields: [authorId], references: [id])
   authorId    Int
   published   Boolean   @default(false)

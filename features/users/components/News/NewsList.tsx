@@ -1,5 +1,7 @@
 "use client";
 
+import { NewsItem } from "@/types/publicTypes";
+
 // React hook
 import { useState } from "react";
 
@@ -7,17 +9,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Card from "@/components/Card";
 import Pagination from "@/components/Pagination";
-
-// Data Type
-interface NewsItem {
-    id: Number
-    image: string;
-    title: string;
-    description: string;
-    date: string;
-    author: string;
-    link: string;
-}
 
 interface NewsListProps {
     newsData: NewsItem[];
@@ -27,8 +18,6 @@ interface NewsListProps {
     viewAllLink?: string;
     cardType:string
 }
-
-
 
 const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPagination, showViewAll, viewAllLink, cardType}) => {
 

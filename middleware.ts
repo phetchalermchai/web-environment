@@ -8,8 +8,24 @@ export async function middleware(request: NextRequest) {
   // ดึง Token ด้วย getToken
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
 
-  // ตรวจสอบเส้นทาง `/admin`
-  if (pathname.startsWith("/admin/dashboard")) {
+  // 🔹 อนุญาตให้เข้าถึง API `/api/activities` โดยไม่ต้องล็อกอิน
+  if (pathname.startsWith("/api/activities")) {
+    return NextResponse.next();
+  }
+
+  // ตรวจสอบเส้นทางที่ต้องการให้ล็อกอินก่อนใช้งาน
+  const protectedRoutes = [
+    "/admin/dashboard",
+    "/admin/banner",
+    "/admin/e-service",
+    "/admin/news/news-update",
+    "/admin/news/activities",
+    "/admin/agency/personnel",
+    "/admin/users",
+    "/admin/setting"
+  ];
+
+  if (protectedRoutes.some(route => pathname.startsWith(route))) {
     // ถ้าไม่มี Token ให้ส่งไปหน้า Login
     if (!token) {
       return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
@@ -17,128 +33,22 @@ export async function middleware(request: NextRequest) {
 
     // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
     const allowedRoles = ["SUPERUSER", "USER"];
-
     if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
       return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
     }
   }
 
-  if (pathname.startsWith("/admin/banner")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
+  // 🔹 ตรวจสอบ API อื่นๆ (ยกเว้น `/api/auth/*` และ `/api/activities`)
+  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth") && !pathname.startsWith("/api/activities")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 
-  if (pathname.startsWith("/admin/e-service")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/admin/news/news-update")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/admin/news/activities")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/admin/agency/personnel")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/admin/users")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-  }
-
-  if (pathname.startsWith("/admin/setting")) {
-    // ถ้าไม่มี Token ให้ส่งไปหน้า Login
-    if (!token) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-
-    // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
-    const allowedRoles = ["SUPERUSER", "USER"];
-
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
-      return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
-    }
-  }
-
-  // ตรวจสอบเส้นทาง `/api/*` และยกเว้น `/api/auth/*`
-  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth")) {
-    // ถ้าไม่มี Token ให้ส่ง HTTP 401 Unauthorized
-    if (!token) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-  }
-
-  // สำหรับ Dynamic Route เพิ่ม Header x-invoke-pathname
-  const response = NextResponse.next();
-
-  return response;
+  return NextResponse.next();
 }
 
 // Matcher เพื่อระบุว่า Middleware นี้ทำงานกับเส้นทางใด
 export const config = {
-  matcher: ["/api/:path*", "/admin/:path*" , "/auth/secure/gateway/login"],
+  matcher: ["/admin/:path*", "/auth/secure/gateway/login", "/api/:path*"],
 };

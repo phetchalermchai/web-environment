@@ -38,7 +38,7 @@ const Card = ({ news, cardType }: CardProps) => {
                 </div>
             )}
             {cardType === "type2" && (
-                <Link href={news.link}>
+                <Link href={`activities/${news.slug}`}>
                     <div className="w-full shadow-md rounded-2xl relative overflow-hidden group">
                         <figure>
                             <img
