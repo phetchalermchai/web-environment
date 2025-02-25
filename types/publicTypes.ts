@@ -1,10 +1,9 @@
 export interface NewsItem {
     id: string;
-    image: string;
     title: string;
-    description: string;
-    date: string;
-    author: string;
-    link: string;
     slug: string;
+    description: string;
+    image: string;
+    author: string;
+    createdAt: string;
 }

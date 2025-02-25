@@ -4,81 +4,98 @@ import SortDropdown from "./SortDropdown"
 import Table from "./Table"
 import { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
-import { User } from "@/types/userTypes";
+
+interface Activity {
+    id: string;
+    title: string;
+    author: {
+        firstname: string,
+        lastname: string,
+        department: string
+    };
+    description?: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 const ManagementPage = () => {
 
     // กำหนด type ให้กับ state variables
-    const [users, setUsers] = useState<User[]>([]); // users เป็น array ของ User interface
-    const [loading, setLoading] = useState<boolean>(true); // loading เป็น boolean
-    const [error, setError] = useState<Error | null>(null); // error เป็น Error object หรือ null
+    const [activities, setActivities] = useState<Activity[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<Error | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [sort, setSort] = useState<string>("Email")
-
-    // ฟังก์ชันรับ query จาก SearchBar
-    const handleSearch = (query: string) => {
-        setSearchQuery(query);
-    };
+    const [sort, setSort] = useState<string>("ชื่อกิจกรรม");
 
     useEffect(() => {
-        const loadUsers = async () => {
+        const loadActivities = async () => {
             setLoading(true);
             setError(null);
             try {
-                const { data } = await axios.get(`/api/superuser/get-users`);
-                const usersWithDate = data.map((user: any) => ({
-                    ...user,
-                    createdAt: new Date(user.createdAt),
-                    updatedAt: new Date(user.updatedAt),
+                const { data } = await axios.get(`/api/activities`);
+                const activitiesWithDate = data.map((a: any) => ({
+                    ...a,
+                    createdAt: a.createdAt && !isNaN(Date.parse(a.createdAt)) ? new Date(a.createdAt) : null,
+                    updatedAt: a.updatedAt && !isNaN(Date.parse(a.updatedAt)) ? new Date(a.updatedAt) : null,
                 }));
-
-                // เรียงลำดับอีเมลก่อนตั้งค่า users
-                usersWithDate.sort((a: { email: string; }, b: { email: string; }) => a.email.localeCompare(b.email));
-
-                setUsers(usersWithDate);
+                console.log("API Response:", data);
+                setActivities(activitiesWithDate);
             } catch (error) {
-                setError(new Error(axios.isAxiosError(error) ? error.response?.data?.message || "Failed to fetch users" : "An unexpected error occurred"));
+                console.log(error);
+                setError(new Error(axios.isAxiosError(error) ? error.response?.data?.message || "Failed to fetch activities" : "An unexpected error occurred"));
             } finally {
                 setLoading(false);
             }
         };
 
-        loadUsers();
+        loadActivities();
     }, []);
 
     // ใช้ useEffect เพื่อ filter ข้อมูลตาม searchQuery เมื่อ users หรือ searchQuery เปลี่ยนแปลง
-    const filteredUsers = useMemo(() => {
-        return users.filter(user =>
-            (user.firstname?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
-            (user.lastname?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
-            (user.email?.toLowerCase() ?? "").includes(searchQuery.toLowerCase())
+    const filteredActivities = useMemo(() => {
+        return activities.filter(a =>
+            a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (a.description?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
+            (a.author.firstname?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
+            (a.author.department?.toLowerCase() ?? "").includes(searchQuery.toLowerCase())
         );
-    }, [users, searchQuery]);
+    }, [activities, searchQuery]);
 
     // ฟังก์ชันเรียงลำดับข้อมูลผู้ใช้งานตามตัวเลือก
-    const sortedFilteredUsers = useMemo(() => {
-        let sorted = [...filteredUsers];
-
+    const sortedFilteredActivities = useMemo(() => {
+        let sorted = [...filteredActivities];
+    
         switch (sort) {
-            case "Email":
-                sorted.sort((a, b) => a.email.localeCompare(b.email));
+            case "ชื่อกิจกรรม":
+                sorted.sort((a, b) => a.title.localeCompare(b.title));
                 break;
-            case "Department":
-                sorted.sort((a, b) => (a.department || "").localeCompare(b.department || ""));
+            case "คำอธิบาย":
+                sorted.sort((a, b) => (a.description || "").localeCompare(b.description || ""));
                 break;
-            case "Created":
+            case "ผู้เขียน":
+                sorted.sort((a, b) => (a.author.firstname || "").localeCompare(b.author.firstname || ""));
+                break;
+            case "ส่วนงาน":
+                sorted.sort((a, b) => (a.author.department || "").localeCompare(b.author.department || ""));
+                break;
+            case "วันที่สร้าง":
                 sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 break;
-            case "Updated":
+            case "วันที่อัปเดต":
                 sorted.sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
                 break;
         }
-
+    
         return sorted;
-    }, [filteredUsers, sort]);
+    }, [filteredActivities, sort]);
 
     const handleSort = (option: string) => {
         setSort(option);
+    };
+
+    // ฟังก์ชันรับ query จาก SearchBar
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
     };
 
     if (loading) {
@@ -90,6 +107,7 @@ const ManagementPage = () => {
     }
 
     return (
+
         <div className="p-5 sm:p-6 lg:p-7 xl:p-10 flex flex-col h-[calc(100vh-66px)]">
             <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
@@ -99,7 +117,7 @@ const ManagementPage = () => {
                 <CreateButton />
             </div>
             <div className="overflow-x-auto mt-6 grow">
-                <Table users={sortedFilteredUsers} sort={sort} />
+                <Table activities={sortedFilteredActivities} sort={sort} />
             </div>
         </div>
     )

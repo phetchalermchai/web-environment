@@ -1,5 +1,6 @@
 import News from "@/features/users/components/News/News"
 import axios from "axios";
+import { transliterate } from "transliteration";
 
 const getActivities = async () => {
     try {
@@ -11,13 +12,12 @@ const getActivities = async () => {
 
         const activities = res.data.activities.map((item: any) => ({
             id: item.id,
-            image: item.images || "https://via.placeholder.com/300",
             title: item.title,
-            description: item.description || "ไม่มีคำอธิบาย",
-            date: formatDateToThai(item.date), // แสดงเฉพาะวันที่
-            author: item.author ? `${item.author.firstname} ${item.author.lastname}` : "สำนักสาธารณสุขและสิ่งแวดล้อม",
-            link: item.link || "#", // ถ้าไม่มี link ให้เป็น "#"
+            image: item.image || "https://via.placeholder.com/300",
             slug: item.slug || "",
+            description: item.description || "ไม่มีคำอธิบาย",
+            createdAt: formatDateToThai(item.createdAt), // แสดงเฉพาะวันที่
+            author: item.author ? `${item.author.firstname} ${item.author.lastname}` : "สำนักสาธารณสุขและสิ่งแวดล้อม",
         }));
 
         return activities;
@@ -36,6 +36,9 @@ const formatDateToThai = (dateString: string): string => {
 };
 
 const page = async () => {
+    const title = "สวัสดีครับ";
+    const converted = transliterate(title);
+    console.log(converted);
 
     const activitiesData1 = [
         {

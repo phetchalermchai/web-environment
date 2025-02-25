@@ -38,3 +38,27 @@ export async function deleteAvatar(avatarUrl: string) {
         console.error("Failed to delete avatar:", error);
     }
 }
+
+export async function uploadActivityImage(formData: FormData) {
+    try {
+        const file = formData.get("image") as File;
+        if (!file) {
+            throw new Error("No file uploaded");
+        }
+
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = new Uint8Array(arrayBuffer);
+
+        const fileName = `${Date.now()}-${file.name}`;
+        const uploadPath = path.join(process.cwd(), "public/activities", fileName);
+
+        await fs.writeFile(uploadPath, buffer);
+
+        revalidatePath("/");
+
+        return `/activities/${fileName}`;
+    } catch (error) {
+        console.error("❌ File upload failed:", error);
+        return null;
+    }
+}

@@ -2,13 +2,12 @@ import Link from "next/link";
 
 interface CardProps {
     news: {
-        image: string;
         title: string;
-        description: string;
-        date: string;
-        author: string;
-        link: string;
         slug: string;
+        description: string;
+        image: string;
+        author: string;
+        createdAt: string;
     },
     cardType: string
 }
@@ -31,9 +30,9 @@ const Card = ({ news, cardType }: CardProps) => {
                     <div className="card-body">
                         <h2 className="card-title">{news.title}</h2>
                         <p>{truncatedDescription}</p>
-                        <p>{news.date}</p>
+                        <p>{news.createdAt}</p>
                         <div className="card-actions justify-end">
-                            <Link href={news.link} className="btn btn-primary">อ่านเพิ่มเติม</Link>
+                            <Link href={news.slug|| ""} className="btn btn-primary">อ่านเพิ่มเติม</Link>
                         </div>
                     </div>
                 </div>
@@ -43,7 +42,7 @@ const Card = ({ news, cardType }: CardProps) => {
                     <div className="w-full shadow-md rounded-2xl relative overflow-hidden group">
                         <figure>
                             <img
-                                src={news.image}
+                                src={`${process.env.NEXT_PUBLIC_API_URL}/${news.image}`}
                                 alt={news.title}
                                 className="rounded-2xl block w-full"
                             />
@@ -51,7 +50,7 @@ const Card = ({ news, cardType }: CardProps) => {
                         <div className="absolute bottom-0 left-0 w-full bg-base-300/90 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-5 xl:p-8"> {/* ปรับตำแหน่งและขนาด */}
                             <h3 className="lg:text-xl sm:text-lg text-base font-bold mb-2 lg:mb-4">{news.title}</h3>
                             <div className="text-sm md:flex md:justify-between">
-                                <p>โพสต์เมื่อ: {news.date}</p>
+                                <p>โพสต์เมื่อ: {news.createdAt}</p>
                                 <p>โดย: {news.author}</p>
                             </div>
                         </div>

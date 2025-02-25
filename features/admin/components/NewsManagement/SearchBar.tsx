@@ -49,7 +49,7 @@ const SearchBar = ({ onSearch, debounceTime = 500 }:SearchBarProps) => {
         onChange={(e) => setQuery(e.target.value)}
         type="text"
         className="lg:grow w-28 md:w-auto"
-        placeholder="Search" />
+        placeholder="ค้นหา" />
       <kbd className="kbd kbd-sm hidden lg:flex">ctrl</kbd>
       <kbd className="kbd kbd-sm hidden lg:flex">K</kbd>
     </label>
