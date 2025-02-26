@@ -12,6 +12,7 @@ const TitleBar = () => {
         "e-service": "จัดการระบบ E-Service",
         "news/news-update": "ข่าวประชาสัมพันธ์",
         "news/activities": "กิจกรรมของสำนัก",
+        "news/activities/create": "สร้างกิจกรรมใหม่",
         "agency/personnel": "บุคลากร",
         "users": "จัดการระบบผู้ใช้งาน",
         "users/create": "สร้างบัญชีผู้ใช้ใหม่",
