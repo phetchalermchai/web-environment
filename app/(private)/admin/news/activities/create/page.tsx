@@ -1,11 +1,10 @@
-"use client"; // ทำให้ไฟล์นี้เป็น Client Component
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import Link from "next/link";
 
-// จำลองข้อมูลผู้ใช้ที่ล็อกอิน
 const loggedInUser = {
     firstname: "สมชาย",
     department: "ฝ่ายประชาสัมพันธ์",
@@ -13,9 +12,9 @@ const loggedInUser = {
 
 const CreateActivity = () => {
     const { quill, quillRef } = useQuill({
-        placeholder: 'เขียนรายละเอียดบทความ',
-        theme: 'snow', // or 'bubble'
-      });
+        placeholder: "เขียนรายละเอียดบทความ",
+        theme: "snow",
+    });
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -30,11 +29,10 @@ const CreateActivity = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const newActivity = {
             title,
-            description, // มีทั้งข้อความ + รูปภาพ
-            author: loggedInUser.firstname, // ใช้ค่าจากข้อมูลล็อกอิน
+            description,
+            author: loggedInUser.firstname,
             department: loggedInUser.department,
         };
 
@@ -44,6 +42,7 @@ const CreateActivity = () => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto p-10">
+            {/* Input สำหรับชื่อกิจกรรม */}
             <label className="form-control">
                 <div className="label">
                     <span className="label-text">ชื่อกิจกรรม</span>
@@ -53,24 +52,23 @@ const CreateActivity = () => {
                     name="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className={`input input-bordered`} />
-                {/* {errors.firstname && (
-                    <div className="label">
-                        <span className="label-text-alt text-error">{errors.firstname}</span>
-                    </div>
-                )} */}
+                    className="input input-bordered w-full"
+                />
             </label>
 
-            <div className="">
-                <div ref={quillRef} className="" />
+            {/* Quill Editor + Focus Effect */}
+            <div className="custom-quill">
+                <div ref={quillRef} />
             </div>
+
             <div className="flex gap-4">
                 <button type="submit" className="btn btn-success">
                     ยืนยัน
                 </button>
-                <Link href={`/admin/users`} className="btn btn-error">ยกเลิก</Link>
+                <Link href={`/admin/users`} className="btn btn-error">
+                    ยกเลิก
+                </Link>
             </div>
-
         </form>
     );
 };

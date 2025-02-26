@@ -2,3 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ปรับขนาด editor */
+.custom-quill .ql-container {
+    @apply h-[300px] rounded-b-lg border-4 border-base-content/20;
+}
+
+.custom-quill .ql-container.ql-snow {
+    @apply border border-base-content/20;
+}
+
+/* เปลี่ยนสีพื้นหลังของ Editor */
+.custom-quill .ql-editor {
+    @apply text-base p-3 text-base-content;
+}
+
+.custom-quill .ql-editor.ql-blank::before {
+    @apply text-base-content/50;
+}
+
+/* เปลี่ยนสีของ Toolbar */
+.custom-quill .ql-toolbar {
+    @apply rounded-t-lg border-4 border-base-content/20;
+}
+
+.custom-quill .ql-toolbar.ql-snow {
+    @apply border border-base-content/20;
+}

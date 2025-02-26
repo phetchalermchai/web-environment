@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import TitleBar from "./TitleBar";
 import prisma from "@/lib/prisma"
+import axios from "axios";
 
 const Navbar = async () => {
 
@@ -19,10 +20,10 @@ const Navbar = async () => {
         select: { firstname: true, lastname: true, email: true, role: true, avatar: true },
     });
 
-
     // ตรวจสอบว่าพบ user หรือไม่
     if (!user) {
-        throw new Error("User not found in the database");
+        console.error("User not found in database for email:", session.user.email);
+        return null; // ไม่แสดง Navbar ถ้าไม่พบ User
     }
 
     return (
