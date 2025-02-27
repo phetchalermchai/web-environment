@@ -1,6 +1,5 @@
 import News from "@/features/users/components/News/News"
 import axios from "axios";
-import { transliterate } from "transliteration";
 
 const getActivities = async () => {
     try {
@@ -37,8 +36,8 @@ const formatDateToThai = (dateString: string): string => {
 
 const page = async () => {
     const title = "สวัสดีครับ";
-    const converted = transliterate(title);
-    console.log(converted);
+    // const converted = transliterate(title);
+    // console.log(converted);
 
     const activitiesData1 = [
         {
