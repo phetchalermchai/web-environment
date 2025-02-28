@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
             ? `${title.replace(/\s+/g, "-")}-${uuidv4().slice(0, 8)}`
             : slugify(title, { lower: true, strict: true });
 
+        console.log({ title, slug, description, authorId, imagePath });
         // บันทึกข้อมูลลงฐานข้อมูล
         const newActivity = await prisma.activity.create({
             data: {
@@ -46,6 +47,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true, activity: newActivity }, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+        return NextResponse.json({ error: "Something went wrong", mesaage: error }, { status: 500 });
     }
 }

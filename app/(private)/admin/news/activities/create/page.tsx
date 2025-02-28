@@ -5,19 +5,33 @@ import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
 import Link from "next/link";
 import axios from "axios";
+import { uploadActivityImage } from "@/features/admin/server/uploadAction";
+import { useSession } from "next-auth/react";
 
-const loggedInUser = {
-    firstname: "สมชาย",
-    department: "ฝ่ายประชาสัมพันธ์",
-};
+
 
 const CreateActivity = () => {
+    const { data: session } = useSession();
+    
     const { quill, quillRef } = useQuill({
         placeholder: "เขียนรายละเอียดบทความ",
         theme: "snow",
         modules: {
             toolbar: {
-                
+                container: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'align': [] }],
+                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                    ['link', 'image', 'video'],
+
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+
+
+                    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+
+                    ['clean']                                         // remove formatting button
+                ],
                 handlers: {
                     image: () => {
                         const input = document.createElement("input");
@@ -31,11 +45,8 @@ const CreateActivity = () => {
                                 formData.append("image", file);
 
                                 try {
-                                    const { data } = await axios.post("/api/upload", formData, {
-                                        headers: { "Content-Type": "multipart/form-data" },
-                                    });
-
-                                    const imageUrl = data.url; // URL ของรูปที่อัปโหลดสำเร็จ
+                                    const uploadResult = await uploadActivityImage(formData);
+                                    const imageUrl = uploadResult; // URL ของรูปที่อัปโหลดสำเร็จ
                                     const range = quill?.getSelection();
                                     quill?.insertEmbed(range?.index || 0, "image", imageUrl);
                                 } catch (error) {
@@ -53,6 +64,7 @@ const CreateActivity = () => {
     const [description, setDescription] = useState("");
     const [coverImage, setCoverImage] = useState<File | null>(null);
     const [coverImageUrl, setCoverImageUrl] = useState<string>("");
+    const [errors, setErrors] = useState<{ title?: string; description?: string; coverImage?: string }>({});
 
     useEffect(() => {
         if (quill) {
@@ -65,27 +77,46 @@ const CreateActivity = () => {
     const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (!file.type.startsWith("image/")) {
+                setErrors((prev) => ({ ...prev, coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น" }));
+                return;
+            }
             setCoverImage(file);
             setCoverImageUrl(URL.createObjectURL(file)); // แสดง preview
         }
     };
 
+    const handleValidation = () => {
+        let newErrors: { title?: string; description?: string; coverImage?: string } = {};
+        if (!title.trim()) newErrors.title = "กรุณากรอกชื่อกิจกรรม";
+        if (!description.trim() || description === "<p><br></p>") newErrors.description = "กรุณากรอกรายละเอียดกิจกรรม";
+        if (!coverImage) newErrors.coverImage = "กรุณาอัปโหลดรูปปกกิจกรรม";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!handleValidation()) return;
         let uploadedCoverImageUrl = coverImageUrl;
         if (coverImage) {
             const formData = new FormData();
             formData.append("image", coverImage);
-            const { data } = await axios.post("/api/upload", formData);
-            uploadedCoverImageUrl = data.url;
+            const uploadResult = await uploadActivityImage(formData);
+            if (!uploadResult) {
+                setErrors((prev) => ({ ...prev, coverImage: "อัปโหลดรูปภาพไม่สำเร็จ" }));
+                return;
+            }
+            uploadedCoverImageUrl = uploadResult;
         }
         const newActivity = {
             title,
             description,
-            author: loggedInUser.firstname,
-            department: loggedInUser.department,
+            authorId: 2,
+            imagePath: uploadedCoverImageUrl,
         };
-
+        console.log("ข้อมูลก่อนส่ง : ",newActivity);
+        
         try {
             await axios.post("/api/activities/create", newActivity);
             console.log("บันทึกข้อมูลสำเร็จ!");
@@ -109,9 +140,11 @@ const CreateActivity = () => {
                     onChange={(e) => setTitle(e.target.value)}
                     className="input input-bordered w-full"
                 />
-                <div className="label">
-                    <span className="label-text-alt text-error">Alt label</span>
-                </div>
+                {errors.title &&
+                    <div className="label">
+                        <span className={`label-text-alt ${errors.title ? "text-error" : ""}`}>{errors.title}</span>
+                    </div>
+                }
             </label>
             <label className="form-control">
                 <div className="label">
@@ -119,14 +152,20 @@ const CreateActivity = () => {
                 </div>
                 <input type="file" onChange={handleCoverImageUpload} className="file-input file-input-bordered w-full" />
                 {coverImageUrl && <img src={coverImageUrl} alt="Preview" className="mt-2 w-40 h-40 object-cover rounded-lg" />}
-                <div className="label">
-                    <span className="label-text-alt text-error">Alt label</span>
-                </div>
+                {errors.description &&
+                    <div className="label">
+                        <span className="label-text-alt text-error">{errors.coverImage}</span>
+                    </div>
+                }
             </label>
-            {/* Quill Editor + Focus Effect */}
             <div className="custom-quill">
                 <div ref={quillRef} />
             </div>
+            {errors.description &&
+                <div className="label">
+                    {errors.description && <span className="label-text-alt text-error">{errors.description}</span>}
+                </div>
+            }
             <div className="flex gap-4">
                 <button type="submit" className="btn btn-success">
                     ยืนยัน

@@ -50,7 +50,7 @@ export async function uploadActivityImage(formData: FormData) {
         const buffer = new Uint8Array(arrayBuffer);
 
         const fileName = `${Date.now()}-${file.name}`;
-        const uploadPath = path.join(process.cwd(), "public/activities", fileName);
+        const uploadPath = path.join(process.cwd(), "public/uploads/activities", fileName);
 
         await fs.writeFile(uploadPath, buffer);
 
