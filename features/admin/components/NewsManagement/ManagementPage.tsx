@@ -55,7 +55,6 @@ const ManagementPage = () => {
     const filteredActivities = useMemo(() => {
         return activities.filter(a =>
             a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (a.description?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
             (a.author.firstname?.toLowerCase() ?? "").includes(searchQuery.toLowerCase()) ||
             (a.author.department?.toLowerCase() ?? "").includes(searchQuery.toLowerCase())
         );

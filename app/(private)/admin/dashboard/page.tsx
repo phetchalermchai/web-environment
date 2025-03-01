@@ -1,53 +1,68 @@
-"use client"
+"use client";
 
-import axios from "axios"
-import { useEffect, useState } from "react"
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 
-const page = () => {
-
-  const [data, setData] = useState<any[]>([]); // เก็บข้อมูลผู้ใช้
-  const [loading, setLoading] = useState(true); // สถานะโหลดข้อมูล
+const Page = () => {
+  const [data, setData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchActivities = async () => {
       try {
-        setLoading(true); // เริ่มโหลดข้อมูล
-        const res = await axios.get(`/api/superuser/get-users`);
-        setData(res.data); // บันทึกข้อมูลผู้ใช้
+        setLoading(true);
+        const res = await axios.get(`/api/activities`);
+        // สมมติว่า res.data เป็น array ของ activity objects
+        setData(res.data);
       } catch (err: any) {
-        // จัดการข้อผิดพลาด
-        setError(err.response?.data?.error || "Error fetching user data");
+        setError(err.response?.data?.error || "Error fetching data");
       } finally {
-        setLoading(false); // หยุดสถานะโหลด
+        setLoading(false);
       }
     };
 
-    fetchUser();
+    fetchActivities();
   }, []);
 
   return (
     <div>
-    <h1>รายชื่อผู้ใช้</h1>
+      <h1>รายการกิจกรรม</h1>
 
-    {/* แสดงสถานะโหลดข้อมูล */}
-    {loading && <p>กำลังโหลดข้อมูล...</p>}
+      {loading && <p>กำลังโหลดข้อมูล...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && data.length === 0 && <p>ไม่พบข้อมูลกิจกรรม</p>}
 
-    {/* แสดงข้อความข้อผิดพลาดถ้ามี */}
-    {error && <p style={{ color: "red" }}>{error}</p>}
+      {data.length > 0 && (
+        <ul>
+          {data.map((activity) => {
+            let htmlContent = "";
+            if (activity.description) {
+              // ถ้า description เป็น string (HTML) ให้ใช้ค่าโดยตรง
+              if (typeof activity.description === "string") {
+                htmlContent = activity.description;
+              }
+              // แต่ถ้า description เป็น object ที่มี .ops (Quill Delta) ให้แปลงเป็น HTML
+              else if (activity.description.ops) {
+                const converter = new QuillDeltaToHtmlConverter(
+                  activity.description.ops,
+                  {}
+                );
+                htmlContent = converter.convert();
+              }
+            }
 
-    {/* แสดงข้อมูลผู้ใช้ถ้ามี */}
-    {data.length > 0 && (
-      <ul>
-        {data.map((user) => (
-          <li key={user.id}>
-            {user.firstname} {user.lastname} - {user.email} ({user.role})
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-  )
-}
+            return (
+              <li key={activity.id}>
+                <div className="ql-editor" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+};
 
-export default page
+export default Page;

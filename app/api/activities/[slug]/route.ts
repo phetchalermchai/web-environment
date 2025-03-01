@@ -44,7 +44,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
             }
         }
 
-        return NextResponse.json({ activity }, { status: 200 });
+        return NextResponse.json(activity, { status: 200 });
     } catch (error) {
         return NextResponse.json({ message: 'Error fetching activity' }, { status: 500 });
     }

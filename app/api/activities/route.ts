@@ -30,6 +30,6 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json( activities, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: 'Error fetching activities' }, { status: 500 });
+        return NextResponse.json({ message: error}, { status: 500 });
     }
 }

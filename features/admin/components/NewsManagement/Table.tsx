@@ -25,7 +25,6 @@ const Table = ({ activities, sort }: ActivityTableProps) => {
             <thead>
                 <tr>
                     <th><span className="inline-flex gap-1">ชื่อกิจกรรม {sort === "ชื่อกิจกรรม" ? <ArrowDownIcon /> : ""}</span></th>
-                    <th><span className="inline-flex gap-1">คำอธิบาย {sort === "คำอธิบาย" ? <ArrowDownIcon /> : ""}</span></th>
                     <th><span className="inline-flex gap-1">ผู้เขียน {sort === "ผู้เขียน" ? <ArrowDownIcon /> : ""}</span></th>
                     <th><span className="inline-flex gap-1">ส่วนงาน {sort === "ส่วนงาน" ? <ArrowDownIcon /> : ""}</span></th>
                     <th><span className="inline-flex gap-1">วันที่สร้าง {sort === "วันที่สร้าง" ? <ArrowDownIcon /> : ""}</span></th>

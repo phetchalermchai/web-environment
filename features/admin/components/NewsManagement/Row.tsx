@@ -50,7 +50,6 @@ const Row = ({ activity }: ActivityRowProps) => {
     return (
         <tr key={activity.id}>
             <td className="px-4 py-2">{activity.title}</td>
-            <td className="px-4 py-2">{activity.description || "-"}</td>
             <td className="px-4 py-2">{activity.author.firstname} {activity.author.lastname}</td>
             <td className="px-4 py-2">{activity.author.department}</td>
             <td className="px-4 py-2">{new Date(activity.createdAt).toLocaleDateString("th-TH")}</td>

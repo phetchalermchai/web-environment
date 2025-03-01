@@ -25,9 +25,6 @@ const SortDropdown = ({ onSort }: SortDropdownProps) => {
                     <button onClick={() => handleSortChange("ชื่อกิจกรรม")}>ชื่อกิจกรรม</button>
                 </li>
                 <li>
-                    <button onClick={() => handleSortChange("คำอธิบาย")}>คำอธิบาย</button>
-                </li>
-                <li>
                     <button onClick={() => handleSortChange("ผู้เขียน")}>ผู้เขียน</button>
                 </li>
                 <li>
