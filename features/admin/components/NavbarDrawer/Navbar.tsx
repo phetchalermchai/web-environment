@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import TitleBar from "./TitleBar";
 import prisma from "@/lib/prisma"
-import axios from "axios";
 
 const Navbar = async () => {
 

@@ -3,8 +3,8 @@ import prisma from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from '../../auth/[...nextauth]/route';
 
-export async function GET(req: Request, { params }: { params: { slug: string } }) {
-    const { slug } = await params;
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+    const { id } = await params;
 
     try {
          // ตรวจสอบ Session
@@ -16,7 +16,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
 
         // ค้นหากิจกรรมที่มี slug ตรงกัน
         const activity = await prisma.activity.findUnique({
-            where: { slug },
+            where: { id },
             include: {
                 author: {
                     select: { firstname: true, lastname: true, department: true },

@@ -13,10 +13,11 @@ const TitleBar = () => {
         "news/news-update": "ข่าวประชาสัมพันธ์",
         "news/activities": "กิจกรรมของสำนัก",
         "news/activities/create": "สร้างกิจกรรมใหม่",
+        "news/activities/edit": "แก้ไขกิจกรรมสำนัก",
         "agency/personnel": "บุคลากร",
         "users": "จัดการระบบผู้ใช้งาน",
         "users/create": "สร้างบัญชีผู้ใช้ใหม่",
-        "users/edit": "แก้ไขบัญชีผู้ใช้ใหม่",
+        "users/edit": "แก้ไขบัญชีผู้ใช้งาน",
         "setting": "ตั้งค่า",
     };
 

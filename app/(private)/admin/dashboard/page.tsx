@@ -53,6 +53,8 @@ const Page = () => {
               }
             }
 
+            console.log(htmlContent);
+            
             return (
               <li key={activity.id}>
                 <div className="ql-editor" dangerouslySetInnerHTML={{ __html: htmlContent }} />

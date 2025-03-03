@@ -28,7 +28,7 @@ const Row = ({ activity }: ActivityRowProps) => {
     const handleDelete = async () => {
         setDeleting(true);
         try {
-            await axios.delete(`/api/superuser/delete-activity/${activity.id}`);
+            await axios.delete(`/api/activities/delete/${activity.id}`);
             window.location.reload();
         } catch (error: any) {
             setMessage(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบกิจกรรม");
@@ -60,7 +60,7 @@ const Row = ({ activity }: ActivityRowProps) => {
                         <EllipsisHorizontalIcon />
                     </div>
                     <div tabIndex={0} className="dropdown-content card card-compact bg-base-100 rounded-lg z-[1] w-52 p-2 shadow">
-                        <Link href={`/admin/activities/edit/${activity.id}`} className='btn btn-ghost btn-sm'>
+                        <Link href={`/admin/news/activities/edit/${activity.id}`} className='btn btn-ghost btn-sm'>
                             แก้ไขกิจกรรม
                         </Link>
                         <button
