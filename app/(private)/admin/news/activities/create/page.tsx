@@ -10,7 +10,8 @@ import { useSession } from "next-auth/react";
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const CreateActivity = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
   const [description, setDescription] = useState<any>({ ops: [] });
@@ -24,16 +25,20 @@ const CreateActivity = () => {
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    setIsPageLoading(false);
+  }, []);
+
   // กำหนด modules ของ Quill
   const modules = {
     toolbar: {
       container: [
         [{ 'font': [] }],
-        [{ size: [ 'small', false, 'large', 'huge' ]}],
+        [{ size: ['small', false, 'large', 'huge'] }],
         [{ align: [] }],
         ["bold", "italic", "underline", "strike"],
         [{ color: [] }, { background: [] }],
-        [{ 'script': 'sub'}, { 'script': 'super' }], 
+        [{ 'script': 'sub' }, { 'script': 'super' }],
         ['blockquote', 'code-block'],
         ["link", "image", "video"],
         [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
@@ -118,6 +123,28 @@ const CreateActivity = () => {
       return () => clearTimeout(timer);
     }
   }, [message]);
+
+  if (status === "loading" || isPageLoading) {
+    return (
+      <div className="mx-auto p-10 max-w-[1440px]">
+        <div>
+          <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
+          <div className="skeleton h-12 w-full rounded-lg"></div>
+        </div>
+        <div className="mt-4">
+          <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+          <div className="skeleton h-12 w-full rounded-lg"></div>
+        </div>
+        <div className="mt-4">
+          <div className="skeleton h-[517px] md:h-[468px] xl:h-[400px] w-full rounded-lg"></div>
+        </div>
+        <div className="mt-4 flex gap-4">
+          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
+          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mx-auto p-10 max-w-[1440px]">

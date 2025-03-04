@@ -21,8 +21,9 @@ interface MenuProps {
 
 const Menu = ({ role }: MenuProps) => {
     const pathname = usePathname();
-    const isActive = (href: string) => (pathname === href ? "active" : "");
-
+    const isActive = (base: string) =>
+        pathname === base || pathname.startsWith(`${base}/`) ? "active" : "";
+    
     return (
         <div className="flex flex-col gap-4">
             <li>

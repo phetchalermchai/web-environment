@@ -63,7 +63,7 @@ const ManagementPage = () => {
     // ฟังก์ชันเรียงลำดับข้อมูลผู้ใช้งานตามตัวเลือก
     const sortedFilteredActivities = useMemo(() => {
         let sorted = [...filteredActivities];
-    
+
         switch (sort) {
             case "ชื่อกิจกรรม":
                 sorted.sort((a, b) => a.title.localeCompare(b.title));
@@ -84,7 +84,7 @@ const ManagementPage = () => {
                 sorted.sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
                 break;
         }
-    
+
         return sorted;
     }, [filteredActivities, sort]);
 
@@ -98,7 +98,20 @@ const ManagementPage = () => {
     };
 
     if (loading) {
-        return <div>Loading users...</div>;
+        return (
+            <div className="p-5 sm:p-6 lg:p-7 xl:p-10 flex flex-col h-[calc(100vh-66px)]">
+                <div className='flex items-center justify-between'>
+                    <div className='flex items-center'>
+                        <div className="skeleton h-8 lg:h-12 w-[154px] md:w-[201px] lg:w-[296px] rounded-lg"></div>
+                        <div className="skeleton h-8 lg:h-12 w-[105px] lg:w-[168px] rounded-lg m-1 md:mx-3"></div>
+                    </div>
+                    <div className="skeleton h-8 lg:h-12 w-[38px] lg:w-[117px] rounded-lg"></div>
+                </div>
+                <div className="overflow-x-auto mt-6 grow">
+                    <div className="skeleton h-full w-full"></div>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
