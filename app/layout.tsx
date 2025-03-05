@@ -14,7 +14,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" data-theme="light">
-      <body className={`antialiased`}>
+      <body className={`antialiased bg-base-300/30`}>
         {children}
       </body>
     </html>

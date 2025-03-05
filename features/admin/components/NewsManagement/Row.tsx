@@ -48,7 +48,7 @@ const Row = ({ activity }: ActivityRowProps) => {
     }, [message]);
 
     return (
-        <tr key={activity.id}>
+        <tr key={activity.id} className="text-nowrap hover:bg-base-200/40 cursor-pointer">
             <td className="px-4 py-2">{activity.title}</td>
             <td className="px-4 py-2">{activity.author.firstname} {activity.author.lastname}</td>
             <td className="px-4 py-2">{activity.author.department}</td>

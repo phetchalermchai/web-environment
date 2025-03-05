@@ -9,7 +9,7 @@ interface UserTableProps {
 
 const Table = ({ users , sort }: UserTableProps) => {
     return (
-        <table className="table table-xs md:table-md">
+        <table className="table table-sm md:table-md">
             <thead>
                 <tr>
                     <th><span className="inline-flex gap-1">User {sort === "Email" ? <ArrowDownIcon/> : ""}</span></th>

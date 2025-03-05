@@ -32,7 +32,7 @@ const ManagementPage = () => {
             setLoading(true);
             setError(null);
             try {
-                const { data } = await axios.get(`/api/activities1`);
+                const { data } = await axios.get(`/api/activities`);
                 const activitiesWithDate = data.map((a: any) => ({
                     ...a,
                     createdAt: a.createdAt && !isNaN(Date.parse(a.createdAt)) ? new Date(a.createdAt) : null,
@@ -116,7 +116,7 @@ const ManagementPage = () => {
 
     if (error) {
         return (
-          <div className="flex items-center justify-center h-screen bg-base-100">
+          <div className="flex items-center justify-center h-screen bg-base-200/20">
             <div className="text-center p-6 bg-base-100 rounded-lg shadow-md">
               <h1 className="text-3xl font-bold text-red-600 mb-4">Error</h1>
               <p className="text-lg text-gray-700">เกิดข้อผิดพลาด: {error.message}</p>
@@ -127,7 +127,7 @@ const ManagementPage = () => {
 
     return (
 
-        <div className="p-5 sm:p-6 lg:p-7 xl:p-10 flex flex-col h-[calc(100vh-66px)]">
+        <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
             <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                     <SearchBar onSearch={handleSearch} />

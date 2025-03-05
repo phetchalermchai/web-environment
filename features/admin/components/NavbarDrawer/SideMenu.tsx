@@ -24,7 +24,7 @@ const SideMenu = async () => {
     }
 
     return (
-        <ul className="menu bg-base-200 min-h-full w-80 p-4 justify-between">
+        <ul className="menu bg-base-100 min-h-full w-80 p-4 justify-between border-r border-base-300">
             <Menu role={user.role}/>
             <div className="flex flex-col gap-10 py-5">
                 <div className="flex flex-col items-center gap-2">

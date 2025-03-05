@@ -58,7 +58,7 @@ const Row = ({ user }: UserRowProps) => {
     }, [message]);
 
     return (
-        <tr key={user.id}>
+        <tr key={user.id} className="text-nowrap hover:bg-base-200/40 cursor-pointer">
             <td>
                 <div className="flex items-center gap-3">
                     {
