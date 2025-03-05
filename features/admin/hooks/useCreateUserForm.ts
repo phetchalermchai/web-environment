@@ -133,7 +133,7 @@ const useCreateUserForm = () => {
             const payload = { ...formData, avatar: avatarUrl };
 
             // ส่งข้อมูลไปยัง API route ที่จะสร้างผู้ใช้งานใหม่
-            const response = await axios.post("/api/superuser/create-user", payload, {
+            await axios.post("/api/superuser/create-user", payload, {
                 headers: {
                     "Content-Type": "application/json",
                 },

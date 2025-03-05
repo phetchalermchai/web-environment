@@ -32,7 +32,7 @@ const ManagementPage = () => {
             setLoading(true);
             setError(null);
             try {
-                const { data } = await axios.get(`/api/activities`);
+                const { data } = await axios.get(`/api/activities1`);
                 const activitiesWithDate = data.map((a: any) => ({
                     ...a,
                     createdAt: a.createdAt && !isNaN(Date.parse(a.createdAt)) ? new Date(a.createdAt) : null,
@@ -115,8 +115,15 @@ const ManagementPage = () => {
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
-    }
+        return (
+          <div className="flex items-center justify-center h-screen bg-base-100">
+            <div className="text-center p-6 bg-base-100 rounded-lg shadow-md">
+              <h1 className="text-3xl font-bold text-red-600 mb-4">Error</h1>
+              <p className="text-lg text-gray-700">เกิดข้อผิดพลาด: {error.message}</p>
+            </div>
+          </div>
+        );
+      }
 
     return (
 
