@@ -15,7 +15,7 @@ const page = async () => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex bg-base-100">
       <ImageLogin />
       <FormLogin />
     </div>

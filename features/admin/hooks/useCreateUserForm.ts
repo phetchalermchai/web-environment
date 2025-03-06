@@ -37,6 +37,7 @@ const useCreateUserForm = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
+    const [fileUrl, setFileUrl] = useState<string>("");
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
@@ -98,9 +99,26 @@ const useCreateUserForm = () => {
         }));
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
-    };
+    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
+    // };
+
+    const handleFileChange = async (
+        e: React.ChangeEvent<HTMLInputElement>
+      ) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          if (!file.type.startsWith("image/")) {
+            setErrors((prev) => ({
+              ...prev,
+              coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
+            }));
+            return;
+          }
+          setFile(file);
+          setFileUrl(URL.createObjectURL(file)); // แสดง preview
+        }
+      };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -177,12 +195,13 @@ const useCreateUserForm = () => {
         errors,
         loading,
         message,
+        fileUrl,
         handleChange,
         handleFileChange,
         handleSubmit,
         setErrors,
         setMessage,
-        validateForm
+        validateForm,
     };
 };
 

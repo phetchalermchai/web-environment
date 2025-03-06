@@ -4,92 +4,98 @@ import useEditUserForm from "@/features/admin/hooks/useEditUserForm";
 import Link from "next/link";
 
 const EditUserForm = () => {
-  const {handleChange, formData, errors, loading, message, handleSubmit, handleFileChange} = useEditUserForm()
+  const { handleChange, formData, errors, loading, message, handleSubmit, handleFileChange } = useEditUserForm()
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto p-10">
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">ชื่อจริง</span>
+    <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
+      <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">ชื่อจริง</span>
+            </div>
+            <input
+              type="text"
+              name="firstname"
+              placeholder="Type here"
+              value={formData.firstname}
+              onChange={handleChange}
+              className={`input input-bordered ${errors.firstname ? "input-error" : ""}`} />
+            {errors.firstname && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.firstname}</span>
+              </div>
+            )}
+          </label>
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">นามสกุล</span>
+            </div>
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Type here"
+              value={formData.lastname}
+              onChange={handleChange}
+              className={`input input-bordered ${errors.lastname ? "input-error" : ""}`} />
+            {errors.lastname && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.lastname}</span>
+              </div>
+            )}
+          </label>
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">อีเมล</span>
+            </div>
+            <input
+              type="text"
+              name="email"
+              placeholder="Type here"
+              value={formData.email}
+              onChange={handleChange}
+              className={`input input-bordered ${errors.email ? "input-error" : ""}`} />
+            {errors.email && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.email}</span>
+              </div>
+            )}
+          </label>
         </div>
-        <input
-          type="text"
-          name="firstname"
-          placeholder="Type here"
-          value={formData.firstname}
-          onChange={handleChange}
-          className={`input input-bordered ${errors.firstname ? "input-error" : ""}`} />
-        {errors.firstname && (
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.firstname}</span>
-          </div>
-        )}
-      </label>
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">นามสกุล</span>
+        <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">แผนก</span>
+            </div>
+            <input
+              type="text"
+              name="department"
+              placeholder="Type here"
+              value={formData.department}
+              onChange={handleChange}
+              className={`input input-bordered ${errors.department ? "input-error" : ""}`} />
+            {errors.department && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.department}</span>
+              </div>
+            )}
+          </label>
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">ระดับผู้ใช้งาน</span>
+            </div>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="select select-bordered"
+            >
+              <option value="USER">User</option>
+              <option value="SUPERUSER">Superuser</option>
+            </select>
+          </label>
         </div>
-        <input
-          type="text"
-          name="lastname"
-          placeholder="Type here"
-          value={formData.lastname}
-          onChange={handleChange}
-          className={`input input-bordered ${errors.lastname ? "input-error" : ""}`} />
-        {errors.lastname && (
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.lastname}</span>
-          </div>
-        )}
-      </label>
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">อีเมล</span>
-        </div>
-        <input
-          type="text"
-          name="email"
-          placeholder="Type here"
-          value={formData.email}
-          onChange={handleChange}
-          className={`input input-bordered ${errors.email ? "input-error" : ""}`} />
-        {errors.email && (
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.email}</span>
-          </div>
-        )}
-      </label>
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">แผนก</span>
-        </div>
-        <input
-          type="text"
-          name="department"
-          placeholder="Type here"
-          value={formData.department}
-          onChange={handleChange}
-          className={`input input-bordered ${errors.department ? "input-error" : ""}`} />
-        {errors.department && (
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.department}</span>
-          </div>
-        )}
-      </label>
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">ระดับผู้ใช้งาน</span>
-        </div>
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="select select-bordered"
-        >
-          <option value="USER">User</option>
-          <option value="SUPERUSER">Superuser</option>
-        </select>
-      </label>
+      </div>
       <label className="form-control">
         <div className="label">
           <span className="label-text">รูปโปรไฟล์</span>

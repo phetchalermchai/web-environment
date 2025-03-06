@@ -96,7 +96,7 @@ const EditActivity = () => {
   const handleValidation = () => {
     let newErrors: { title?: string; description?: string; coverImage?: string } = {};
     if (!title.trim()) newErrors.title = "กรุณากรอกชื่อกิจกรรม";
-    
+
     // ใช้ stripHtml เพื่อตรวจสอบว่าเนื้อหาที่ไม่มีแท็กเป็นค่าว่างหรือไม่
     const strippedValue = stripHtml(value);
     if (!strippedValue || strippedValue === "" || strippedValue === "​") {
@@ -124,13 +124,13 @@ const EditActivity = () => {
       formData.append("coverImage", coverImage);
     }
     formData.append("htmlContent", value);
-    
+
     try {
       // เรียก API update activity (ใช้ PATCH หรือ PUT ตามที่คุณกำหนด)
       await axios.put(`/api/activities/edit/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      
+
       setMessage("แก้ไขข้อมูลสำเร็จ!");
       // Redirect ไปยังหน้า activity list หลังแก้ไขสำเร็จ
       router.push("/admin/news/activities");
@@ -155,13 +155,34 @@ const EditActivity = () => {
   }, [message]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex flex-col">
+        <div className="flex flex-col lg:flex-row">
+          <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
+            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
+            <div className="skeleton h-12 w-full rounded-lg"></div>
+          </div>
+          <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
+            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+            <div className="skeleton h-12 w-full rounded-lg"></div>
+          </div>
+        </div>
+        <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
+          <div className="skeleton h-[517px] md:h-[468px] xl:h-[443px] w-full rounded-lg"></div>
+        </div>
+        <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5">
+          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
+          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
-      <form onSubmit={handleSubmit} className="space-y-4 mx-auto p-10 max-w-[1440px]">
-        {/* Input สำหรับชื่อกิจกรรม */}
-        <label className="form-control">
+    <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
+      {/* Input สำหรับชื่อกิจกรรม */}
+      <div className="flex flex-col lg:flex-row">
+        <label className="form-control bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
           <div className="label">
             <span className="label-text">ชื่อกิจกรรม</span>
           </div>
@@ -180,7 +201,7 @@ const EditActivity = () => {
             </div>
           )}
         </label>
-        <label className="form-control">
+        <label className="form-control bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
           <div className="label">
             <span className="label-text">อัปโหลดรูปปกกิจกรรม</span>
           </div>
@@ -193,7 +214,7 @@ const EditActivity = () => {
             <img
               src={coverImageUrl}
               alt="Preview"
-              className="mt-2 w-40 h-40 object-cover rounded-lg"
+              className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
             />
           )}
           {errors.coverImage && (
@@ -202,39 +223,41 @@ const EditActivity = () => {
             </div>
           )}
         </label>
-        <div className="custom-quill">
-          <ReactQuill
-            theme="snow"
-            value={value}
-            onChange={(content, delta, source, editor) => {
-              setValue(content); // เก็บ HTML content สำหรับ preview
-              setDescription(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
-            }}
-            modules={modules}
-          />
+      </div>
+      <div className="custom-quill bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
+        <div className="py-2 px-1 "><span className="text-sm">รายละเอียดกิจกรรม</span></div>
+        <ReactQuill
+          theme="snow"
+          value={value}
+          onChange={(content, delta, source, editor) => {
+            setValue(content); // เก็บ HTML content สำหรับ preview
+            setDescription(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
+          }}
+          modules={modules}
+        />
+      </div>
+      {errors.description && (
+        <div className="label">
+          <span className="label-text-alt text-error">{errors.description}</span>
         </div>
-        {errors.description && (
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.description}</span>
-          </div>
-        )}
-        <div className="flex gap-4">
-          <button type="submit" className="btn btn-success" disabled={isSubmitting}>
-            {isSubmitting ? "กำลังแก้ไข..." : "แก้ไข"}
-          </button>
-          <Link href="/admin/news/activities" className="btn btn-error">
-            ยกเลิก
-          </Link>
+      )}
+      <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5 xl:pb-5">
+        <button type="submit" className="btn btn-success" disabled={isSubmitting}>
+          {isSubmitting ? "กำลังแก้ไข..." : "แก้ไข"}
+        </button>
+        <Link href="/admin/news/activities" className="btn btn-error">
+          ยกเลิก
+        </Link>
+      </div>
+      {message && (
+        <div
+          role="alert"
+          className="fixed bottom-4 right-4 shadow-lg w-80 alert alert-success"
+        >
+          <span>{message}</span>
         </div>
-        {message && (
-          <div
-            role="alert"
-            className="fixed bottom-4 right-4 shadow-lg w-80 alert alert-success"
-          >
-            <span>{message}</span>
-          </div>
-        )}
-      </form>
+      )}
+    </form>
   );
 };
 
