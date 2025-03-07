@@ -1,10 +1,9 @@
 "use client"
-import ManagementPage from "@/features/admin/components/NewsManagement/ManagementPage"
+import ManagementPage from "@/features/admin/components/ActivitiesManagement/ManagementPage"
 
-ManagementPage
 const page = () => {
   return (
-    <ManagementPage/>
+    <ManagementPage getsApi="/api/activities" createLink="/admin/news/activities/create" editLink="/admin/news/activities/edit/" deleteApi="/api/activities/delete/"/>
   )
 }
 

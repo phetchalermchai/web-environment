@@ -27,7 +27,7 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [sort, setSort] = useState<string>("ชื่อข่าวสาร");
+    const [sort, setSort] = useState<string>("ชื่อกิจกรรม");
 
     useEffect(() => {
         const loadActivities = async () => {
@@ -66,7 +66,7 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
         let sorted = [...filteredActivities];
 
         switch (sort) {
-            case "ชื่อข่าวสาร":
+            case "ชื่อกิจกรรม":
                 sorted.sort((a, b) => a.title.localeCompare(b.title));
                 break;
             case "คำอธิบาย":

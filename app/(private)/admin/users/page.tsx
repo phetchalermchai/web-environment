@@ -1,6 +1,6 @@
 "use client"
 
-import ManagementPage from '@/features/admin/components/UserManagement/ManagementPage';
+import ManagementPage from '@/features/admin/components/UsersManagement/ManagementPage';
 
 const UsersPage = () => {
   return (

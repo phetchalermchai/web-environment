@@ -26,7 +26,7 @@ model User {
   updatedAt  DateTime @updatedAt
 
   activities Activity[]
-  Post       Post[]
+  Post       News[]
 }
 
 enum Role {
@@ -46,18 +46,15 @@ model Activity {
   updatedAt   DateTime @updatedAt
 }
 
-model Post {
-  id          Int       @id @default(autoincrement())
-  title       String    @db.VarChar(255)
-  slug        String    @unique @db.VarChar(255) // URL slug สำหรับ SEO
-  content     String    @db.Text
-  excerpt     String?   @db.Text
-  coverImage  String? // URL ของภาพหน้าปก
-  images      Json? // เก็บ URL ของภาพประกอบในรูปแบบ JSON Array
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    Int
-  published   Boolean   @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model News {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique @db.VarChar(255) // Slug เพื่อให้ URL อ่านง่าย
+  description String 
+  content     Json?
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId    Int?
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

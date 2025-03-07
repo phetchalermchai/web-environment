@@ -1,10 +1,11 @@
 "use client";
 
 import useEditUserForm from "@/features/admin/hooks/useEditUserForm";
+import Image from "next/image";
 import Link from "next/link";
 
 const EditUserForm = () => {
-  const { handleChange, formData, errors, loading, message, handleSubmit, handleFileChange } = useEditUserForm()
+  const { handleChange, formData, errors, loading, message, fileUrl, handleSubmit, handleFileChange } = useEditUserForm()
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
@@ -96,16 +97,25 @@ const EditUserForm = () => {
           </label>
         </div>
       </div>
-      <label className="form-control">
-        <div className="label">
-          <span className="label-text">รูปโปรไฟล์</span>
-        </div>
-        <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
-        <div className="label">
-          <span className="label-text-alt text-error">{errors.avatar}</span>
-        </div>
-      </label>
-      <div className="flex gap-4">
+      <div className="flex flex-col bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
+        <label className="form-control">
+          <div className="label">
+            <span className="label-text">รูปโปรไฟล์</span>
+          </div>
+          <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
+          {fileUrl && (
+            <img
+              src={fileUrl}
+              alt="Preview"
+              className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
+            />
+          )}
+          <div className="label">
+            <span className="label-text-alt text-error">{errors.avatar}</span>
+          </div>
+        </label>
+      </div>
+      <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5">
         <button type="submit" className="btn btn-success" disabled={loading}>
           {loading ? "กำลังดำเนินการ..." : "แก้ไข"}
         </button>

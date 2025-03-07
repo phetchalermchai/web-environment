@@ -5,7 +5,7 @@ const CreateButton = ({ createLink }: { createLink:string }) => {
     return (
         <div>
             <Link href={createLink} className="btn btn-sm lg:btn-md btn-primary px-2">
-                <span className='hidden lg:inline-flex'>สร้างข่าวสาร</span>
+                <span className='hidden lg:inline-flex'>สร้างกิจกรรม</span>
                 <span className='inline-flex lg:hidden'><UserplusIcon /></span>
             </Link>
         </div>
