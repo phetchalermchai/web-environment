@@ -14,13 +14,15 @@ const CreateNews = () => {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
-  const [description, setDescription] = useState<any>({ ops: [] });
+  const [description, setDescription] = useState("");
+  const [content, setContent] = useState<any>({ ops: [] });
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [coverImageUrl, setCoverImageUrl] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<{
     title?: string;
     description?: string;
+    content?: string;
     coverImage?: string;
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,20 +67,21 @@ const CreateNews = () => {
   };
 
   const handleValidation = () => {
-    let newErrors: { title?: string; description?: string; coverImage?: string } = {};
-    if (!title.trim()) newErrors.title = "กรุณากรอกชื่อกิจกรรม";
+    let newErrors: { title?: string; description?: string; content?: string; coverImage?: string } = {};
+    if (!title.trim()) newErrors.title = "กรุณากรอกชื่อข่าวประชาสัมพันธ์";
+    if (!description.trim()) newErrors.description = "กรุณากรอกรายละเอียดข่าวประชาสัมพันธ์";
     // ตรวจสอบ Delta: ถ้า ops ว่างหรือมีแค่หนึ่ง op ที่เป็นการเว้นว่าง
     if (
-      !description ||
-      !description.ops ||
-      description.ops.length === 0 ||
-      (description.ops.length === 1 &&
-        typeof description.ops[0].insert === "string" &&
-        description.ops[0].insert.trim() === "")
+      !content ||
+      !content.ops ||
+      content.ops.length === 0 ||
+      (content.ops.length === 1 &&
+        typeof content.ops[0].insert === "string" &&
+        content.ops[0].insert.trim() === "")
     ) {
-      newErrors.description = "กรุณากรอกรายละเอียดกิจกรรม";
+      newErrors.content = "กรุณากรอกเนื้อหาข่าวประชาสัมพันธ์";
     }
-    if (!coverImage) newErrors.coverImage = "กรุณาอัปโหลดรูปปกกิจกรรม";
+    if (!coverImage) newErrors.coverImage = "กรุณาอัปโหลดรูปปกข่าวประชาสัมพันธ์";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -91,7 +94,8 @@ const CreateNews = () => {
     // สร้าง FormData เพื่อส่งข้อมูลไปยัง API
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("description", JSON.stringify(description));
+    formData.append("description", description);
+    formData.append("content", JSON.stringify(content));
     formData.append("authorId", String(session?.user.id));
     if (coverImage) {
       formData.append("coverImage", coverImage);
@@ -99,11 +103,11 @@ const CreateNews = () => {
     formData.append("htmlContent", value);
 
     try {
-      await axios.post("/api/activities/create", formData, {
+      await axios.post("/api/news/create", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setMessage("บันทึกข้อมูลสำเร็จ!");
-      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/news/activities`;
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/news/news-update`;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         setMessage(error.response.data?.error || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
@@ -138,9 +142,13 @@ const CreateNews = () => {
           </div>
         </div>
         <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
-          <div className="skeleton h-[517px] md:h-[468px] xl:h-[443px] w-full rounded-lg"></div>
+          <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+          <div className="skeleton h-12 w-full rounded-lg"></div>
         </div>
-        <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5">
+        <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
+          <div className="skeleton h-[532px] md:h-[507px] xl:h-[483px] w-full rounded-lg"></div>
+        </div>
+        <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
           <div className="skeleton h-12 w-[72px] rounded-lg"></div>
           <div className="skeleton h-12 w-[72px] rounded-lg"></div>
         </div>
@@ -149,7 +157,7 @@ const CreateNews = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
+    <form onSubmit={handleSubmit} className="flex flex-col">
       {/* Input สำหรับชื่อกิจกรรม */}
       <div className="flex flex-col lg:flex-row">
         <label className="form-control bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
@@ -173,7 +181,7 @@ const CreateNews = () => {
         </label>
         <label className="form-control bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
           <div className="label">
-            <span className="label-text">อัปโหลดรูปปกกิจกรรม</span>
+            <span className="label-text">อัปโหลดรูปปกข่าวประชาสัมพันธ์</span>
           </div>
           <input
             type="file"
@@ -194,28 +202,49 @@ const CreateNews = () => {
           )}
         </label>
       </div>
+      <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
+        <label className="form-control">
+          <div className="label">
+            <span className="label-text">รายละเอียดข่าวประชาสัมพันธ์</span>
+          </div>
+          <input
+            type="text"
+            name="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="input input-bordered w-full"
+          />
+          {errors.description && (
+            <div className="label">
+              <span className={`label-text-alt ${errors.description ? "text-error" : ""}`}>
+                {errors.description}
+              </span>
+            </div>
+          )}
+        </label>
+      </div>
       <div className="custom-quill bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
-        <div className="py-2 px-1 "><span className="text-sm">รายละเอียดกิจกรรม</span></div>
+        <div className="py-2 px-1 "><span className="text-sm">เนื้อหาข่าวประชาสัมพันธ์</span></div>
         <ReactQuill
           theme="snow"
           value={value}
           onChange={(content, delta, source, editor) => {
             setValue(content); // เก็บ HTML content สำหรับ preview
-            setDescription(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
+            setContent(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
           }}
           modules={modules}
         />
       </div>
-      {errors.description && (
+      {errors.content && (
         <div className="label">
-          <span className="label-text-alt text-error">{errors.description}</span>
+          <span className="label-text-alt text-error">{errors.content}</span>
         </div>
       )}
-      <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5">
+      <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
         <button type="submit" className="btn btn-success" disabled={isSubmitting}>
           {isSubmitting ? "กำลังบันทึก..." : "ยืนยัน"}
         </button>
-        <Link href={`/admin/news/activities`} className="btn btn-error">
+        <Link href={`/admin/news/news-update`} className="btn btn-error">
           ยกเลิก
         </Link>
       </div>

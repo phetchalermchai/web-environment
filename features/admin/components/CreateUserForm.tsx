@@ -42,7 +42,7 @@ const CreateUserForm = () => {
           <div className="skeleton h-12 w-full rounded-lg"></div>
           <div className="py-2"></div>
         </div>
-        <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5">
+        <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
           <div className="skeleton h-12 w-[72px] rounded-lg"></div>
           <div className="skeleton h-12 w-[72px] rounded-lg"></div>
         </div>
@@ -51,7 +51,7 @@ const CreateUserForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
+    <form onSubmit={handleSubmit} className="flex flex-col">
       <div className="flex flex-col lg:flex-row">
         <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
           <label className="form-control">
@@ -177,7 +177,7 @@ const CreateUserForm = () => {
           </div>
         </label>
       </div>
-      <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5">
+      <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
         <button type="submit" className="btn btn-success" disabled={loading}>
           {loading ? "กำลังดำเนินการ..." : "ยืนยัน"}
         </button>
