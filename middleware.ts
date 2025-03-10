@@ -39,7 +39,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // 🔹 ตรวจสอบ API อื่นๆ (ยกเว้น `/api/auth/*` และ `/api/activities`)
-  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth") && !pathname.startsWith("/api/activities")) {
+  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth") && !pathname.startsWith("/api/activities") && !pathname.startsWith("/api/news")) {
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

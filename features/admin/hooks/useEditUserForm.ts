@@ -46,9 +46,9 @@ const useEditUserForm = () => {
             try {
                 const res = await axios.get(`/api/superuser/get-user/${email}`);
                 setFormData(res.data);
-
+                setFileUrl(res.data.avatar || "")
             } catch (err: any) {
-                setMessage(err.response?.data?.error || "Error fetching user data");
+                setMessage(err.response?.data?.error || "เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้");
             } finally {
                 setLoading(false);
             }
@@ -65,6 +65,21 @@ const useEditUserForm = () => {
             return () => clearTimeout(timer);
         }
     }, [email, message]);
+
+    const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (!file.type.startsWith("image/")) {
+                setErrors((prev) => ({
+                    ...prev,
+                    coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
+                }));
+                return;
+            }
+            setFile(file);
+            setFileUrl(URL.createObjectURL(file));
+        }
+    };
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
@@ -114,20 +129,20 @@ const useEditUserForm = () => {
 
     const handleFileChange = async (
         e: React.ChangeEvent<HTMLInputElement>
-      ) => {
+    ) => {
         const file = e.target.files?.[0];
         if (file) {
-          if (!file.type.startsWith("image/")) {
-            setErrors((prev) => ({
-              ...prev,
-              coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
-            }));
-            return;
-          }
-          setFile(file);
-          setFileUrl(URL.createObjectURL(file)); // แสดง preview
+            if (!file.type.startsWith("image/")) {
+                setErrors((prev) => ({
+                    ...prev,
+                    coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
+                }));
+                return;
+            }
+            setFile(file);
+            setFileUrl(URL.createObjectURL(file)); // แสดง preview
         }
-      };
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -200,6 +215,7 @@ const useEditUserForm = () => {
         handleChange,
         handleFileChange,
         handleSubmit,
+        handleCoverImageUpload
     };
 
 }

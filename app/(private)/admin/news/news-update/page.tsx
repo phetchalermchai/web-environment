@@ -3,7 +3,7 @@ import ManagementPage from "@/features/admin/components/NewsManagement/Managemen
 
 const page = () => {
   return (
-    <ManagementPage getsApi="/api/activities" createLink="/admin/news/news-update/create" editLink="/admin/news/activities/edit/" deleteApi="/api/activities/delete/"/>
+    <ManagementPage getsApi="/api/news" createLink="/admin/news/news-update/create" editLink="/admin/news/news-update/edit/" deleteApi="/api/activities/delete/"/>
   )
 }
 

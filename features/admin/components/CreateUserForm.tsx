@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import useCreateUserForm from "@/features/admin/hooks/useCreateUserForm";
+import Image from "next/image";
 
 const CreateUserForm = () => {
 
@@ -166,8 +167,10 @@ const CreateUserForm = () => {
           </div>
           <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
           {fileUrl && (
-            <img
+            <Image
               src={fileUrl}
+              width={256}
+              height={256}
               alt="Preview"
               className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
             />

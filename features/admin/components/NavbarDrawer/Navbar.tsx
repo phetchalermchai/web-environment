@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import TitleBar from "./TitleBar";
 import prisma from "@/lib/prisma"
+import Image from "next/image";
 
 const Navbar = async () => {
 
@@ -36,8 +37,10 @@ const Navbar = async () => {
                         ?
                         <div className="avatar">
                             <div className="mask mask-circle h-10 w-10 bg-base-300">
-                                <img
+                                <Image
                                     src={user.avatar}
+                                    width={40}
+                                    height={40}
                                     alt="Avatar Tailwind CSS Component" />
                             </div>
                         </div>

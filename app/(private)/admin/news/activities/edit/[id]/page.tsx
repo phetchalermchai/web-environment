@@ -7,6 +7,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import 'react-quill-new/dist/quill.snow.css';
+import Image from "next/image";
 
 // Import react-quill-new dynamically (client-side only)
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -66,7 +67,7 @@ const EditActivity = () => {
         // หากต้องการเก็บ Delta ให้ลอง parse หรือเก็บแยกกัน (ในที่นี้เราใช้ HTML)
         setCoverImageUrl(activity.image || "");
       } catch (error) {
-        console.error("Failed to fetch activity data", error);
+        console.error("ไม่สามารถดึงข้อมูลกิจกรรมได้", error);
         setMessage("ไม่สามารถดึงข้อมูลกิจกรรมได้");
       } finally {
         setIsLoading(false);
@@ -99,10 +100,10 @@ const EditActivity = () => {
 
     // ใช้ stripHtml เพื่อตรวจสอบว่าเนื้อหาที่ไม่มีแท็กเป็นค่าว่างหรือไม่
     const strippedValue = stripHtml(value);
-    if (!strippedValue || strippedValue === "" || strippedValue === "​") {
+    const hasImage = /<img\s+[^>]*src=["'][^"']+["'][^>]*>/i.test(value);
+    if (!strippedValue && !hasImage) {
       newErrors.description = "กรุณากรอกรายละเอียดกิจกรรม";
     }
-    // ในการแก้ไข เราอาจไม่บังคับให้เปลี่ยนรูปปก ถ้าไม่มีการเลือกไฟล์ใหม่ ก็ให้ใช้รูปที่มีอยู่แล้ว
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -211,8 +212,10 @@ const EditActivity = () => {
             className="file-input file-input-bordered w-full"
           />
           {coverImageUrl && (
-            <img
+            <Image
               src={coverImageUrl}
+              width={256}
+              height={256}
               alt="Preview"
               className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
             />
@@ -235,13 +238,13 @@ const EditActivity = () => {
           }}
           modules={modules}
         />
+        {errors.description && (
+          <div className="label">
+            <span className="label-text-alt text-error">{errors.description}</span>
+          </div>
+        )}
       </div>
-      {errors.description && (
-        <div className="label">
-          <span className="label-text-alt text-error">{errors.description}</span>
-        </div>
-      )}
-      <div className="flex gap-4 m-3 sm:m-3 lg:m-4 xl:m-5 xl:pb-5">
+      <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
         <button type="submit" className="btn btn-success" disabled={isSubmitting}>
           {isSubmitting ? "กำลังแก้ไข..." : "แก้ไข"}
         </button>
@@ -250,13 +253,14 @@ const EditActivity = () => {
         </Link>
       </div>
       {message && (
-        <div
-          role="alert"
-          className="fixed bottom-4 right-4 shadow-lg w-80 alert alert-success"
-        >
-          <span>{message}</span>
-        </div>
-      )}
+                <div
+                    role="alert"
+                    className={`fixed bottom-4 right-4 shadow-lg w-80 alert alert-success ${message === "แก้ไขข้อมูลสำเร็จ!" ? "alert-success" : "alert-error"
+                        }`}
+                >
+                    <span>{message}</span>
+                </div>
+            )}
     </form>
   );
 };

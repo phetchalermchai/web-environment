@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
         userRole === "SUPERUSER"
           ? undefined // SUPERUSER เห็นทั้งหมด
           : userId
-          ? { authorId: userId } // USER เห็นเฉพาะของตัวเอง
-          : undefined, // บุคคลทั่วไป (Public) เห็นทั้งหมด
+            ? { authorId: userId } // USER เห็นเฉพาะของตัวเอง
+            : undefined, // บุคคลทั่วไป (Public) เห็นทั้งหมด
       include: {
         author: {
           select: { firstname: true, lastname: true, department: true },

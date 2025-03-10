@@ -1,18 +1,12 @@
 import Link from "next/link";
+import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
 
-interface CardProps {
-    news: {
-        title: string;
-        slug: string;
-        description: string;
-        image: string;
-        author: string;
-        createdAt: string;
-    },
+interface CardProps<T> {
+    news: T,
     cardType: string
 }
 
-const Card = ({ news, cardType }: CardProps) => {
+const Card = <T extends NewsItems | ActivitiesItems>({ news, cardType }: CardProps<T>) => {
 
     const MAX_LENGTH = 120; // จำนวนตัวอักษรที่ต้องการแสดง
     const truncatedDescription = news.description.length > MAX_LENGTH ? news.description.slice(0, MAX_LENGTH) + "..." : news.description;
@@ -30,15 +24,19 @@ const Card = ({ news, cardType }: CardProps) => {
                     <div className="card-body">
                         <h2 className="card-title">{news.title}</h2>
                         <p>{truncatedDescription}</p>
-                        <p>{news.createdAt}</p>
-                        <div className="card-actions justify-end">
-                            <Link href={news.slug|| ""} className="btn btn-primary">อ่านเพิ่มเติม</Link>
+                        <p className="flex flex-col text-sm">
+                            <span>โดย: {news.author.firstname} {news.author.lastname}</span>
+                            <span>ส่วนงาน: {news.author.department}</span>
+                        </p>
+                        <div className="card-actions justify-between">
+                            <div className="text-sm self-center">โพสต์เมื่อ: {new Date(news.createdAt).toLocaleDateString("th-TH")}</div>
+                            <Link href={`news/news-updates/${news.id || ""}`} className="btn btn-primary">อ่านเพิ่มเติม</Link>
                         </div>
                     </div>
                 </div>
             )}
             {cardType === "type2" && (
-                <Link href={`activities/${news.slug}`}>
+                <Link href={`news/activities/${news.id}`}>
                     <div className="w-full shadow-md rounded-2xl relative overflow-hidden group">
                         <figure>
                             <img
@@ -50,8 +48,11 @@ const Card = ({ news, cardType }: CardProps) => {
                         <div className="absolute bottom-0 left-0 w-full bg-base-300/90 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-5 xl:p-8"> {/* ปรับตำแหน่งและขนาด */}
                             <h3 className="lg:text-xl sm:text-lg text-base font-bold mb-2 lg:mb-4">{news.title}</h3>
                             <div className="text-sm md:flex md:justify-between">
-                                <p>โพสต์เมื่อ: {news.createdAt}</p>
-                                <p>โดย: {news.author}</p>
+                                <p className="self-center">โพสต์เมื่อ: {new Date(news.createdAt).toLocaleDateString("th-TH")}</p>
+                                <p className="flex flex-col">
+                                    <span>โดย: {news.author.firstname} {news.author.lastname}</span>
+                                    <span>ส่วนงาน: {news.author.department}</span>
+                                </p>
                             </div>
                         </div>
                     </div>

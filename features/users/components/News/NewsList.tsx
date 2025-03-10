@@ -1,6 +1,6 @@
 "use client";
 
-import { NewsItem } from "@/types/publicTypes";
+import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
 
 // React hook
 import { useState } from "react";
@@ -10,8 +10,8 @@ import Link from "next/link";
 import Card from "@/components/Card";
 import Pagination from "@/components/Pagination";
 
-interface NewsListProps {
-    newsData: NewsItem[];
+interface NewsListProps<T> {
+    newsData: T[];
     itemsPerPage: number;
     showPagination?: boolean;
     showViewAll?: boolean;
@@ -19,11 +19,14 @@ interface NewsListProps {
     cardType:string
 }
 
-const NewsList: React.FC<NewsListProps> = ({ newsData, itemsPerPage, showPagination, showViewAll, viewAllLink, cardType}) => {
-
-    // use react hook
+const NewsList = <T extends NewsItems | ActivitiesItems> ({ 
+    newsData, 
+    itemsPerPage, 
+    showPagination, 
+    showViewAll, 
+    viewAllLink, 
+    cardType}: NewsListProps<T>) => {
     const [currentPage, setCurrentPage] = useState(1);
-
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedNews = newsData.slice(startIndex, startIndex + itemsPerPage);
 

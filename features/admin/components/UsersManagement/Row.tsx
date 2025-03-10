@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { deleteAvatar } from "../../server/uploadAction";
 import { User } from "@/types/userTypes";
+import Image from "next/image";
 
 interface UserRowProps {
     user: User;
@@ -65,8 +66,10 @@ const Row = ({ user }: UserRowProps) => {
                         user.avatar ?
                             <div className="avatar">
                                 <div className="mask mask-circle h-12 w-12 bg-base-300">
-                                    <img
+                                    <Image
                                         src={user.avatar}
+                                        width={48}
+                                        height={48}
                                         alt="Avatar Tailwind CSS Component" />
                                 </div>
                             </div> :

@@ -3,6 +3,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Menu from "./Menu";
 import SignOut from "./SignOut";
 import prisma from "@/lib/prisma"
+import Image from "next/image";
 
 const SideMenu = async () => {
 
@@ -34,8 +35,10 @@ const SideMenu = async () => {
                                 ?
                                 <div className="avatar">
                                     <div className="mask mask-circle h-10 w-10 bg-base-300">
-                                        <img
+                                        <Image
                                             src={user.avatar}
+                                            width={40}
+                                            height={40}
                                             alt="Avatar Tailwind CSS Component" />
                                     </div>
                                 </div>

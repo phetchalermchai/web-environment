@@ -1,21 +1,28 @@
 import NewsList from "./NewsList"
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { NewsItem } from "@/types/publicTypes";
+import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
 
-interface NewsProps {
-    newsData: NewsItem[];
-    title?: string; // หัวข้อข่าว
-    itemsPerPage?: number; // จำนวนข่าวต่อหน้า
-    showPagination?: boolean; // แสดงปุ่มเลขหน้า
-    showViewAll?: boolean; // แสดงปุ่ม "ดูทั้งหมด"
-    showBreadcrumbs?: boolean; // ควบคุมการแสดง Breadcrumbs
-    cardType:string
-    viewAllLink?: string; // ลิงก์ที่ใช้สำหรับปุ่ม "ดูทั้งหมด"
-    icon?: React.ReactElement; // รับไอคอนเป็น React Node
+interface NewsProps<T> {
+    newsData: T[];
+    title?: string;
+    itemsPerPage?: number;
+    showPagination?: boolean;
+    showViewAll?: boolean;
+    showBreadcrumbs?: boolean;
+    viewAllLink?: string;   
+    icon?: React.ReactElement;
+    cardType: string;
 }
 
-const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showViewAll, showBreadcrumbs = false, viewAllLink, icon ,cardType = "type1"}: NewsProps) => {
-
+const News = async <T extends NewsItems | ActivitiesItems>({ 
+    newsData, 
+    title, 
+    itemsPerPage = 2, 
+    showPagination, 
+    showViewAll, 
+    showBreadcrumbs = false, 
+    viewAllLink, icon, 
+    cardType = "type1" }: NewsProps<T>) => {
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
         { label: "ข้อมูลข่าวสาร", href: "/news/news-updates" },
@@ -45,7 +52,7 @@ const News = async ({ newsData, title, itemsPerPage = 2, showPagination, showVie
                     </div>
                 </div>
             )}
-            <NewsList newsData={newsData} itemsPerPage={itemsPerPage} showPagination={showPagination} showViewAll={showViewAll} viewAllLink={viewAllLink} cardType={cardType}/>
+            <NewsList newsData={newsData} itemsPerPage={itemsPerPage} showPagination={showPagination} showViewAll={showViewAll} viewAllLink={viewAllLink} cardType={cardType} />
         </div>
     )
 }

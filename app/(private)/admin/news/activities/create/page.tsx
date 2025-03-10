@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 // Import react-quill-new dynamically (client-side only)
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
@@ -181,8 +182,10 @@ const CreateActivity = () => {
             className="file-input file-input-bordered w-full"
           />
           {coverImageUrl && (
-            <img
+            <Image
               src={coverImageUrl}
+              width={256}
+              height={256}
               alt="Preview"
               className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
             />

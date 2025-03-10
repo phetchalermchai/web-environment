@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const EditUserForm = () => {
-  const { handleChange, formData, errors, loading, message, fileUrl, handleSubmit, handleFileChange } = useEditUserForm()
+  const { handleChange, formData, errors, loading, message, fileUrl, handleSubmit, handleFileChange, handleCoverImageUpload } = useEditUserForm()
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
@@ -102,10 +102,12 @@ const EditUserForm = () => {
           <div className="label">
             <span className="label-text">รูปโปรไฟล์</span>
           </div>
-          <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
+          <input type="file" accept="image/*" onChange={handleCoverImageUpload} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
           {fileUrl && (
-            <img
+            <Image
               src={fileUrl}
+              width={256}
+              height={256}
               alt="Preview"
               className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
             />

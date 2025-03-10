@@ -2,8 +2,27 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import NewsImage from "@/features/users/components/News/NewsImage";
 import ShareButton from "@/features/users/components/News/ShareButton";
+import { NewsItems } from "@/types/publicTypes";
 
-function page() {
+const fetchNewById = async (id: string): Promise<NewsItems[]> => {
+    
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${id}`, {
+            cache: "no-store", // ป้องกันการแคชข้อมูล
+        });
+        if (!res.ok) throw new Error("Failed to fetch news with Id: ${id}");
+        return await res.json();
+    } catch (error) {
+        console.error(`Error fetching news by Id ${id}:`, error);
+        return [];
+    }
+};
+
+
+const page = async ({ params }: { params: { id: string } }) => {
+    const newsItem = await fetchNewById(params.id);
+    console.log(newsItem);
+    
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
         { label: "ข้อมูลข่าวสาร", href: "/news/news-updates" },
@@ -24,7 +43,7 @@ function page() {
         author: "เฉลิมชัย เหว่าไว",
         link: "/news/news-updates/1",
     }
- 
+
     return (
         <div className="px-10 py-5 xl:px-20 xl:py-10">
             <Breadcrumbs items={breadcrumbs} />

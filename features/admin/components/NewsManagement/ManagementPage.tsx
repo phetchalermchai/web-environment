@@ -10,6 +10,7 @@ import Link from "next/link";
 interface Activity {
     id: string;
     title: string;
+    slug: string;
     author: {
         firstname: string,
         lastname: string,

@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 interface Activity {
     id: string;
     title: string;
+    slug: string;
     author: {
         firstname: string,
         lastname: string,
@@ -30,7 +31,7 @@ const Row = ({ activity, editLink, deleteApi }: ActivityRowProps) => {
     const handleDelete = async () => {
         setDeleting(true);
         try {
-            await axios.delete(`/api/activities/delete/${activity.id}`);
+            await axios.delete(`/api/news/delete/${activity.slug}`);
             window.location.reload();
         } catch (error: any) {
             setMessage(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบกิจกรรม");
@@ -62,7 +63,7 @@ const Row = ({ activity, editLink, deleteApi }: ActivityRowProps) => {
                         <EllipsisHorizontalIcon />
                     </div>
                     <div tabIndex={0} className="dropdown-content card card-compact bg-base-100 rounded-lg z-[1] w-52 p-2 shadow">
-                        <Link href={`/admin/news/activities/edit/${activity.id}`} className='btn btn-ghost btn-sm'>
+                        <Link href={`/admin/news/news-update/edit/${activity.id}`} className='btn btn-ghost btn-sm'>
                             แก้ไขกิจกรรม
                         </Link>
                         <button
@@ -74,12 +75,12 @@ const Row = ({ activity, editLink, deleteApi }: ActivityRowProps) => {
                         </button>
                         <dialog ref={modalRef} className="modal">
                             <div className="modal-box">
-                                <h3 className="font-bold text-lg">ลบกิจกรรม</h3>
+                                <h3 className="font-bold text-lg">ลบข่าวสาร</h3>
                                 <p className="py-4">คุณแน่ใจหรือไม่ว่าต้องการลบกิจกรรมนี้?</p>
                                 <div className="modal-action">
                                     <form method="dialog" className="flex gap-2">
                                         <button className="btn btn-error" onClick={handleDelete}>
-                                            {deleting ? "กำลังลบกิจกรรม..." : "ตกลง"}
+                                            {deleting ? "กำลังลบข่าวสาร..." : "ตกลง"}
                                         </button>
                                         <button className="btn" onClick={closeModal}>ยกเลิก</button>
                                     </form>

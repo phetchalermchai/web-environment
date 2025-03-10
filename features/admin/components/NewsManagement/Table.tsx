@@ -4,6 +4,7 @@ import { DocumentIcon, ArrowDownIcon } from "@/config/iconConfig";
 interface Activity {
     id: string;
     title: string;
+    slug: string
     author: {
         firstname: string,
         lastname: string,
