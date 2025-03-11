@@ -1,48 +1,59 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
-import NewsImage from "@/features/users/components/News/NewsImage";
 import ShareButton from "@/features/users/components/News/ShareButton";
-import { NewsItems } from "@/types/publicTypes";
+import { NewsItem } from "@/types/publicTypes";
+import axios from "axios";
 
-const fetchNewById = async (id: string): Promise<NewsItems[]> => {
-    
+const fetchNewById = async (id: string) => {
+
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${id}`, {
-            cache: "no-store", // ป้องกันการแคชข้อมูล
-        });
-        if (!res.ok) throw new Error("Failed to fetch news with Id: ${id}");
-        return await res.json();
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${id}`);
+        const news: NewsItem = {
+            id: data.id,
+            title: data.title,
+            slug: data.slug,
+            image: data.image,
+            description: data.description,
+            content: data.content || "ไม่มีคำอธิบาย",
+            author: {
+                firstname: data.author.firstname,
+                lastname: data.author.lastname,
+                department: data.author.department,
+                avatar: data.author.avatar,
+                email: data.author.email
+            },
+            createdAt: formatDateToThai(data.createdAt),
+        };
+        return news;
     } catch (error) {
-        console.error(`Error fetching news by Id ${id}:`, error);
-        return [];
+        console.log(`Error fetching news by Id ${id}:`, error);
     }
+};
+
+const formatDateToThai = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long", // "long" => มกราคม, "short" => ม.ค.
+        day: "numeric",
+    });
 };
 
 
 const page = async ({ params }: { params: { id: string } }) => {
-    const newsItem = await fetchNewById(params.id);
-    console.log(newsItem);
-    
+    const { id } = await params
+    const newsItem = await fetchNewById(id);
+
+    if (!newsItem) {
+        return null;
+    }
+
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
         { label: "ข้อมูลข่าวสาร", href: "/news/news-updates" },
         { label: "ข่าวประชาสัมพันธ์", href: "/news/news-updates" },
-        { label: "ชื่อข่าวประชาสัมพันธ์ 17-1-2568", isCurrent: true },
+        { label: newsItem.title, isCurrent: true },
     ];
-
-    const news = {
-        id: 1,
-        image: [
-            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชนเปิดโครงการพัฒนาชุมชน" },
-            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" },
-            { src: 'https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg', caption: "เปิดโครงการพัฒนาชุมชน" }
-        ],
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/1",
-    }
 
     return (
         <div className="px-10 py-5 xl:px-20 xl:py-10">
@@ -54,14 +65,13 @@ const page = async ({ params }: { params: { id: string } }) => {
                 </div>
             </div>
             <div className="flex items-center pb-5 px-2 sm:px-4 md:px-5 lg:px-6 xl:px-8">
-                <AuthorInfo name={news.author} department="ผู้ช่วยนักวิชาการคอมพิวเตอร์" date="16-1-2568" />
+                <AuthorInfo name={`${newsItem.author.firstname} ${newsItem.author.lastname}`} department={newsItem.author.department} date={newsItem.createdAt} image={newsItem.author.avatar} email={newsItem.author.email} />
                 <div className="px-4">
                     <ShareButton />
                 </div>
             </div>
-            <div className="flex flex-col items-center justify-center gap-5">
-                {/* ใช้ร่วมกับ news-updates และ activities */}
-                <NewsImage images={news.image} alt={news.title} />
+            <div className="ql-editor prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
+                    <div className="[&_img]:max-w-[80%] [&_img]:h-auto [&_img]:rounded-2xl [&_img]:mx-auto" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
             </div>
         </div>
     )

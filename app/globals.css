@@ -4,7 +4,7 @@
 
 /* ปรับขนาด editor */
 .custom-quill .ql-container {
-    @apply h-[400px] rounded-b-lg border-4 border-base-content/20;
+    @apply rounded-b-lg border-4 border-base-content/20;
 }
 
 .custom-quill .ql-container.ql-snow {
@@ -28,3 +28,4 @@
 .custom-quill .ql-toolbar.ql-snow {
     @apply border border-base-content/20;
 }
+

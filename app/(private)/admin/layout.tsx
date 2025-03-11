@@ -1,5 +1,4 @@
 import Drawer from "@/features/admin/components/NavbarDrawer/Drawer"
-import 'react-quill-new/dist/quill.snow.css';
 
 // import components
 

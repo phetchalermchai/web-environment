@@ -19,7 +19,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
             where: { id },
             include: {
                 author: {
-                    select: { firstname: true, lastname: true, department: true },
+                    select: { firstname: true, lastname: true, department: true, avatar: true, email: true },
                 },
             },
         });

@@ -14,7 +14,7 @@ const fetchActivities = async () => {
             author: {
                 firstname: item.author.firstname,
                 lastname: item.author.lastname,
-                department: item.author.department
+                department: item.author.department,
             },
             createdAt: formatDateToThai(item.createdAt),
         }));
