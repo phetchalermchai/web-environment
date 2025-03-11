@@ -1,63 +1,42 @@
 import News from "@/features/users/components/News/News"
+import { NewsItems } from "@/types/publicTypes";
+import axios from "axios";
 
-const page = () => {
+const fetchNews = async () => {
+    try {
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/news`);
+        const activities = data.map((item: NewsItems) => ({
+            id: item.id,
+            title: item.title,
+            slug: item.slug,
+            description: item.description || "ไม่มีคำอธิบาย",
+            content: item.content || "ไม่มีเนื้อหาข่าวประชาสัมพันธ์",
+            image: item.image,
+            author: {
+                firstname: item.author.firstname,
+                lastname: item.author.lastname,
+                department: item.author.department
+            },
+            createdAt: formatDateToThai(item.createdAt),
+        }));
+        return activities;
+    } catch (error) {
+        console.log("Error fetching activities:", error);
+        return [];
+    }
+};
 
-  const newsData = [
-    {
-        id: 1,
-        image: "https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg",
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/1",
-    },
-    {
-        id: 2,
-        image: "https://cdn.pixabay.com/photo/2018/05/30/09/58/pollution-3441119_1280.jpg",
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/2",
-    },
-    {
-        id: 3,
-        image: "https://cdn.pixabay.com/photo/2017/09/28/21/56/leaf-2797173_1280.jpg",
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/3",
-    },
-    {
-        id: 4,
-        image: "https://cdn.pixabay.com/photo/2017/09/01/22/05/recycle-2705681_1280.jpg",
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/4",
-    },
-    {
-        id: 5,
-        image: "https://cdn.pixabay.com/photo/2013/09/17/21/33/cars-cemetry-183249_960_720.jpg",
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/5",
-    },
-    {
-        id: 6,
-        image: "https://cdn.pixabay.com/photo/2023/11/17/14/48/ai-generated-8394496_1280.jpg",
-        title: "ถังขยะรีไซเคิล (recycle)",
-        description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก แม้ขะเป็นวัสดุที่ย่อยสลายได้ยากแม้ขะเป็นวัสดุที่ย่อยสลายได้ยากแม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-        date: "Dec 12, 2024",
-        author: "เฉลิมชัย เหว่าไว",
-        link: "/news/news-updates/6",
-    },
-]
+const formatDateToThai = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long", // "long" => มกราคม, "short" => ม.ค.
+        day: "numeric",
+    });
+};
+
+const page = async () => {
+    const newsData = await fetchNews();
 
   return (
     <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={3} showPagination={true} showViewAll={false} showBreadcrumbs={true} cardType={"type1"}/>

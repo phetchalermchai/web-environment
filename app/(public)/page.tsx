@@ -6,151 +6,67 @@ import Service from "@/features/users/components/E-Service/Service";
 import Hero from "@/features/users/components/Hero/Hero";
 import News from "@/features/users/components/News/News";
 import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
+import axios from "axios";
 
 const fetchNews = async (): Promise<NewsItems[]> => {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/news`, {
-            cache: "no-store", // ป้องกันการแคชข้อมูล
-        });
-        if (!res.ok) throw new Error("Failed to fetch news");
-        return await res.json();
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/news`);
+        const activities = data.map((item: NewsItems) => ({
+            id: item.id,
+            title: item.title,
+            slug: item.slug,
+            description: item.description || "ไม่มีคำอธิบาย",
+            content: item.content || "ไม่มีเนื้อหาข่าวประชาสัมพันธ์",
+            image: item.image,
+            author: {
+                firstname: item.author.firstname,
+                lastname: item.author.lastname,
+                department: item.author.department
+            },
+            createdAt: formatDateToThai(item.createdAt),
+        }));
+        return activities;
     } catch (error) {
-        console.error("Error fetching news:", error);
+        console.log("Error fetching news:", error);
         return [];
     }
 };
 
 const fetchActivities = async (): Promise<ActivitiesItems[]> => {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/activities`, {
-            cache: "no-store",
-        });
-        if (!res.ok) throw new Error("Failed to fetch activities");
-        return await res.json();
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/activities`);
+        const activities = data.map((item: ActivitiesItems) => ({
+            id: item.id,
+            title: item.title,
+            slug: item.slug,
+            image: item.image,
+            description: item.description || "ไม่มีคำอธิบาย",
+            author: {
+                firstname: item.author.firstname,
+                lastname: item.author.lastname,
+                department: item.author.department
+            },
+            createdAt: formatDateToThai(item.createdAt),
+        }));
+        return activities;
     } catch (error) {
-        console.error("Error fetching activities:", error);
+        console.log("Error fetching activities:", error);
         return [];
     }
+};
+
+const formatDateToThai = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long", // "long" => มกราคม, "short" => ม.ค.
+        day: "numeric",
+    });
 };
 
 const page = async () => {
     const newsData = await fetchNews();
     const activitiesData = await fetchActivities();
-
-    // const newsData = [
-    //     {
-    //         id: 1,
-    //         image: "https://cdn.pixabay.com/photo/2021/11/10/07/34/rubbish-6783223_1280.jpg",
-    //         title: "ถังขยะรีไซเคิล (recycle)",
-    //         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-    //         date: "Dec 12, 2024",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/news-updates/1",
-    //     },
-    //     {
-    //         id: 2,
-    //         image: "https://cdn.pixabay.com/photo/2018/05/30/09/58/pollution-3441119_1280.jpg",
-    //         title: "ถังขยะรีไซเคิล (recycle)",
-    //         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-    //         date: "Dec 12, 2024",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/news-updates/2",
-    //     },
-    //     {
-    //         id: 3,
-    //         image: "https://cdn.pixabay.com/photo/2017/09/28/21/56/leaf-2797173_1280.jpg",
-    //         title: "ถังขยะรีไซเคิล (recycle)",
-    //         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-    //         date: "Dec 12, 2024",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/news-updates/3",
-    //     },
-    //     {
-    //         id: 4,
-    //         image: "https://cdn.pixabay.com/photo/2017/09/01/22/05/recycle-2705681_1280.jpg",
-    //         title: "ถังขยะรีไซเคิล (recycle)",
-    //         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-    //         date: "Dec 12, 2024",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/news-updates/4",
-    //     },
-    //     {
-    //         id: 5,
-    //         image: "https://cdn.pixabay.com/photo/2013/09/17/21/33/cars-cemetry-183249_960_720.jpg",
-    //         title: "ถังขยะรีไซเคิล (recycle)",
-    //         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-    //         date: "Dec 12, 2024",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/news-updates/5",
-    //     },
-    //     {
-    //         id: 6,
-    //         image: "https://cdn.pixabay.com/photo/2023/11/17/14/48/ai-generated-8394496_1280.jpg",
-    //         title: "ถังขยะรีไซเคิล (recycle)",
-    //         description: "สำหรับขยะที่นำกลับมาผลิตเพื่อใช้ใหม่ได้อีกครั้ง แม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก แม้ขะเป็นวัสดุที่ย่อยสลายได้ยากแม้ขะเป็นวัสดุที่ย่อยสลายได้ยากแม้ขะเป็นวัสดุที่ย่อยสลายได้ยาก",
-    //         date: "Dec 12, 2024",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/news-updates/6",
-    //     },
-    // ]
-
-    // const activitiesData = [
-    //     {
-    //         id: 1,
-    //         image: "/posts/สำนักสาธารณสุขและสิ่งแวดล้อม ฝ่ายส่งเสริ.png",
-    //         title: "งานจัดการมูลฝอย ส่วนบริการอนามัยสิ่งแวดล้อม",
-    //         description: "",
-    //         date: "14 มกราคม 2568",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/activities/1",
-    //     },
-    //     {
-    //         id: 2,
-    //         image: "/posts/Copy of Copy of 67-12-25.jpg",
-    //         title: "งานจัดการมูลฝอย ส่วนบริการอนามัยสิ่งแวดล้อม",
-    //         description: "",
-    //         date: "15 มกราคม 2568",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/activities/2",
-    //     },
-    //     {
-    //         id: 3,
-    //         image: "/posts/งานสุขาภิบาลสถานประกอบกิจการ-1.png",
-    //         title: "ให้บริการออกใบอนุญาต ตรวจประเมินด้านสุขาภิบาลอาหาร",
-    //         description: "",
-    //         date: "15 มกราคม 2568",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/activities/3",
-    //     },
-    //     {
-    //         id: 4,
-    //         image: "/posts/งานบริการสูบสิ่งปฏิกูล.png",
-    //         title: "ให้บริการสูบสิ่งปฏิกูล ณ วันที่ 14 มกราคม 2568",
-    //         description: "",
-    //         date: "15 มกราคม 2568",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/activities/4",
-    //     },
-    //     {
-    //         id: 5,
-    //         image: "/posts/กิจกรรมให้ความรู้เรื่องพฤติกรรมการใช้ส้วมสาธารณะที่ถูกสุขลักษณะ ในสถานศึกษา.png",
-    //         title: "กิจกรรมให้ความรู้เรื่องพฤติกรรมการใช้ส้วมสาธารณะที่ถูกสุขลักษณะ ในสถานศึกษา",
-    //         description: "",
-    //         date: "16 มกราคม 2568",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/activities/5",
-    //     },
-    //     {
-    //         id: 6,
-    //         image: "/posts/คัดกรอง NCDS เชิงรุก.jpg",
-    //         title: "กิจกรรมคัดกรอง NCDS เชิงรุก",
-    //         description: "",
-    //         date: "16 มกราคม 2568",
-    //         author: "เฉลิมชัย เหว่าไว",
-    //         link: "/news/activities/6",
-    //     },
-    // ]
-
     return (
         <>
             <Carousel />
