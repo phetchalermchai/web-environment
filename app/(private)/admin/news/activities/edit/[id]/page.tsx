@@ -38,20 +38,32 @@ const EditActivity = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // กำหนด modules ของ Quill
-  const modules = {
-    toolbar: {
-      container: [
-        [{ font: [] }],
-        [{ size: ["small", false, "large", "huge"] }],
-        [{ align: [] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ color: [] }, { background: [] }],
-        [{ script: "sub" }, { script: "super" }],
-        ["blockquote", "code-block"],
-        ["link", "image", "video"],
-        [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-        ["clean"],
-      ],
+  const Editor = {
+    modules: {
+      toolbar: {
+        container: [
+          [{ 'font': [] }],
+          [{ 'size': ['small', false, 'large', 'huge'] }],
+          [{ 'align': [] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'script': 'sub' }, { 'script': 'super' }],
+          ['blockquote', 'code-block'],
+          ['link', 'image', 'video'],
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+          ['clean'],
+        ],
+      },
+      resize: {
+        locale: {
+          alt: "Resize",
+          size: "Size",
+          lock: "Lock",
+          ratio: "Ratio",
+          mode: "Mode",
+          modeFree: "Free",
+        },
+      },
     },
   };
 
@@ -155,6 +167,16 @@ const EditActivity = () => {
     }
   }, [message]);
 
+  useEffect(() => {
+    // ดำเนินการ import quill-resize-image และลงทะเบียนโมดูลในฝั่ง client เท่านั้น
+    import("quill-resize-image").then((module) => {
+      const QuillResizeImage = module.default;
+      import("react-quill-new").then(({ Quill }) => {
+        Quill.register("modules/resize", QuillResizeImage);
+      });
+    });
+  }, []);
+
   if (isLoading) {
     return (
       <div className="flex flex-col">
@@ -236,7 +258,7 @@ const EditActivity = () => {
             setValue(content); // เก็บ HTML content สำหรับ preview
             setDescription(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
           }}
-          modules={modules}
+          modules={Editor.modules}
         />
         {errors.description && (
           <div className="label">
@@ -253,14 +275,14 @@ const EditActivity = () => {
         </Link>
       </div>
       {message && (
-                <div
-                    role="alert"
-                    className={`fixed bottom-4 right-4 shadow-lg w-80 alert alert-success ${message === "แก้ไขข้อมูลสำเร็จ!" ? "alert-success" : "alert-error"
-                        }`}
-                >
-                    <span>{message}</span>
-                </div>
-            )}
+        <div
+          role="alert"
+          className={`fixed bottom-4 right-4 shadow-lg w-80 alert alert-success ${message === "แก้ไขข้อมูลสำเร็จ!" ? "alert-success" : "alert-error"
+            }`}
+        >
+          <span>{message}</span>
+        </div>
+      )}
     </form>
   );
 };

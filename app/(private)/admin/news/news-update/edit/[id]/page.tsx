@@ -38,20 +38,25 @@ const EditNews = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     // กำหนด modules ของ Quill
-    const modules = {
-        toolbar: {
-            container: [
-                [{ font: [] }],
-                [{ size: ["small", false, "large", "huge"] }],
-                [{ align: [] }],
-                ["bold", "italic", "underline", "strike"],
-                [{ color: [] }, { background: [] }],
-                [{ script: "sub" }, { script: "super" }],
-                ["blockquote", "code-block"],
-                ["link", "image", "video"],
-                [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-                ["clean"],
-            ],
+    const Editor = {
+        modules: {
+            toolbar: {
+                container: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    [{ 'align': [] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'script': 'sub' }, { 'script': 'super' }],
+                    ['blockquote', 'code-block'],
+                    ['link', 'image', 'video'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['clean'],
+                ],
+            },
+            resize: {
+                locale: {},
+            },
         },
     };
 
@@ -155,6 +160,16 @@ const EditNews = () => {
         }
     }, [message]);
 
+    useEffect(() => {
+        // ดำเนินการ import quill-resize-image และลงทะเบียนโมดูลในฝั่ง client เท่านั้น
+        import("quill-resize-image").then((module) => {
+            const QuillResizeImage = module.default;
+            import("react-quill-new").then(({ Quill }) => {
+                Quill.register("modules/resize", QuillResizeImage);
+            });
+        });
+    }, []);
+
     if (isLoading) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
     }
@@ -237,7 +252,7 @@ const EditNews = () => {
                         setValue(content); // เก็บ HTML content สำหรับ preview
                         setContent(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
                     }}
-                    modules={modules}
+                    modules={Editor.modules}
                 />
                 {errors.content && (
                     <div className="label">

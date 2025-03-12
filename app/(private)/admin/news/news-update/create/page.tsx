@@ -30,25 +30,36 @@ const CreateNews = () => {
 
   useEffect(() => {
     setIsPageLoading(false);
+    import("quill-resize-image").then((module) => {
+      const QuillResizeImage = module.default;
+      import("react-quill-new").then(({ Quill }) => {
+        Quill.register("modules/resize", QuillResizeImage);
+      });
+    });
   }, []);
 
   // กำหนด modules ของ Quill
-  const modules = {
-    toolbar: {
-      container: [
-        [{ 'font': [] }],
-        [{ size: ['small', false, 'large', 'huge'] }],
-        [{ align: [] }],
-        ["bold", "italic", "underline", "strike"],
-        [{ color: [] }, { background: [] }],
-        [{ 'script': 'sub' }, { 'script': 'super' }],
-        ['blockquote', 'code-block'],
-        ["link", "image", "video"],
-        [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-        ["clean"],
-      ],
+  const Editor = {
+    modules: {
+        toolbar: {
+            container: [
+                [{ 'font': [] }],
+                [{ 'size': ['small', false, 'large', 'huge'] }],
+                [{ 'align': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                ['blockquote', 'code-block'],
+                ['link', 'image', 'video'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                ['clean'],
+            ],
+        },
+        resize: {
+            locale: {},
+        },
     },
-  };
+};
 
   const handleCoverImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -235,7 +246,7 @@ const CreateNews = () => {
             setValue(content); // เก็บ HTML content สำหรับ preview
             setContent(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
           }}
-          modules={modules}
+          modules={Editor.modules}
         />
         {errors.content && (
           <div className="label">
