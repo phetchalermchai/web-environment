@@ -12,10 +12,10 @@ const Table = ({ users , sort }: UserTableProps) => {
         <table className="table table-sm md:table-md">
             <thead>
                 <tr>
-                    <th><span className="inline-flex gap-1">User {sort === "Email" ? <ArrowDownIcon/> : ""}</span></th>
-                    <th><span className="inline-flex gap-1">Department {sort === "Department" ? <ArrowDownIcon/> : ""}</span></th>
-                    <th><span className="inline-flex gap-1">Created {sort === "Created" ? <ArrowDownIcon/> : ""}</span></th>
-                    <th><span className="inline-flex gap-1">Updated {sort === "Updated" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">ผู้ใช้งาน {sort === "ผู้ใช้งาน" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">ส่วนงาน {sort === "ส่วนงาน" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">วันที่สร้าง {sort === "วันที่สร้าง" ? <ArrowDownIcon/> : ""}</span></th>
+                    <th><span className="inline-flex gap-1">วันที่อัปเดต {sort === "วันที่อัปเดต" ? <ArrowDownIcon/> : ""}</span></th>
                     <th></th>
                 </tr>
             </thead>

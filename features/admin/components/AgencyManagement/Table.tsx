@@ -42,7 +42,7 @@ const Table = ({ personnel, sort, editLink, deleteApi }: PersonnelTableProps) =>
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={5} className="text-center">
+                        <td colSpan={7} className="text-center">
                             <div className="mask mask-circle bg-base-300 w-11 h-11 rounded-full flex items-center justify-center mx-auto mt-16 mb-3">
                                 <UserGroupIcon />
                             </div>

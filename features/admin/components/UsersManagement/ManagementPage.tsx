@@ -15,7 +15,7 @@ const ManagementPage = () => {
     const [loading, setLoading] = useState<boolean>(true); // loading เป็น boolean
     const [error, setError] = useState<Error | null>(null); // error เป็น Error object หรือ null
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [sort, setSort] = useState<string>("Email")
+    const [sort, setSort] = useState<string>("ผู้ใช้งาน")
 
     // ฟังก์ชันรับ query จาก SearchBar
     const handleSearch = (query: string) => {

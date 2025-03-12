@@ -1,5 +1,5 @@
 import Row from "./Row";
-import { DocumentIcon, ArrowDownIcon } from "@/config/iconConfig";
+import { NewspaperIcon, ArrowDownIcon } from "@/config/iconConfig";
 
 interface Activity {
     id: string;
@@ -42,11 +42,11 @@ const Table = ({ activities, sort, editLink, deleteApi }: ActivityTableProps) =>
                     ))
                 ) : (
                     <tr>
-                        <td colSpan={5} className="text-center">
+                        <td colSpan={6} className="text-center">
                             <div className="mask mask-circle bg-base-300 w-11 h-11 rounded-full flex items-center justify-center mx-auto mt-16 mb-3">
-                                <DocumentIcon />
+                                <NewspaperIcon />
                             </div>
-                            <p className="text-lg py-2">ไม่พบข้อมูลกิจกรรม</p>
+                            <p className="text-lg py-2">ไม่พบข้อมูลข่าวประชาสัมพันธ์</p>
                             <p className="mb-16">ลองเปลี่ยนคำค้นหาของคุณ</p>
                         </td>
                     </tr>
