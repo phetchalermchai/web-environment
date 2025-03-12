@@ -1,7 +1,10 @@
+"use client"
+import ManagementPage from "@/features/admin/components/AgencyManagement/ManagementPage"
+
 const page = () => {
   return (
-    <div>agency page</div>
+    <ManagementPage getsApi="/api/agency/personnel" createLink="/admin/agency/personnel/create" editLink="/admin/agency/personnel/edit/" deleteApi="/api/agency/personnel/delete/"/>
   )
 }
 
-export default page
+export default page 

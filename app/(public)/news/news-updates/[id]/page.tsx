@@ -71,7 +71,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                 </div>
             </div>
             <div className="ql-editor prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
-                    <div className="[&_img]:max-w-[80%] [&_img]:h-auto [&_img]:rounded-2xl [&_img]:mx-auto" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+                    <div className="[&_img]:max-w-[80%] [&_img]:h-auto [&_img]:rounded-2xl" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
             </div>
         </div>
     )

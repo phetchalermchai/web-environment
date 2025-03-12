@@ -55,7 +55,9 @@ const CreateActivity = () => {
         ],
       },
       resize: {
-        locale: {},
+        locale: {
+          altTip: "คลิกและลากเพื่อปรับขนาดภาพ",
+        },
       },
     },
   };
