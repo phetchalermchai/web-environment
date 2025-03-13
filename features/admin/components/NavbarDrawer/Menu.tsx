@@ -10,6 +10,7 @@ import {
     UserGroupIcon,
     CalendarSolidIcon,
     BanknotesIcon,
+    PhotoIcon,
     DocumentIcon,
     Chartpie
 } from "@/config/iconConfig";
@@ -23,7 +24,7 @@ const Menu = ({ role }: MenuProps) => {
     const pathname = usePathname();
     const isActive = (base: string) =>
         pathname === base || pathname.startsWith(`${base}/`) ? "active" : "";
-    
+
     return (
         <div className="flex flex-col gap-4">
             <li>
@@ -48,10 +49,26 @@ const Menu = ({ role }: MenuProps) => {
                 </Link>
             </li>
             <li>
-                <Link href={`/admin/banner`} className={isActive(`/admin/banner`)}>
-                    <BanknotesIcon />
-                    จัดการแบนเนอร์
-                </Link>
+                <details>
+                    <summary>
+                        <DocumentIcon />
+                        จัดการแบนเนอร์
+                    </summary>
+                    <ul className="py-2">
+                        <li className="py-2">
+                            <Link href={`/admin/news/news-update`} className={isActive(`/admin/news/news-update`)}>
+                                <BanknotesIcon />
+                                แบนเนอร์ส่วนที่ 1
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href={`/admin/news/activities`} className={isActive(`/admin/news/activities`)}>
+                                <PhotoIcon />
+                                แบนเนอร์ส่วนที่ 2
+                            </Link>
+                        </li>
+                    </ul>
+                </details>
             </li>
             <li>
                 <Link href={`/admin/e-service`} className={isActive(`/admin/e-service`)}>
