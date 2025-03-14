@@ -71,3 +71,24 @@ model AgencyPersonnel {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+model BannerImage {
+  id          String   @id @default(uuid())
+  title       String  // ชื่อหรือหัวข้อของแบนเนอร์
+  image       String   // URL ของรูปแบนเนอร์
+  isActive    Boolean  @default(true) // สถานะการแสดงแบนเนอร์
+  sortOrder   Int      @default(0)      // ลำดับการแสดงแบนเนอร์
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BannerVideo {
+  id          String   @id @default(uuid())
+  title       String  // ชื่อหรือหัวข้อของแบนเนอร์
+  video       String   // URL ของรูปแบนเนอร์
+  isActive    Boolean  @default(true) // สถานะการแสดงแบนเนอร์
+  sortOrder   Int      @default(0)      // ลำดับการแสดงแบนเนอร์
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
