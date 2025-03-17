@@ -7,32 +7,33 @@ import axios from "axios";
 import { uploadAvatar } from "@/features/admin/server/uploadAction";
 
 interface CreateUserFormData {
+    nametitle: string;
     firstname: string;
     lastname: string;
-    email: string;
-    password: string;
+    position: string;
+    positionname: string;
     department: string;
-    role: "USER" | "SUPERUSER";
     avatar: string;
 }
 
 interface FormErrors {
+    nametitle?: string;
     firstname?: string;
     lastname?: string;
-    email?: string;
-    password?: string;
+    position?: string;
+    positionname?: string;
     department?: string;
     avatar?: string;
 }
 
 const page = () => {
     const [formData, setFormData] = useState<CreateUserFormData>({
+        nametitle: "",
         firstname: "",
         lastname: "",
-        email: "",
-        password: "",
+        position: "",
+        positionname: "",
         department: "",
-        role: "USER",
         avatar: "",
     });
     const [errors, setErrors] = useState<FormErrors>({});
@@ -44,6 +45,10 @@ const page = () => {
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
 
+        if (!formData.nametitle.trim()) {
+            newErrors.nametitle = "กรุณาระบุคำนำหน้า";
+        }
+
         if (!formData.firstname.trim()) {
             newErrors.firstname = "กรุณาระบุชื่อ";
         }
@@ -52,28 +57,16 @@ const page = () => {
             newErrors.lastname = "กรุณาระบุนามสกุล";
         }
 
-        if (!formData.email.trim()) {
-            newErrors.email = "กรุณาระบุอีเมล";
-        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-            newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
+        if (!formData.position.trim()) {
+            newErrors.position = "กรุณาระบุตำแหน่ง";
         }
 
-        if (!formData.password) {
-            newErrors.password = "กรุณาระบุพาสเวิร์ด";
-        } else if (formData.password.length < 12) {
-            newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
-        } else if (
-            !/(?=.*[A-Z])/.test(formData.password) ||
-            !/(?=.*[a-z])/.test(formData.password) ||
-            !/(?=.*\d)/.test(formData.password) ||
-            !/(?=.*[@$!%*?&#])/.test(formData.password)
-        ) {
-            newErrors.password =
-                "รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และอักขระพิเศษ";
+        if (!formData.positionname.trim()) {
+            newErrors.positionname = "กรุณาระบุชื่อตำแหน่ง";
         }
 
         if (!formData.department.trim()) {
-            newErrors.department = "กรุณาระบุแผนกงาน";
+            newErrors.department = "กรุณาระบุส่วนงาน";
         }
 
         if (file && !["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
@@ -155,15 +148,15 @@ const page = () => {
                 },
             });
 
-            setMessage("สร้างผู้ใช้สำเร็จแล้ว");
+            setMessage("สร้างบุคลากรสำเร็จแล้ว");
             // Reset ฟอร์ม
             setFormData({
+                nametitle: "",
                 firstname: "",
                 lastname: "",
-                email: "",
-                password: "",
+                position: "",
+                positionname: "",
                 department: "",
-                role: "USER",
                 avatar: "",
             });
             window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
@@ -234,7 +227,7 @@ const page = () => {
                         <input
                             type="text"
                             name="firstname"
-                            placeholder="ตัวอย่าง เทศบาล"
+                            placeholder="ตัวอย่าง นาย, นาง, นางสาว"
                             value={formData.firstname}
                             onChange={handleChange}
                             className={`input input-bordered ${errors.firstname ? "input-error" : ""}`} />
@@ -284,16 +277,15 @@ const page = () => {
                         <div className="label">
                             <span className="label-text">ตำแหน่ง</span>
                         </div>
-                        <input
-                            type="text"
-                            name="email"
-                            placeholder="ตัวอย่าง Abc123@gmail.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={`input input-bordered ${errors.email ? "input-error" : ""}`} />
-                        {errors.email && (
+                        <select className="select select-bordered" value={formData.position} onChange={handleChange} name="position">
+                            <option disabled selected value="" hidden>กรุณาเลือกตำแหน่ง</option>
+                            <option value="ผู้อำนวยการสำนัก">ผู้อำนวยการสำนัก</option>
+                            <option value="ผู้อำนวยการส่วน">ผู้อำนวยการส่วน</option>
+                            <option value="หัวหน้าฝ่าย">หัวหน้าฝ่าย</option>
+                        </select>
+                        {errors.position && (
                             <div className="label">
-                                <span className="label-text-alt text-error">{errors.email}</span>
+                                <span className="label-text-alt text-error">{errors.position}</span>
                             </div>
                         )}
                     </label>
@@ -302,40 +294,42 @@ const page = () => {
                             <span className="label-text">ชื่อตำแหน่ง</span>
                         </div>
                         <input
-                            type="password"
-                            name="password"
-                            placeholder="ตัวอย่าง Abc123456789@"
-                            value={formData.password}
+                            type="text"
+                            name="positionName"
+                            placeholder="ตัวอย่าง ผู้อำนวยการส่วนส่งเสริมสาธารณสุข"
+                            value={formData.positionname}
                             onChange={handleChange}
-                            className={`input input-bordered ${errors.password ? "input-error" : ""}`} />
-                        {errors.password && (
+                            className={`input input-bordered ${errors.positionname ? "input-error" : ""}`} />
+                        {errors.positionname && (
                             <div className="label">
-                                <span className="label-text-alt text-error">{errors.password}</span>
+                                <span className="label-text-alt text-error">{errors.positionname}</span>
                             </div>
                         )}
                     </label>
                     <label className="form-control">
                         <div className="label">
-                            <span className="label-text">แผนก</span>
+                            <span className="label-text">ส่วนงาน</span>
                         </div>
-                        <select
-                            name="role"
-                            value={formData.role}
+                        <input
+                            type="text"
+                            name="department"
+                            placeholder="ตัวอย่าง ส่วนบริการอนามัยสิ่งแวดล้อม"
+                            value={formData.department}
                             onChange={handleChange}
-                            className="select select-bordered"
-                        >
-                            <option value="USER">User</option>
-                            <option value="SUPERUSER">Superuser</option>
-                        </select>
+                            className={`input input-bordered ${errors.department ? "input-error" : ""}`} />
+                        {errors.department && (
+                            <div className="label">
+                                <span className="label-text-alt text-error">{errors.department}</span>
+                            </div>
+                        )}
                     </label>
-
                 </div>
 
             </div>
             <div className="flex flex-col bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
                 <label className="form-control">
                     <div className="label">
-                        <span className="label-text">รูปโปรไฟล์</span>
+                        <span className="label-text">รูปบุคลากร</span>
                     </div>
                     <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
                     {fileUrl && (
