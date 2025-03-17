@@ -1,7 +1,7 @@
 
 const page = () => {
   return (
-    <div>banner page</div>
+    <div>banner image page</div>
   )
 }
 
