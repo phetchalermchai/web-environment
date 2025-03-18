@@ -30,7 +30,7 @@ const Row = ({ personnel, editLink, deleteApi }: PersonnelRowProps) => {
     const handleDelete = async () => {
         setDeleting(true);
         try {
-            await axios.delete(`/api/news/delete/${personnel.id}`);
+            await axios.delete(`/api/agency/personnel/delete/${personnel.id}`);
             window.location.reload();
         } catch (error: any) {
             setMessage(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบข้อมูลบุคลากร");
@@ -63,7 +63,7 @@ const Row = ({ personnel, editLink, deleteApi }: PersonnelRowProps) => {
                         <EllipsisHorizontalIcon />
                     </div>
                     <div tabIndex={0} className="dropdown-content card card-compact bg-base-100 rounded-lg z-[1] w-52 p-2 shadow">
-                        <Link href={`/admin/news/news-update/edit/${personnel.id}`} className='btn btn-ghost btn-sm'>
+                        <Link href={`/admin/agency/personnel/edit/${personnel.id}`} className='btn btn-ghost btn-sm'>
                             แก้ไขบุคลากร
                         </Link>
                         <button

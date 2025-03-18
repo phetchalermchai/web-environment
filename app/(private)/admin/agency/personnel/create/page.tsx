@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { uploadAvatar } from "@/features/admin/server/uploadAction";
 
 interface CreateUserFormData {
     nametitle: string;
@@ -13,7 +12,7 @@ interface CreateUserFormData {
     position: string;
     positionname: string;
     department: string;
-    avatar: string;
+    image: string;
 }
 
 interface FormErrors {
@@ -23,7 +22,7 @@ interface FormErrors {
     position?: string;
     positionname?: string;
     department?: string;
-    avatar?: string;
+    image?: string;
 }
 
 const page = () => {
@@ -34,7 +33,7 @@ const page = () => {
         position: "",
         positionname: "",
         department: "",
-        avatar: "",
+        image: "",
     });
     const [errors, setErrors] = useState<FormErrors>({});
     const [loading, setLoading] = useState(false);
@@ -50,7 +49,7 @@ const page = () => {
         }
 
         if (!formData.firstname.trim()) {
-            newErrors.firstname = "กรุณาระบุชื่อ";
+            newErrors.firstname = "กรุณาระบุชื่อจริง";
         }
 
         if (!formData.lastname.trim()) {
@@ -69,12 +68,13 @@ const page = () => {
             newErrors.department = "กรุณาระบุส่วนงาน";
         }
 
-        if (file && !["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-            newErrors.avatar = "ไฟล์ต้องเป็นรูปภาพประเภท .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
+        if (!file) {
+            newErrors.image = "กรุณาอัปโหลดรูปภาพ";
         }
-        //  else if (!file) {
-        //     newErrors.avatar = "กรุณาอัพโหลดรูปภาพต้องมีนามสกุล .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
-        // }
+
+        if (file && !["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+            newErrors.image = "ไฟล์ต้องเป็นรูปภาพประเภท .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -122,30 +122,21 @@ const page = () => {
         }
 
         try {
-            let avatarUrl = formData.avatar;
 
+            const formDataUpload = new FormData();
+            formDataUpload.append("nameTitle", formData.nametitle);
+            formDataUpload.append("firstName", formData.firstname);
+            formDataUpload.append("lastName", formData.lastname);
+            formDataUpload.append("position", formData.position);
+            formDataUpload.append("positionName", formData.positionname);
+            formDataUpload.append("department", formData.department);
+    
             if (file) {
-                // อัปโหลดรูปภาพก่อนสร้างผู้ใช้
-                const uniqueFilename = `${Date.now()}-${file.name}`;
-                const formDataUpload = new FormData();
-                formDataUpload.append("file", file);
-                formDataUpload.append("filename", uniqueFilename);
-
-                // เรียกใช้งาน server action อัปโหลดไฟล์
-                await uploadAvatar(formDataUpload);
-
-                // สร้าง URL สำหรับรูปภาพที่อัปโหลด
-                avatarUrl = `/uploads/avatar/${uniqueFilename}`;
+                formDataUpload.append("coverImage", file);
             }
-
-            // สร้าง payload ใหม่โดยรวม avatarUrl ที่อัปโหลดแล้ว
-            const payload = { ...formData, avatar: avatarUrl };
-
-            // ส่งข้อมูลไปยัง API route ที่จะสร้างผู้ใช้งานใหม่
-            await axios.post("/api/superuser/create-user", payload, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            
+            await axios.post("/api/agency/personnel/create", formDataUpload, {
+                headers: { "Content-Type": "multipart/form-data" },
             });
 
             setMessage("สร้างบุคลากรสำเร็จแล้ว");
@@ -157,11 +148,10 @@ const page = () => {
                 position: "",
                 positionname: "",
                 department: "",
-                avatar: "",
+                image: "",
             });
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/agency/personnel`;
         } catch (error: any) {
-            // หากเกิด error, ตรวจสอบ error.response.data.error จาก axios
             if (error.response && error.response.data && error.response.data.error) {
                 setMessage(error.response.data.error);
             } else {
@@ -226,14 +216,15 @@ const page = () => {
                         </div>
                         <input
                             type="text"
-                            name="firstname"
+                            name="nametitle"
                             placeholder="ตัวอย่าง นาย, นาง, นางสาว"
-                            value={formData.firstname}
+                            value={formData.nametitle}
                             onChange={handleChange}
-                            className={`input input-bordered ${errors.firstname ? "input-error" : ""}`} />
-                        {errors.firstname && (
+                            className={`input input-bordered ${errors.nametitle ? "input-error" : ""}`}
+                        />
+                        {errors.nametitle && (
                             <div className="label">
-                                <span className="label-text-alt text-error">{errors.firstname}</span>
+                                <span className="label-text-alt text-error">{errors.nametitle}</span>
                             </div>
                         )}
                     </label>
@@ -243,14 +234,15 @@ const page = () => {
                         </div>
                         <input
                             type="text"
-                            name="lastname"
-                            placeholder="ตัวอย่าง นครนนทบุรี"
-                            value={formData.lastname}
+                            name="firstname"
+                            placeholder="ตัวอย่าง ชื่อจริง"
+                            value={formData.firstname}
                             onChange={handleChange}
-                            className={`input input-bordered ${errors.lastname ? "input-error" : ""}`} />
-                        {errors.lastname && (
+                            className={`input input-bordered ${errors.firstname ? "input-error" : ""}`}
+                        />
+                        {errors.firstname && (
                             <div className="label">
-                                <span className="label-text-alt text-error">{errors.lastname}</span>
+                                <span className="label-text-alt text-error">{errors.firstname}</span>
                             </div>
                         )}
                     </label>
@@ -260,14 +252,15 @@ const page = () => {
                         </div>
                         <input
                             type="text"
-                            name="department"
-                            placeholder="ตัวอย่าง งานบริหารจัดการมูลฝอย"
-                            value={formData.department}
+                            name="lastname"
+                            placeholder="ตัวอย่าง นามสกุล"
+                            value={formData.lastname}
                             onChange={handleChange}
-                            className={`input input-bordered ${errors.department ? "input-error" : ""}`} />
-                        {errors.department && (
+                            className={`input input-bordered ${errors.lastname ? "input-error" : ""}`}
+                        />
+                        {errors.lastname && (
                             <div className="label">
-                                <span className="label-text-alt text-error">{errors.department}</span>
+                                <span className="label-text-alt text-error">{errors.lastname}</span>
                             </div>
                         )}
                     </label>
@@ -277,8 +270,8 @@ const page = () => {
                         <div className="label">
                             <span className="label-text">ตำแหน่ง</span>
                         </div>
-                        <select className="select select-bordered" value={formData.position} onChange={handleChange} name="position">
-                            <option disabled selected value="" hidden>กรุณาเลือกตำแหน่ง</option>
+                        <select className={`select select-bordered ${errors.position ? "select-error" : ""}`} value={formData.position} onChange={handleChange} name="position">
+                            <option value="" disabled hidden>กรุณาเลือกตำแหน่ง</option>
                             <option value="ผู้อำนวยการสำนัก">ผู้อำนวยการสำนัก</option>
                             <option value="ผู้อำนวยการส่วน">ผู้อำนวยการส่วน</option>
                             <option value="หัวหน้าฝ่าย">หัวหน้าฝ่าย</option>
@@ -295,11 +288,12 @@ const page = () => {
                         </div>
                         <input
                             type="text"
-                            name="positionName"
+                            name="positionname"
                             placeholder="ตัวอย่าง ผู้อำนวยการส่วนส่งเสริมสาธารณสุข"
                             value={formData.positionname}
                             onChange={handleChange}
-                            className={`input input-bordered ${errors.positionname ? "input-error" : ""}`} />
+                            className={`input input-bordered ${errors.positionname ? "input-error" : ""}`}
+                        />
                         {errors.positionname && (
                             <div className="label">
                                 <span className="label-text-alt text-error">{errors.positionname}</span>
@@ -316,7 +310,8 @@ const page = () => {
                             placeholder="ตัวอย่าง ส่วนบริการอนามัยสิ่งแวดล้อม"
                             value={formData.department}
                             onChange={handleChange}
-                            className={`input input-bordered ${errors.department ? "input-error" : ""}`} />
+                            className={`input input-bordered ${errors.department ? "input-error" : ""}`}
+                        />
                         {errors.department && (
                             <div className="label">
                                 <span className="label-text-alt text-error">{errors.department}</span>
@@ -324,14 +319,13 @@ const page = () => {
                         )}
                     </label>
                 </div>
-
             </div>
             <div className="flex flex-col bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
                 <label className="form-control">
                     <div className="label">
                         <span className="label-text">รูปบุคลากร</span>
                     </div>
-                    <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
+                    <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.image ? "file-input-error" : ""}`} />
                     {fileUrl && (
                         <Image
                             src={fileUrl}
@@ -342,7 +336,7 @@ const page = () => {
                         />
                     )}
                     <div className="label">
-                        <span className="label-text-alt text-error">{errors.avatar}</span>
+                        <span className="label-text-alt text-error">{errors.image}</span>
                     </div>
                 </label>
             </div>
@@ -350,12 +344,12 @@ const page = () => {
                 <button type="submit" className="btn btn-success" disabled={loading}>
                     {loading ? "กำลังดำเนินการ..." : "ยืนยัน"}
                 </button>
-                <Link href={`/admin/users`} className="btn btn-error">ยกเลิก</Link>
+                <Link href="/admin/agency/personnel" className="btn btn-error">ยกเลิก</Link>
             </div>
             {
                 message && <div
                     role="alert"
-                    className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างผู้ใช้สำเร็จแล้ว" ? "alert-success" : "alert-error"
+                    className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างบุคลากรสำเร็จแล้ว" ? "alert-success" : "alert-error"
                         }`}
                 >
                     <span>{message}</span>
