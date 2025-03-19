@@ -29,7 +29,8 @@ export async function GET(
       select: {
         id: true,
         title: true,
-        image: true,
+        imageMobile: true,
+        imageDesktop: true,
         isActive: true,
         sortOrder: true,
         createdAt: true,

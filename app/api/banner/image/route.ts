@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         title: true,
-        image: true,
+        imageMobile: true,
+        imageDesktop: true,
         isActive: true,
         sortOrder: true,
         createdAt: true,

@@ -15,6 +15,8 @@ const TitleBar = () => {
         "news/activities/create": "สร้างกิจกรรมใหม่",
         "news/activities/edit": "แก้ไขกิจกรรมสำนัก",
         "agency/personnel": "บุคลากร",
+        "agency/personnel/create": "สร้างบุคลากรใหม่",
+        "agency/personnel/edit": "แก้ไขข้อมูลบุคลากร",
         "users": "จัดการระบบผู้ใช้งาน",
         "users/create": "สร้างบัญชีผู้ใช้ใหม่",
         "users/edit": "แก้ไขบัญชีผู้ใช้งาน",

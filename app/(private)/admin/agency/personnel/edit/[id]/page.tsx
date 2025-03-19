@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 
 interface CreateUserFormData {
@@ -26,6 +27,8 @@ interface FormErrors {
 }
 
 const page = () => {
+  const router = useRouter();
+  const { id } = useParams();
   const [formData, setFormData] = useState<CreateUserFormData>({
     nametitle: "",
     firstname: "",
@@ -40,6 +43,39 @@ const page = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
+
+  useEffect(() => {
+    const fetchPersonnel = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/agency/personnel/${id}`
+        );
+        // สมมุติว่า API ส่งกลับข้อมูลในรูปแบบ { personnel: { ... } }
+        const personnel = res.data;
+        if (personnel) {
+          setFormData({
+            nametitle: personnel.nameTitle || "",
+            firstname: personnel.firstName || "",
+            lastname: personnel.lastName || "",
+            position: personnel.position || "",
+            positionname: personnel.positionName || "",
+            department: personnel.department || "",
+            image: personnel.image || "",
+          });
+          setFileUrl(personnel.image || "");
+        }
+      } catch (error: any) {
+        setMessage("เกิดข้อผิดพลาดในการดึงข้อมูล");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchPersonnel();
+    }
+  }, [id]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -62,9 +98,7 @@ const page = () => {
     if (!formData.department.trim()) {
       newErrors.department = "กรุณาระบุส่วนงาน";
     }
-    if (!file) {
-      newErrors.image = "กรุณาอัปโหลดรูปภาพ";
-    }
+
     if (file && !["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
       newErrors.image = "ไฟล์ต้องเป็นรูปภาพประเภท .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
     }
@@ -128,11 +162,11 @@ const page = () => {
         formDataUpload.append("coverImage", file);
       }
 
-      await axios.post("/api/agency/personnel/create", formDataUpload, {
+      await axios.put(`/api/agency/personnel/edit/${id}`, formDataUpload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setMessage("สร้างบุคลากรสำเร็จแล้ว");
+      setMessage("แก้ไขบุคลากรสำเร็จแล้ว");
       // Reset ฟอร์ม
       setFormData({
         nametitle: "",
@@ -143,7 +177,8 @@ const page = () => {
         department: "",
         image: "",
       });
-      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/agency/personnel`;
+      // window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/agency/personnel`;
+      router.push(`${process.env.NEXT_PUBLIC_API_URL}/admin/agency/personnel`);
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
@@ -163,7 +198,6 @@ const page = () => {
       return () => clearTimeout(timer);
     }
   }, [message]);
-
 
   if (loading) {
     return (
@@ -336,14 +370,14 @@ const page = () => {
       </div>
       <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
         <button type="submit" className="btn btn-success" disabled={loading}>
-          {loading ? "กำลังดำเนินการ..." : "ยืนยัน"}
+          {loading ? "กำลังดำเนินการ..." : "แก้ไข"}
         </button>
         <Link href="/admin/agency/personnel" className="btn btn-error">ยกเลิก</Link>
       </div>
       {
         message && <div
           role="alert"
-          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างบุคลากรสำเร็จแล้ว" ? "alert-success" : "alert-error"
+          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "แก้ไขบุคลากรสำเร็จแล้ว" ? "alert-success" : "alert-error"
             }`}
         >
           <span>{message}</span>

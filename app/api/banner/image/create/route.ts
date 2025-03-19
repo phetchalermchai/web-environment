@@ -41,37 +41,53 @@ export async function POST(req: NextRequest) {
     // รับข้อมูลจาก FormData (multipart/form-data)
     const form = await req.formData();
     const title = form.get("title") as string;
-    const coverImageFile = form.get("coverImage") as File;
+    const coverImageDesktopFile = form.get("coverImageDesktop") as File;
+    const coverImageMobileFile = form.get("coverMobileDesktop") as File;
 
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!title || !coverImageFile) {
+    if (!title || !coverImageDesktopFile) {
       return NextResponse.json(
-        { error: "Missing required fields: title and coverImage" },
+        { error: "Missing required fields: title and coverImageDesktop" },
         { status: 400 }
       );
     }
 
     // สร้าง random folder สำหรับแบนเนอร์นี้
     const bannerFolder = uuidv4();
-    let imageUrl = "";
-    if (coverImageFile) {
+    let imageDesktopUrl = "";
+    if (coverImageDesktopFile) {
       // ดึง extension จากชื่อไฟล์ เช่น .jpg, .png
-      const originalName = coverImageFile.name;
+      const originalName = coverImageDesktopFile.name;
       const ext = path.extname(originalName);
       const baseName = path.basename(originalName, ext);
       // ใช้ slugify เพื่อแปลงชื่อไฟล์ให้ปลอดภัย (ไม่เป็นภาษาไทย)
       const safeBaseName = slugify(baseName, { lower: true, strict: true });
       const filename = `${Date.now()}-${safeBaseName}${ext}`;
-      const buffer = Buffer.from(await coverImageFile.arrayBuffer());
+      const buffer = Buffer.from(await coverImageDesktopFile.arrayBuffer());
       // บันทึกไฟล์รูปภาพลงในโฟลเดอร์ "cover" ภายใน bannerFolder
-      imageUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+      imageDesktopUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+    }
+
+    let imageMobileUrl = "";
+    if (coverImageMobileFile) {
+      // ดึง extension จากชื่อไฟล์ เช่น .jpg, .png
+      const originalName = coverImageMobileFile.name;
+      const ext = path.extname(originalName);
+      const baseName = path.basename(originalName, ext);
+      // ใช้ slugify เพื่อแปลงชื่อไฟล์ให้ปลอดภัย (ไม่เป็นภาษาไทย)
+      const safeBaseName = slugify(baseName, { lower: true, strict: true });
+      const filename = `${Date.now()}-${safeBaseName}${ext}`;
+      const buffer = Buffer.from(await coverImageMobileFile.arrayBuffer());
+      // บันทึกไฟล์รูปภาพลงในโฟลเดอร์ "cover" ภายใน bannerFolder
+      imageMobileUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
     }
 
     // สร้าง record ใหม่ในฐานข้อมูลสำหรับแบนเนอร์
     const newBanner = await prisma.bannerImage.create({
       data: {
         title,
-        image: imageUrl,
+        imageMobile: imageMobileUrl,
+        imageDesktop: imageDesktopUrl,
       },
     });
 

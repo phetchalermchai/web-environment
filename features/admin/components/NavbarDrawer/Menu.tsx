@@ -56,13 +56,13 @@ const Menu = ({ role }: MenuProps) => {
                     </summary>
                     <ul className="py-2">
                         <li className="py-2">
-                            <Link href={`/admin/news/news-update`} className={isActive(`/admin/news/news-update`)}>
+                            <Link href={`/admin/banner/video`} className={isActive(`/admin/banner/video`)}>
                                 <BanknotesIcon />
                                 แบนเนอร์ส่วนที่ 1
                             </Link>
                         </li>
                         <li>
-                            <Link href={`/admin/news/activities`} className={isActive(`/admin/news/activities`)}>
+                            <Link href={`/admin/banner/image`} className={isActive(`/admin/banner/image`)}>
                                 <PhotoIcon />
                                 แบนเนอร์ส่วนที่ 2
                             </Link>

@@ -84,9 +84,9 @@ export async function PUT(
         const coverImageFile = form.get("coverImage") as File;
 
         // ตรวจสอบความถูกต้องของข้อมูลที่จำเป็น
-        if (!nameTitle || !firstName || !lastName || !position || !positionName || !department || !coverImageFile) {
+        if (!nameTitle || !firstName || !lastName || !position || !positionName || !department) {
             return NextResponse.json(
-                { error: "Missing required fields: nameTitle, firstName, lastName, position, positionName, department, image" },
+                { error: "Missing required fields: nameTitle, firstName, lastName, position, positionName, department" },
                 { status: 400 }
             );
         }
