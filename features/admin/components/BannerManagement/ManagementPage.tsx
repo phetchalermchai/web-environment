@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
 import Image from "next/image"
 import Link from "next/link";
+import BannerGrid from "./BannerGrid"
 
 interface BannerImage {
     id: string;
@@ -93,6 +94,23 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
         setSearchQuery(query);
     };
 
+    const handleDelete = async (id: string) => {
+        try {
+          await axios.delete(`/api/banner/image/${id}`);
+        } catch (err: any) {
+          console.error("Delete error", err);
+        }
+      };
+    
+      const handleToggleActive = async (id: string, newStatus: boolean) => {
+        try {
+          // เรียก API เพื่อ toggle active (คุณอาจต้องสร้าง endpoint สำหรับนี้)
+          await axios.put(`/api/banner/image/create/${id}`, { isActive: newStatus });
+        } catch (err: any) {
+          console.error("Toggle active error", err);
+        }
+      };
+
     if (loading) {
         return (
             <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
@@ -125,16 +143,16 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
 
     return (
 
-        <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
+        <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col bg-base-100 rounded-lg shadow">
             <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                     <SearchBar onSearch={handleSearch} />
                     <SortDropdown onSort={handleSort} />
                 </div>
-                <CreateButton createLink={createLink}/>
             </div>
             <div className="overflow-x-auto mt-6 grow">
-                <Table bannerImage={sortedFilteredBanner} sort={sort} editLink={editLink} deleteApi={deleteApi}/>
+                {/* <Table bannerImage={sortedFilteredBanner} sort={sort} editLink={editLink} deleteApi={deleteApi}/> */}
+                <BannerGrid banners={sortedFilteredBanner} onDelete={handleDelete} onToggleActive={handleToggleActive}/>
             </div>
         </div>
     )

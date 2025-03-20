@@ -59,3 +59,15 @@ export interface ActivityItem {
     };
     createdAt: string;
 }
+
+export interface BannerImage {
+    id: string;
+    title: string;
+    imageMobile: string;
+    imageDesktop: string;
+    isActive: string;
+    sortOrder: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+  

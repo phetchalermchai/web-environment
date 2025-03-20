@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     const form = await req.formData();
     const title = form.get("title") as string;
     const coverImageDesktopFile = form.get("coverImageDesktop") as File;
-    const coverImageMobileFile = form.get("coverMobileDesktop") as File;
+    const coverImageMobileFile = form.get("coverImageMobile") as File;
 
     // ตรวจสอบข้อมูลที่จำเป็น
     if (!title || !coverImageDesktopFile) {
