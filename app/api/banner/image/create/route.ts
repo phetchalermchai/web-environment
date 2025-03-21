@@ -38,9 +38,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ตรวจสอบจำนวน banner ที่มีอยู่ ถ้ามากกว่า หรือเท่ากับ 6 ไม่อนุญาตให้สร้างเพิ่ม
+    const currentCount = await prisma.bannerImage.count();
+    if (currentCount >= 6) {
+      return NextResponse.json({ error: "Cannot create more than 6 banner cards" }, { status: 400 });
+    }
+
     // รับข้อมูลจาก FormData (multipart/form-data)
     const form = await req.formData();
     const title = form.get("title") as string;
+    const sortOrder = form.get("sortOrder") as string;
     const coverImageDesktopFile = form.get("coverImageDesktop") as File;
     const coverImageMobileFile = form.get("coverImageMobile") as File;
 

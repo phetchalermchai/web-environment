@@ -26,7 +26,7 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [sort, setSort] = useState<string>("ชื่อ-นามสกุล");
+    const [sort, setSort] = useState<string>("ลำดับแบนเนอร์");
 
     useEffect(() => {
         const loadBanner = async () => {
@@ -68,14 +68,8 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
             case "ชื่อแบนเนอร์":
                 sorted.sort((a, b) => a.title.localeCompare(b.title));
                 break;
-            case "สถานะการแสดง":
-                sorted.sort((a, b) => (a.isActive || "").localeCompare(b.isActive || ""));
-                break;
-            case "ลำดับการแสดง":
-                sorted.sort((a, b) => (a.sortOrder || "").localeCompare(b.sortOrder || ""));
-                break;
-            case "วันที่สร้าง":
-                sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            case "ลำดับแบนเนอร์":
+                sorted.sort((a, b) => (String(a.sortOrder)).localeCompare(String(b.sortOrder)));
                 break;
             case "วันที่อัปเดต":
                 sorted.sort((a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime());
@@ -152,7 +146,7 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
             </div>
             <div className="overflow-x-auto mt-6 grow">
                 {/* <Table bannerImage={sortedFilteredBanner} sort={sort} editLink={editLink} deleteApi={deleteApi}/> */}
-                <BannerGrid banners={sortedFilteredBanner} onDelete={handleDelete} onToggleActive={handleToggleActive}/>
+                <BannerGrid banners={sortedFilteredBanner} onDelete={handleDelete}/>
             </div>
         </div>
     )

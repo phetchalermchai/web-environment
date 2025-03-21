@@ -7,7 +7,7 @@ interface SortDropdownProps {
 
 const SortDropdown = ({ onSort }: SortDropdownProps) => {
 
-    const [sortOption, setSortOption] = useState("ชื่อ-นามสกุล");
+    const [sortOption, setSortOption] = useState("ลำดับแบนเนอร์");
 
     const handleSortChange = (option: string) => {
         setSortOption(option);
@@ -22,19 +22,10 @@ const SortDropdown = ({ onSort }: SortDropdownProps) => {
             </div>
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li>
-                    <button onClick={() => handleSortChange("ชื่อ-นามสกุล")}>ชื่อ-นามสกุล</button>
+                    <button onClick={() => handleSortChange("ลำดับแบนเนอร์")}>ลำดับแบนเนอร์</button>
                 </li>
                 <li>
-                    <button onClick={() => handleSortChange("ตำแหน่ง")}>ตำแหน่ง</button>
-                </li>
-                <li>
-                    <button onClick={() => handleSortChange("ชื่อตำแหน่ง")}>ชื่อตำแหน่ง</button>
-                </li>
-                <li>
-                    <button onClick={() => handleSortChange("ส่วนงาน")}>ส่วนงาน</button>
-                </li>
-                <li>
-                    <button onClick={() => handleSortChange("วันที่สร้าง")}>วันที่สร้าง</button>
+                    <button onClick={() => handleSortChange("ชื่อแบนเนอร์")}>ชื่อแบนเนอร์</button>
                 </li>
                 <li>
                     <button onClick={() => handleSortChange("วันที่อัปเดต")}>วันที่อัปเดต</button>
