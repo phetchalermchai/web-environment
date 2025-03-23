@@ -78,7 +78,7 @@ model BannerImage {
   imageMobile       String   // URL ของรูปแบนเนอร์
   imageDesktop       String   // URL ของรูปแบนเนอร์
   isActive    Boolean  @default(true) // สถานะการแสดงแบนเนอร์
-  sortOrder   Int      @default(0)      // ลำดับการแสดงแบนเนอร์
+  sortOrder   Int      @default(1)      // ลำดับการแสดงแบนเนอร์
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

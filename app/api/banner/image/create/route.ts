@@ -59,6 +59,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ตรวจสอบ sortOrder ว่าเป็นตัวเลขและอยู่ในช่วง 1 ถึง 6
+    if (typeof Number(sortOrder) !== "number" || Number(sortOrder) < 1 || Number(sortOrder) > 6) {
+      return NextResponse.json({ error: "Sort Order ต้องเป็นตัวเลขระหว่าง 1 ถึง 6" }, { status: 400 });
+    }
+
+    // ตรวจสอบว่า sortOrder นี้ถูกใช้ไปแล้วหรือไม่
+    const count = await prisma.bannerImage.count({
+      where: { sortOrder: Number(sortOrder) },
+    });
+    if (count > 0) {
+      return NextResponse.json({ error: "Sort Order นี้ถูกใช้งานไปแล้ว" }, { status: 400 });
+    }
+
     // สร้าง random folder สำหรับแบนเนอร์นี้
     const bannerFolder = uuidv4();
     let imageDesktopUrl = "";
@@ -95,6 +108,7 @@ export async function POST(req: NextRequest) {
         title,
         imageMobile: imageMobileUrl,
         imageDesktop: imageDesktopUrl,
+        sortOrder: sortOrder ? Number(sortOrder) : 1,
       },
     });
 
