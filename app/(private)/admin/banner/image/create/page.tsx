@@ -8,6 +8,7 @@ import axios from "axios";
 interface CreateBannerFormData {
   title: string;
   sortOrder: number; // 1 to 6
+  isActive: string;
   imageMobile: string;
   imageDesktop: string;
 }
@@ -15,6 +16,7 @@ interface CreateBannerFormData {
 interface FormErrors {
   title?: string;
   sortOrder?: string;
+  isActive?: string;
   imageMobile?: string;
   imageDesktop?: string;
 }
@@ -23,6 +25,7 @@ const page = () => {
   const [formData, setFormData] = useState<CreateBannerFormData>({
     title: "",
     sortOrder: 0,
+    isActive: "",
     imageMobile: "",
     imageDesktop: "",
   });
@@ -73,6 +76,10 @@ const page = () => {
 
     if (!formData.sortOrder || formData.sortOrder <= 0) {
       newErrors.sortOrder = "กรุณาระบุลำดับแบนเนอร์";
+    }
+
+    if (!formData.isActive) {
+      newErrors.isActive = "กรุณาระบุสถานะแบนเนอร์";
     }
 
     if (!imageMobileFile) {
@@ -164,6 +171,7 @@ const page = () => {
       const formDataUpload = new FormData();
       formDataUpload.append("title", formData.title);
       formDataUpload.append("sortOrder", formData.sortOrder.toString());
+      formDataUpload.append("isActive", formData.isActive);
       if (imageMobileFile) {
         formDataUpload.append("coverImageMobile", imageMobileFile);
       }
@@ -171,15 +179,21 @@ const page = () => {
         formDataUpload.append("coverImageDesktop", imageDesktopFile);
       }
 
-      await axios.post("/api/banner/image/create", formDataUpload, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      // await axios.post("/api/banner/image/create", formDataUpload, {
+      //   headers: { "Content-Type": "multipart/form-data" },
+      // });
+      console.log("title", formDataUpload.get("title"));
+      console.log("sortOrder", formDataUpload.get("sortOrder"));
+      console.log("isActive", formDataUpload.get("isActive"));
+      console.log("coverImageMobile", formDataUpload.get("coverImageMobile"));
+      console.log("coverImageDesktop", formDataUpload.get("coverImageDesktop"));
 
       setMessage("สร้างแบนเนอร์สำเร็จแล้ว");
       // Reset form data
       setFormData({
         title: "",
-        sortOrder: 0,
+        sortOrder: 1,
+        isActive: "",
         imageMobile: "",
         imageDesktop: "",
       });
@@ -187,7 +201,7 @@ const page = () => {
       setImageDesktopFile(null);
       setImageMobileUrl("");
       setImageDesktopUrl("");
-      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/image`;
+      // window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/image`;
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
@@ -269,7 +283,7 @@ const page = () => {
               <span className="label-text">ลำดับแบนเนอร์</span>
             </div>
             <select
-              className="select select-bordered"
+              className={`select select-bordered ${errors.sortOrder ? "select-error" : ""}`}
               value={formData.sortOrder}
               onChange={handleChange}
               name="sortOrder"
@@ -287,20 +301,53 @@ const page = () => {
               </div>
             )}
           </label>
+          <label className="form-control">
+            <div className="label">
+              <span className="label-text">สถานะแบนเนอร์</span>
+            </div>
+            <select
+              className={`select select-bordered ${errors.isActive ? "select-error" : ""}`}
+              value={formData.isActive}
+              onChange={handleChange}
+              name="isActive"
+            >
+              <option value="" disabled hidden>กรุณาเลือก</option>
+              <option value="1">แสดงแบนเนอร์</option>
+              <option value="0">ไม่แสดงแบนเนอร์</option>
+            </select>
+            {errors.isActive && (
+              <div className="label">
+                <span className="label-text-alt text-error">{errors.isActive}</span>
+              </div>
+            )}
+          </label>
         </div>
         {/* Right Column */}
         <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
+          <div role="alert" className="alert alert-info text-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="h-6 w-6 shrink-0 stroke-current">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p>ขนาดรูปแบนเนอร์ (Desktop) <span className="font-bold underline">1440x824px</span> | ขนาดรูปแบนเนอร์ (Mobile) <span className="font-bold underline">512x512px</span></p>
+          </div>
           <label className="form-control">
             <div className="label">
               <span className="label-text">{`รูปแบนเนอร์ (Desktop)`}</span>
-            </div>
+            </div>  
             <input
               type="file"
               accept="image/*"
               onChange={handleDesktopFileChange}
-              className={`file-input file-input-bordered ${
-                errors.imageDesktop ? "file-input-error" : ""
-              }`}
+              className={`file-input file-input-bordered ${errors.imageDesktop ? "file-input-error" : ""
+                }`}
             />
             {imageDesktopUrl && (
               <Image
@@ -323,9 +370,8 @@ const page = () => {
               type="file"
               accept="image/*"
               onChange={handleMobileFileChange}
-              className={`file-input file-input-bordered ${
-                errors.imageMobile ? "file-input-error" : ""
-              }`}
+              className={`file-input file-input-bordered ${errors.imageMobile ? "file-input-error" : ""
+                }`}
             />
             {imageMobileUrl && (
               <Image
@@ -346,18 +392,17 @@ const page = () => {
         <button type="submit" className="btn btn-success" disabled={loading}>
           {loading ? "กำลังดำเนินการ..." : "ยืนยัน"}
         </button>
-        <Link href="/admin/agency/personnel" className="btn btn-error">
+        <Link href="/admin/banner/image" className="btn btn-error">
           ยกเลิก
         </Link>
       </div>
       {message && (
         <div
           role="alert"
-          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${
-            message === "สร้างบุคลากรสำเร็จแล้ว"
-              ? "alert-success"
-              : "alert-error"
-          }`}
+          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างบุคลากรสำเร็จแล้ว"
+            ? "alert-success"
+            : "alert-error"
+            }`}
         >
           <span>{message}</span>
         </div>
