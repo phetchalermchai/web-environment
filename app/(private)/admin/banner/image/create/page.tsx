@@ -179,15 +179,9 @@ const page = () => {
         formDataUpload.append("coverImageDesktop", imageDesktopFile);
       }
 
-      // await axios.post("/api/banner/image/create", formDataUpload, {
-      //   headers: { "Content-Type": "multipart/form-data" },
-      // });
-      console.log("title", formDataUpload.get("title"));
-      console.log("sortOrder", formDataUpload.get("sortOrder"));
-      console.log("isActive", formDataUpload.get("isActive"));
-      console.log("coverImageMobile", formDataUpload.get("coverImageMobile"));
-      console.log("coverImageDesktop", formDataUpload.get("coverImageDesktop"));
-
+      await axios.post("/api/banner/image/create", formDataUpload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setMessage("สร้างแบนเนอร์สำเร็จแล้ว");
       // Reset form data
       setFormData({
@@ -201,7 +195,7 @@ const page = () => {
       setImageDesktopFile(null);
       setImageMobileUrl("");
       setImageDesktopUrl("");
-      // window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/image`;
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/image`;
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
@@ -399,7 +393,7 @@ const page = () => {
       {message && (
         <div
           role="alert"
-          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างบุคลากรสำเร็จแล้ว"
+          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างแบนเนอร์สำเร็จแล้ว"
             ? "alert-success"
             : "alert-error"
             }`}

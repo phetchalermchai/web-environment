@@ -1,29 +1,42 @@
 import { TrashIcon } from "@/config/iconConfig";
 import { BannerImage } from "@/types/publicTypes";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useRef } from "react";
 
 interface BannerCardProps {
     banner: BannerImage;
-    onDelete: (id: string) => void;
 }
 
-const BannerCard: React.FC<BannerCardProps> = ({ banner, onDelete }) => {
+const BannerCard: React.FC<BannerCardProps> = ({ banner}) => {
+    const modalRef = useRef<HTMLDialogElement>(null);
+    const [deleting, setDeleting] = useState(false);
 
     const handleDelete = async () => {
-        // เรียกใช้งานฟังก์ชัน onDelete ที่ส่งมาจาก parent
-        onDelete(banner.id);
+        setDeleting(true);
+        try {
+            await axios.delete(`/api/banner/image/delete/${banner.id}`);
+            window.location.reload();
+        } catch (error: any) {
+            console.log(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบข้อมูลแบนเนอร์");
+        } finally {
+            setDeleting(false);
+        }
     };
+
+    const openModal = () => modalRef.current?.showModal();
+    const closeModal = () => modalRef.current?.close();
 
     return (
         <div className="card card-compact bg-base-100 border-2 border-base-300 shadow-sm relative">
-            <div className="absolute top-0 left-0 rounded-[14px] w-12 h-10 bg-secondary/50 flex items-center justify-center  border border-secondary">
-                <span className="text-secondary-content font-bold">{banner.sortOrder  }</span>
+            <div className="absolute top-0 left-0 rounded-[14px] w-12 h-10 bg-primary/50 flex items-center justify-center  border border-primary">
+                <span className="text-primary-content font-bold">{banner.sortOrder}</span>
             </div>
             <figure>
                 <Image
                     height={824}
-                    width={1440 }
+                    width={1440}
                     src={banner.imageDesktop}
                     alt={banner.title}
                     className="w-full h-48 object-cover rounded-t-[14px]"
@@ -38,9 +51,25 @@ const BannerCard: React.FC<BannerCardProps> = ({ banner, onDelete }) => {
                     <Link href={`/admin/banner/edit/${banner.id}`} className="btn btn-primary">
                         แก้ไข
                     </Link>
-                    <button onClick={handleDelete} className="btn btn-error">
-                        ลบ
+                    <button
+                        onClick={openModal}
+                        className="btn btn-error">
+                        {deleting ? "กำลังลบ..." : "ลบ"}
                     </button>
+                    <dialog ref={modalRef} className="modal">
+                        <div className="modal-box">
+                            <h3 className="font-bold text-lg">ลบแบนเนอร์</h3>
+                            <p className="py-4">คุณแน่ใจหรือไม่ว่าต้องการลบแบนเนอร์?</p>
+                            <div className="modal-action">
+                                <form method="dialog" className="flex gap-2">
+                                    <button className="btn btn-error" onClick={handleDelete}>
+                                        {deleting ? "กำลังลบแบนเนอร์..." : "ตกลง"}
+                                    </button>
+                                    <button className="btn" onClick={closeModal}>ยกเลิก</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
                 </div>
             </div>
         </div>

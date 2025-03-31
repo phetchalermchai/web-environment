@@ -5,6 +5,32 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import fs from "fs";
 import path from "path";
 
+function deleteFileAndCleanUp(fileUrl: string) {
+  const filePath = path.join(process.cwd(), "public", fileUrl);
+  if (fs.existsSync(filePath)) {
+    try {
+      fs.unlinkSync(filePath);
+      console.log(`Deleted file: ${filePath}`);
+
+      // ลบโฟลเดอร์ cover ถ้าโฟลเดอร์ว่างเปล่า
+      const coverFolder = path.dirname(filePath);
+      if (fs.existsSync(coverFolder) && fs.readdirSync(coverFolder).length === 0) {
+        fs.rmdirSync(coverFolder);
+        console.log(`Deleted folder: ${coverFolder}`);
+      }
+
+      // ลบโฟลเดอร์หลัก (bannerFolder) ถ้าโฟลเดอร์ว่างเปล่า
+      const bannerFolder = path.dirname(coverFolder);
+      if (fs.existsSync(bannerFolder) && fs.readdirSync(bannerFolder).length === 0) {
+        fs.rmdirSync(bannerFolder);
+        console.log(`Deleted folder: ${bannerFolder}`);
+      }
+    } catch (err) {
+      console.log(`Failed to delete file or folder for ${filePath}:`, err);
+    }
+  }
+}
+
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -33,32 +59,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Banner not found" }, { status: 404 });
     }
 
-    // ถ้ามีรูปใน field image ให้ลบไฟล์และโฟลเดอร์ที่เกี่ยวข้อง
-    if (banner.image) {
-      // คาดว่า banner.image เป็น URL แบบ relative เช่น:
-      // "/uploads/banner/image/{bannerFolder}/cover/filename.ext"
-      const filePath = path.join(process.cwd(), "public", banner.image);
-      if (fs.existsSync(filePath)) {
-        try {
-          // ลบไฟล์รูป
-          fs.unlinkSync(filePath);
-          console.log(`Deleted file: ${filePath}`);
-          // ลบโฟลเดอร์ cover ถ้าโฟลเดอร์ว่างเปล่า
-          const coverFolder = path.dirname(filePath); // โฟลเดอร์: .../cover
-          if (fs.existsSync(coverFolder) && fs.readdirSync(coverFolder).length === 0) {
-            fs.rmdirSync(coverFolder);
-            console.log(`Deleted folder: ${coverFolder}`);
-          }
-          // ลบโฟลเดอร์หลัก (bannerFolder) ถ้าโฟลเดอร์ว่างเปล่า
-          const mainFolder = path.dirname(coverFolder); // โฟลเดอร์: .../{bannerFolder}
-          if (fs.existsSync(mainFolder) && fs.readdirSync(mainFolder).length === 0) {
-            fs.rmdirSync(mainFolder);
-            console.log(`Deleted folder: ${mainFolder}`);
-          }
-        } catch (err) {
-          console.error(`Failed to delete file or folder for ${filePath}:`, err);
-        }
-      }
+    // ลบไฟล์รูปของ imageDesktop (ถ้ามี)
+    if (banner.imageDesktop) {
+      deleteFileAndCleanUp(banner.imageDesktop);
+    }
+    // ลบไฟล์รูปของ imageMobile (ถ้ามี)
+    if (banner.imageMobile) {
+      deleteFileAndCleanUp(banner.imageMobile);
     }
 
     // ลบ record แบนเนอร์จากฐานข้อมูล
@@ -68,7 +75,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true, banner: deletedBanner }, { status: 200 });
   } catch (error: any) {
-    console.error("Error deleting banner:", error);
+    console.log("Error deleting banner:", error);
     return NextResponse.json(
       { error: "Failed to delete banner", message: error.message || error },
       { status: 500 }

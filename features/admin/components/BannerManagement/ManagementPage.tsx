@@ -19,7 +19,7 @@ interface BannerImage {
     updatedAt: string;
 }
 
-const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi:string, createLink:string, editLink:string, deleteApi:string }) => {
+const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi: string, createLink: string, editLink: string, deleteApi: string }) => {
 
     // กำหนด type ให้กับ state variables
     const [banner, setBanner] = useState<BannerImage[]>([]);
@@ -88,23 +88,6 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
         setSearchQuery(query);
     };
 
-    const handleDelete = async (id: string) => {
-        try {
-          await axios.delete(`/api/banner/image/${id}`);
-        } catch (err: any) {
-          console.error("Delete error", err);
-        }
-      };
-    
-      const handleToggleActive = async (id: string, newStatus: boolean) => {
-        try {
-          // เรียก API เพื่อ toggle active (คุณอาจต้องสร้าง endpoint สำหรับนี้)
-          await axios.put(`/api/banner/image/create/${id}`, { isActive: newStatus });
-        } catch (err: any) {
-          console.error("Toggle active error", err);
-        }
-      };
-
     if (loading) {
         return (
             <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
@@ -128,7 +111,7 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
                 <div className="text-center p-6 bg-base-100 rounded-lg shadow-md">
                     <h1 className="text-3xl font-bold text-error mb-4">Error</h1>
                     <p className="text-lg mb-4">เกิดข้อผิดพลาด: {error.message}</p>
-                    <Image src={`/undraw_not-found_6bgl.svg`} alt="Error เกิดข้อผิดพลาด" width={300} height={300}/>
+                    <Image src={`/undraw_not-found_6bgl.svg`} alt="Error เกิดข้อผิดพลาด" width={300} height={300} />
                     <Link href={`/admin/dashboard`} className="btn btn-primary my-4">ไปยังหน้าแดชบอร์ด</Link>
                 </div>
             </div>
@@ -146,7 +129,7 @@ const ManagementPage = ( { getsApi, createLink, editLink, deleteApi }: { getsApi
             </div>
             <div className="overflow-x-auto mt-6 grow">
                 {/* <Table bannerImage={sortedFilteredBanner} sort={sort} editLink={editLink} deleteApi={deleteApi}/> */}
-                <BannerGrid banners={sortedFilteredBanner} onDelete={handleDelete}/>
+                <BannerGrid banners={sortedFilteredBanner} />
             </div>
         </div>
     )

@@ -48,13 +48,21 @@ export async function POST(req: NextRequest) {
     const form = await req.formData();
     const title = form.get("title") as string;
     const sortOrder = form.get("sortOrder") as string;
+    const isActive = form.get("isActive") as string;
     const coverImageDesktopFile = form.get("coverImageDesktop") as File;
     const coverImageMobileFile = form.get("coverImageMobile") as File;
 
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!title || !coverImageDesktopFile) {
+    const missingFields: string[] = [];
+    if (!title || !title.trim()) missingFields.push(" ");
+    if (!sortOrder || Number(sortOrder) < 1 || Number(sortOrder) > 6) missingFields.push("sortOrder");
+    if (!isActive) missingFields.push("isActive");
+    if (!coverImageDesktopFile) missingFields.push("coverImageDesktop");
+    if (!coverImageMobileFile) missingFields.push("coverImageMobile");
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: "Missing required fields: title and coverImageDesktop" },
+        { error: `Missing required fields: ${missingFields.join(", ")}` },
         { status: 400 }
       );
     }
@@ -108,6 +116,7 @@ export async function POST(req: NextRequest) {
         title,
         imageMobile: imageMobileUrl,
         imageDesktop: imageDesktopUrl,
+        isActive: Number(isActive) === 0 ? false : true,
         sortOrder: sortOrder ? Number(sortOrder) : 1,
       },
     });

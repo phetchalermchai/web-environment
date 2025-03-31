@@ -5,17 +5,16 @@ import BannerCard from "./BannerCard"; // คอมโพเนนต์ที�
 
 interface BannerCardsGridProps {
   banners: BannerImage[];
-  onDelete: (id: string) => void;
 }
 
-const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ banners, onDelete }) => {
+const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ banners }) => {
   const totalCards = 6;
   const emptyCount = Math.max(totalCards - banners.length, 0);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       {banners.map((banner) => (
-        <BannerCard key={banner.id} banner={banner} onDelete={onDelete} />
+        <BannerCard key={banner.id} banner={banner} />
       ))}
       {Array.from({ length: emptyCount }).map((_, index) => (
         <div
