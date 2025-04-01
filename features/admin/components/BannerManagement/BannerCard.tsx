@@ -7,16 +7,18 @@ import { useState, useRef } from "react";
 
 interface BannerCardProps {
     banner: BannerImage;
+    editLink: string;
+    deleteApi: string;
 }
 
-const BannerCard: React.FC<BannerCardProps> = ({ banner}) => {
+const BannerCard: React.FC<BannerCardProps> = ({ banner, editLink, deleteApi}) => {
     const modalRef = useRef<HTMLDialogElement>(null);
     const [deleting, setDeleting] = useState(false);
 
     const handleDelete = async () => {
         setDeleting(true);
         try {
-            await axios.delete(`/api/banner/image/delete/${banner.id}`);
+            await axios.delete(`${deleteApi}/${banner.id}`);
             window.location.reload();
         } catch (error: any) {
             console.log(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบข้อมูลแบนเนอร์");
@@ -48,7 +50,7 @@ const BannerCard: React.FC<BannerCardProps> = ({ banner}) => {
                     Updated: {new Date(banner.updatedAt).toLocaleString()}
                 </p>
                 <div className="card-actions justify-end">
-                    <Link href={`/admin/banner/edit/${banner.id}`} className="btn btn-primary">
+                    <Link href={`${editLink}/${banner.id}`} className="btn btn-primary">
                         แก้ไข
                     </Link>
                     <button

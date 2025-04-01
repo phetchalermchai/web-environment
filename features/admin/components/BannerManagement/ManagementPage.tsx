@@ -1,7 +1,5 @@
-import CreateButton from "./CreateButton"
 import SearchBar from "./SearchBar"
 import SortDropdown from "./SortDropdown"
-import Table from "./Table"
 import { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
 import Image from "next/image"
@@ -54,9 +52,7 @@ const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi:
     // ใช้ useEffect เพื่อ filter ข้อมูลตาม searchQuery เมื่อ users หรือ searchQuery เปลี่ยนแปลง
     const filteredBanner = useMemo(() => {
         return banner.filter(a =>
-            a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.isActive.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.sortOrder.toLowerCase().includes(searchQuery.toLowerCase())
+            a.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [banner, searchQuery]);
 
@@ -128,8 +124,7 @@ const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi:
                 </div>
             </div>
             <div className="overflow-x-auto mt-6 grow">
-                {/* <Table bannerImage={sortedFilteredBanner} sort={sort} editLink={editLink} deleteApi={deleteApi}/> */}
-                <BannerGrid banners={sortedFilteredBanner} />
+                <BannerGrid banners={sortedFilteredBanner} createLink={createLink} editLink={editLink} deleteApi={deleteApi}/>
             </div>
         </div>
     )

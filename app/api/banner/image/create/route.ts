@@ -55,10 +55,10 @@ export async function POST(req: NextRequest) {
     // ตรวจสอบข้อมูลที่จำเป็น
     const missingFields: string[] = [];
     if (!title || !title.trim()) missingFields.push(" ");
-    if (!sortOrder || Number(sortOrder) < 1 || Number(sortOrder) > 6) missingFields.push("sortOrder");
+    if (!sortOrder) missingFields.push("sortOrder");
     if (!isActive) missingFields.push("isActive");
-    if (!coverImageDesktopFile) missingFields.push("coverImageDesktop");
-    if (!coverImageMobileFile) missingFields.push("coverImageMobile");
+    if (!coverImageDesktopFile || coverImageDesktopFile.size === 0) missingFields.push("coverImageDesktop");
+    if (!coverImageMobileFile || coverImageMobileFile.size === 0) missingFields.push("coverImageMobile");
 
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -78,6 +78,14 @@ export async function POST(req: NextRequest) {
     });
     if (count > 0) {
       return NextResponse.json({ error: "Sort Order นี้ถูกใช้งานไปแล้ว" }, { status: 400 });
+    }
+
+    // ตรวจสอบ isActive ให้มีค่าเป็น "0" หรือ "1"
+    if (isActive !== "0" && isActive !== "1") {
+      return NextResponse.json(
+        { error: "isActive ต้องเป็นค่า 0 หรือ 1" },
+        { status: 400 }
+      );
     }
 
     // สร้าง random folder สำหรับแบนเนอร์นี้

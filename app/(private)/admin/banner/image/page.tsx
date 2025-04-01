@@ -4,7 +4,7 @@ import ManagementPage from "@/features/admin/components/BannerManagement/Managem
 
 const page = () => {
   return (
-    <ManagementPage getsApi="/api/banner/image" createLink="/admin/banner/image/create" editLink="/admin/banner/image/edit/" deleteApi="/api/banner/image/delete/"/>
+    <ManagementPage getsApi="/api/banner/image" createLink="/admin/banner/image/create" editLink="/admin/banner/image/edit" deleteApi="/api/banner/image/delete"/>
   )
 }
 

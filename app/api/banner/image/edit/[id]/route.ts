@@ -31,15 +31,13 @@ function deleteFileAndCleanUp(fileUrl: string) {
     try {
       fs.unlinkSync(filePath);
       console.log(`Deleted file: ${filePath}`);
-
-      // ลบโฟลเดอร์ cover หากว่าง
+      // ลบโฟลเดอร์ cover ถ้าโฟลเดอร์ว่างเปล่า
       const coverFolder = path.dirname(filePath);
       if (fs.existsSync(coverFolder) && fs.readdirSync(coverFolder).length === 0) {
         fs.rmdirSync(coverFolder);
         console.log(`Deleted folder: ${coverFolder}`);
       }
-
-      // ลบโฟลเดอร์หลัก (banner folder) หากว่าง
+      // ลบโฟลเดอร์หลัก (bannerFolder) ถ้าโฟลเดอร์ว่างเปล่า
       const bannerFolder = path.dirname(coverFolder);
       if (fs.existsSync(bannerFolder) && fs.readdirSync(bannerFolder).length === 0) {
         fs.rmdirSync(bannerFolder);
@@ -68,7 +66,7 @@ export async function PUT(
       );
     }
 
-    // รับ id จาก params
+    // รับ id จาก params (โปรดตรวจสอบให้แน่ใจว่า Next.js รับ params แบบ asynchronous)
     const { id } = await params;
     if (!id) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
@@ -77,12 +75,32 @@ export async function PUT(
     // รับข้อมูลจาก FormData (multipart/form-data)
     const form = await req.formData();
     const title = form.get("title") as string;
-    // ตรวจสอบว่ามีข้อมูลที่จำเป็น
-    if (!title) {
-      return NextResponse.json({ error: "Missing required field: title" }, { status: 400 });
+    const sortOrder = form.get("sortOrder") as string;
+    const isActive = form.get("isActive") as string;
+    // รับไฟล์ใหม่ (ถ้ามี)
+    const coverImageDesktopFile = form.get("coverImageDesktop") as File | null;
+    const coverImageMobileFile = form.get("coverImageMobile") as File | null;
+
+    // ตรวจสอบข้อมูลที่จำเป็น
+    const missingFields: string[] = [];
+    if (!title) missingFields.push("title");
+    if (!sortOrder) missingFields.push("sortOrder");
+    if (!isActive) missingFields.push("isActive");
+
+    if (missingFields.length > 0) {
+      return NextResponse.json(
+        { error: `Missing required fields: ${missingFields.join(", ")}` },
+        { status: 400 }
+      );
     }
-    // รับไฟล์ coverImage (ถ้ามี)
-    const coverImageFile = form.get("coverImage") as File | null;
+
+    // ตรวจสอบ isActive ให้มีค่าเป็น "0" หรือ "1"
+    if (isActive !== "0" && isActive !== "1") {
+      return NextResponse.json(
+        { error: "isActive ต้องเป็นค่า 0 หรือ 1" },
+        { status: 400 }
+      );
+    }
 
     // ดึงข้อมูลแบนเนอร์เดิมจากฐานข้อมูล
     const existingBanner = await prisma.bannerImage.findUnique({
@@ -92,19 +110,33 @@ export async function PUT(
       return NextResponse.json({ error: "Banner not found" }, { status: 404 });
     }
 
-    let updatedImageUrl = existingBanner.image;
-    // ถ้ามีการอัปโหลดไฟล์รูปใหม่
-    if (coverImageFile) {
-      // ถ้ามีไฟล์เก่าอยู่แล้ว ให้ลบไฟล์และโฟลเดอร์ที่เกี่ยวข้อง
-      if (existingBanner.image) {
-        deleteFileAndCleanUp(existingBanner.image);
+    // ตรวจสอบ sortOrder ว่าเป็นตัวเลขและอยู่ในช่วง 1 ถึง 6
+    if (typeof Number(sortOrder) !== "number" || Number(sortOrder) < 1 || Number(sortOrder) > 6) {
+      return NextResponse.json({ error: "Sort Order ต้องเป็นตัวเลขระหว่าง 1 ถึง 6" }, { status: 400 });
+    }
+
+    // ตรวจสอบว่า sortOrder นี้ถูกใช้งานโดยแบนเนอร์อื่นหรือไม่ (ยกเว้น record ปัจจุบัน)
+    const duplicateCount = await prisma.bannerImage.count({
+      where: {
+        sortOrder: Number(sortOrder),
+        id: { not: id },
+      },
+    });
+    if (duplicateCount > 0) {
+      return NextResponse.json({ error: "Sort Order นี้ถูกใช้งานไปแล้ว" }, { status: 400 });
+    }
+
+    let updatedImageDesktopUrl = existingBanner.imageDesktop;
+    if (coverImageDesktopFile && coverImageDesktopFile.size > 0) {
+      // ลบไฟล์เก่า (ถ้ามี)
+      if (existingBanner.imageDesktop) {
+        deleteFileAndCleanUp(existingBanner.imageDesktop);
       }
       // พยายามดึง folder จาก URL ของไฟล์เก่า
       let bannerFolder = "";
-      if (existingBanner.image) {
-        const parts = existingBanner.image.split("/");
+      if (existingBanner.imageDesktop) {
+        const parts = existingBanner.imageDesktop.split("/");
         // ตัวอย่าง URL: /uploads/banner/image/{bannerFolder}/cover/filename.ext
-        // parts: ["", "uploads", "banner", "image", "{bannerFolder}", "cover", "filename.ext"]
         if (parts.length >= 5) {
           bannerFolder = parts[4];
         }
@@ -113,14 +145,35 @@ export async function PUT(
       if (!bannerFolder) {
         bannerFolder = uuidv4();
       }
-      const ext = path.extname(coverImageFile.name); // เช่น .jpg, .png
-      const baseName = path.basename(coverImageFile.name, ext);
-      // เปลี่ยนชื่อไฟล์ให้ปลอดภัย (แทนที่ช่องว่างด้วยเครื่องหมายขีดและแปลงเป็น lowercase)
-      const safeBaseName = baseName.replace(/\s+/g, "-").toLowerCase();
+      const ext = path.extname(coverImageDesktopFile.name);
+      const baseName = path.basename(coverImageDesktopFile.name, ext);
+      const safeBaseName = slugify(baseName, { lower: true, strict: true });
       const filename = `${Date.now()}-${safeBaseName}${ext}`;
-      const buffer = Buffer.from(await coverImageFile.arrayBuffer());
-      // บันทึกไฟล์รูปภาพลงในโฟลเดอร์ "cover" ภายใน bannerFolder
-      updatedImageUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+      const buffer = Buffer.from(await coverImageDesktopFile.arrayBuffer());
+      updatedImageDesktopUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+    }
+
+    let updatedImageMobileUrl = existingBanner.imageMobile;
+    if (coverImageMobileFile && coverImageMobileFile.size > 0) {
+      if (existingBanner.imageMobile) {
+        deleteFileAndCleanUp(existingBanner.imageMobile);
+      }
+      let bannerFolder = "";
+      if (existingBanner.imageMobile) {
+        const parts = existingBanner.imageMobile.split("/");
+        if (parts.length >= 5) {
+          bannerFolder = parts[4];
+        }
+      }
+      if (!bannerFolder) {
+        bannerFolder = uuidv4();
+      }
+      const ext = path.extname(coverImageMobileFile.name);
+      const baseName = path.basename(coverImageMobileFile.name, ext);
+      const safeBaseName = slugify(baseName, { lower: true, strict: true });
+      const filename = `${Date.now()}-${safeBaseName}${ext}`;
+      const buffer = Buffer.from(await coverImageMobileFile.arrayBuffer());
+      updatedImageMobileUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
     }
 
     // ทำการอัปเดตข้อมูลแบนเนอร์ในฐานข้อมูล
@@ -128,7 +181,10 @@ export async function PUT(
       where: { id },
       data: {
         title,
-        image: updatedImageUrl,
+        sortOrder: Number(sortOrder),
+        isActive: Boolean(Number(isActive)),
+        imageDesktop: updatedImageDesktopUrl,
+        imageMobile: updatedImageMobileUrl,
       },
     });
 
