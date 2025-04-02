@@ -32,7 +32,8 @@ export async function GET(
       select: {
         id: true,
         title: true,
-        video: true, 
+        videoMobile: true, 
+        videoDesktop: true, 
         isActive: true,
         sortOrder: true,
         createdAt: true,

@@ -17,10 +17,23 @@ interface BannerImage {
     updatedAt: string;
 }
 
-const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi: string, createLink: string, editLink: string, deleteApi: string }) => {
+interface BannerVideo {
+    id: string;
+    title: string;
+    videoMobile: string;
+    videoDesktop: string;
+    isActive: string;
+    sortOrder: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+type Banner = BannerImage | BannerVideo;
+
+const ManagementPage = ({ management, getsApi, createLink, editLink, deleteApi }: { management: string, getsApi: string, createLink: string, editLink: string, deleteApi: string }) => {
 
     // กำหนด type ให้กับ state variables
-    const [banner, setBanner] = useState<BannerImage[]>([]);
+    const [banners, setBanners] = useState<Banner[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -37,7 +50,7 @@ const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi:
                     createdAt: a.createdAt && !isNaN(Date.parse(a.createdAt)) ? new Date(a.createdAt) : null,
                     updatedAt: a.updatedAt && !isNaN(Date.parse(a.updatedAt)) ? new Date(a.updatedAt) : null,
                 }));
-                setBanner(bannerWithDate);
+                setBanners(bannerWithDate);
             } catch (error) {
                 console.log(error);
                 setError(new Error(axios.isAxiosError(error) ? error.response?.data?.message || "Failed to fetch Banner Image" : "An unexpected error occurred"));
@@ -51,10 +64,10 @@ const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi:
 
     // ใช้ useEffect เพื่อ filter ข้อมูลตาม searchQuery เมื่อ users หรือ searchQuery เปลี่ยนแปลง
     const filteredBanner = useMemo(() => {
-        return banner.filter(a =>
+        return banners.filter(a =>
             a.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    }, [banner, searchQuery]);
+    }, [banners, searchQuery]);
 
     // ฟังก์ชันเรียงลำดับข้อมูลผู้ใช้งานตามตัวเลือก
     const sortedFilteredBanner = useMemo(() => {
@@ -124,7 +137,7 @@ const ManagementPage = ({ getsApi, createLink, editLink, deleteApi }: { getsApi:
                 </div>
             </div>
             <div className="overflow-x-auto mt-6 grow">
-                <BannerGrid banners={sortedFilteredBanner} createLink={createLink} editLink={editLink} deleteApi={deleteApi}/>
+                <BannerGrid management={management} banners={sortedFilteredBanner} createLink={createLink} editLink={editLink} deleteApi={deleteApi} />
             </div>
         </div>
     )

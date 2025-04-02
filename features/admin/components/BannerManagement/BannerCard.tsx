@@ -1,17 +1,18 @@
 import { TrashIcon } from "@/config/iconConfig";
-import { BannerImage } from "@/types/publicTypes";
+import { Banner } from "@/types/publicTypes";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef } from "react";
 
 interface BannerCardProps {
-    banner: BannerImage;
+    management: string;
+    banner: (BannerImage | BannerVideo);
     editLink: string;
     deleteApi: string;
 }
 
-const BannerCard: React.FC<BannerCardProps> = ({ banner, editLink, deleteApi}) => {
+const BannerCard: React.FC<BannerCardProps> = ({ management, banner, editLink, deleteApi }) => {
     const modalRef = useRef<HTMLDialogElement>(null);
     const [deleting, setDeleting] = useState(false);
 
@@ -35,15 +36,21 @@ const BannerCard: React.FC<BannerCardProps> = ({ banner, editLink, deleteApi}) =
             <div className="absolute top-0 left-0 rounded-[14px] w-12 h-10 bg-primary/50 flex items-center justify-center  border border-primary">
                 <span className="text-primary-content font-bold">{banner.sortOrder}</span>
             </div>
-            <figure>
-                <Image
-                    height={824}
-                    width={1440}
-                    src={banner.imageDesktop}
-                    alt={banner.title}
-                    className="w-full h-48 object-cover rounded-t-[14px]"
-                />
-            </figure>
+            {management === "video" ? (
+                <video className="w-full h-48 object-cover rounded-t-[14px]" autoPlay muted playsInline loop>
+                    <source src={banner.imageDesktop} type="video/mp4" />
+                </video>
+            ) : (
+                <figure>
+                    <Image
+                        height={824}
+                        width={1440}
+                        src={banner.imageDesktop}
+                        alt={banner.title}
+                        className="w-full h-48 object-cover rounded-t-[14px]"
+                    />
+                </figure>
+            )}
             <div className="card-body">
                 <h2 className="card-title">{banner.title} <div className={`badge ${banner.isActive ? "badge-success" : "badge-error"} badge-md`}></div></h2>
                 <p className="text-sm text-gray-500">

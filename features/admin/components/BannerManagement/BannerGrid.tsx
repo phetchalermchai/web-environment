@@ -1,24 +1,59 @@
 import React from "react";
 import Link from "next/link";
-import { BannerImage } from "@/types/publicTypes";
+import { BannerImage, BannerVideo } from "@/types/publicTypes";
 import BannerCard from "./BannerCard"; // คอมโพเนนต์ที่แสดงการ์ดแบนเนอร์ที่มีข้อมูล
 
 interface BannerCardsGridProps {
-  banners: BannerImage[];
+  management: string;
+  banners: (BannerImage | BannerVideo)[];
   createLink: string;
   editLink: string;
   deleteApi: string;
 }
 
-const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ banners, createLink, editLink, deleteApi }) => {
+
+
+const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ management, banners, createLink, editLink, deleteApi }) => {
   const totalCards = 6;
   const emptyCount = Math.max(totalCards - banners.length, 0);
-
+  
+  function isBannerImage(banner: BannerImage | BannerVideo): banner is BannerImage {
+    return (banner as BannerImage) !== undefined;
+  }
+  
+  function isBannerVideo(banner: BannerImage | BannerVideo): banner is BannerVideo {
+    return (banner as BannerVideo) !== undefined;
+  }
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      {banners.map((banner) => (
-        <BannerCard key={banner.id} banner={banner} editLink={editLink} deleteApi={deleteApi}/>
-      ))}
+      {/* {banners.map((banner) => (
+        <BannerCard management={management} key={banner.id} banner={banner} editLink={editLink} deleteApi={deleteApi} />
+      ))} */}
+      {banners.map((banner) => {
+        if (isBannerImage(banner)) {
+          return (
+            <BannerCard
+              key={banner.id}
+              banner={banner}
+              editLink={`${editLink}/${banner.id}`}
+              deleteApi={deleteApi}
+            />
+          );
+        } else if (isBannerVideo(banner)) {
+          return (
+            <BannerCard
+              key={banner.id}
+              banner={banner}
+              editLink={`${editLink}/${banner.id}`}
+              deleteApi={deleteApi}
+            />
+          );
+        } else {
+          return null;
+        }
+      })}
+
       {Array.from({ length: emptyCount }).map((_, index) => (
         <div
           key={index}

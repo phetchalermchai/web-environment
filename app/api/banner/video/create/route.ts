@@ -25,7 +25,7 @@ async function saveFileBuffer(
 
 export async function POST(req: NextRequest) {
   try {
-    // ตรวจสอบ session และสิทธิ์
+    // ตรวจสอบ session และสิทธิ์ (เฉพาะ SUPERUSER)
     const session = await getServerSession({ req, ...authOptions });
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -37,41 +37,87 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ตรวจสอบจำนวน banner video ที่มีอยู่ ถ้ามากกว่า หรือเท่ากับ 6 ไม่อนุญาตให้สร้างเพิ่ม
+    const currentCount = await prisma.bannerVideo.count();
+    if (currentCount >= 6) {
+      return NextResponse.json({ error: "Cannot create more than 6 banner videos" }, { status: 400 });
+    }
+
     // รับข้อมูลจาก FormData (multipart/form-data)
     const form = await req.formData();
     const title = form.get("title") as string;
-    // เปลี่ยน key จาก coverImage เป็น video เพื่อรับไฟล์วิดีโอ
-    const videoFile = form.get("video") as File;
+    const sortOrder = form.get("sortOrder") as string;
+    const isActive = form.get("isActive") as string;
+    const videoDesktopFile = form.get("videoDesktop") as File;
+    const videoMobileFile = form.get("videoMobile") as File;
 
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!title || !videoFile) {
+    const missingFields: string[] = [];
+    if (!title || !title.trim()) missingFields.push("title");
+    if (!sortOrder) missingFields.push("sortOrder");
+    if (!isActive) missingFields.push("isActive");
+    if (!videoDesktopFile || videoDesktopFile.size === 0) missingFields.push("videoDesktop");
+    if (!videoMobileFile || videoMobileFile.size === 0) missingFields.push("videoMobile");
+
+    if (missingFields.length > 0) {
       return NextResponse.json(
-        { error: "Missing required fields: title and video" },
+        { error: `Missing required fields: ${missingFields.join(", ")}` },
         { status: 400 }
       );
     }
 
-    // สร้าง random folder สำหรับ banner video นี้
-    const bannerFolder = uuidv4();
-    let videoUrl = "";
-    if (videoFile) {
-      const originalName = videoFile.name;
-      const ext = path.extname(originalName); // เช่น .mp4, .mov, .webm เป็นต้น
-      const baseName = path.basename(originalName, ext);
-      // ใช้ slugify เพื่อแปลงชื่อไฟล์ให้ปลอดภัย (ไม่เป็นภาษาไทย)
-      const safeBaseName = slugify(baseName, { lower: true, strict: true });
-      const filename = `${Date.now()}-${safeBaseName}${ext}`;
-      const buffer = Buffer.from(await videoFile.arrayBuffer());
-      // บันทึกไฟล์วิดีโอลงในโฟลเดอร์ "cover" ภายใน bannerFolder
-      videoUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+    // ตรวจสอบ sortOrder ให้อยู่ในช่วง 1 ถึง 6
+    const numericSortOrder = Number(sortOrder);
+    if (numericSortOrder < 1 || numericSortOrder > 6) {
+      return NextResponse.json({ error: "Sort Order ต้องเป็นตัวเลขระหว่าง 1 ถึง 6" }, { status: 400 });
     }
 
-    // สร้าง record ใหม่ในฐานข้อมูลสำหรับ banner video
-    // สมมุติว่า model ของคุณใน Prisma ชื่อว่า bannerVideo และมี field video แทน image
+    // ตรวจสอบว่า sortOrder นี้ถูกใช้งานไปแล้วหรือไม่
+    const count = await prisma.bannerVideo.count({
+      where: { sortOrder: numericSortOrder },
+    });
+    if (count > 0) {
+      return NextResponse.json({ error: "Sort Order นี้ถูกใช้งานไปแล้ว" }, { status: 400 });
+    }
+
+    // ตรวจสอบ isActive ต้องเป็น "0" หรือ "1"
+    if (isActive !== "0" && isActive !== "1") {
+      return NextResponse.json({ error: "isActive ต้องเป็นค่า 0 หรือ 1" }, { status: 400 });
+    }
+
+    // สร้าง random folder สำหรับแบนเนอร์ video นี้
+    const bannerFolder = uuidv4();
+
+    let videoDesktopUrl = "";
+    if (videoDesktopFile) {
+      const originalName = videoDesktopFile.name;
+      const ext = path.extname(originalName);
+      const baseName = path.basename(originalName, ext);
+      const safeBaseName = slugify(baseName, { lower: true, strict: true });
+      const filename = `${Date.now()}-${safeBaseName}${ext}`;
+      const buffer = Buffer.from(await videoDesktopFile.arrayBuffer());
+      videoDesktopUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+    }
+
+    let videoMobileUrl = "";
+    if (videoMobileFile) {
+      const originalName = videoMobileFile.name;
+      const ext = path.extname(originalName);
+      const baseName = path.basename(originalName, ext);
+      const safeBaseName = slugify(baseName, { lower: true, strict: true });
+      const filename = `${Date.now()}-${safeBaseName}${ext}`;
+      const buffer = Buffer.from(await videoMobileFile.arrayBuffer());
+      videoMobileUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+    }
+
+    // สร้าง record ใหม่ในฐานข้อมูลสำหรับแบนเนอร์ video
     const newBannerVideo = await prisma.bannerVideo.create({
       data: {
         title,
-        video: videoUrl,
+        videoDesktop: videoDesktopUrl,
+        videoMobile: videoMobileUrl,
+        isActive: Number(isActive) === 0 ? false : true,
+        sortOrder: numericSortOrder,
       },
     });
 

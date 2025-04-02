@@ -70,4 +70,17 @@ export interface BannerImage {
     createdAt: string;
     updatedAt: string;
   }
+
+export interface BannerVideo {
+    id: string;
+    title: string;
+    videoMobile: string;
+    videoDesktop: string;
+    isActive: string;
+    sortOrder: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+  
+export type Banner = BannerImage | BannerVideo;
   

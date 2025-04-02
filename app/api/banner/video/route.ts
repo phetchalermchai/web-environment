@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         title: true,
-        video: true, 
+        videoMobile: true, 
+        videoDesktop: true, 
         isActive: true,
         sortOrder: true,
         createdAt: true,

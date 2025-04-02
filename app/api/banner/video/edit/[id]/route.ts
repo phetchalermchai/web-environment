@@ -31,15 +31,13 @@ function deleteFileAndCleanUp(fileUrl: string) {
     try {
       fs.unlinkSync(filePath);
       console.log(`Deleted file: ${filePath}`);
-
-      // ลบโฟลเดอร์ cover หากว่าง
+      // ลบโฟลเดอร์ cover ถ้าโฟลเดอร์ว่างเปล่า
       const coverFolder = path.dirname(filePath);
       if (fs.existsSync(coverFolder) && fs.readdirSync(coverFolder).length === 0) {
         fs.rmdirSync(coverFolder);
         console.log(`Deleted folder: ${coverFolder}`);
       }
-
-      // ลบโฟลเดอร์หลัก (banner folder) หากว่าง
+      // ลบโฟลเดอร์หลัก (bannerFolder) ถ้าโฟลเดอร์ว่างเปล่า
       const bannerFolder = path.dirname(coverFolder);
       if (fs.existsSync(bannerFolder) && fs.readdirSync(bannerFolder).length === 0) {
         fs.rmdirSync(bannerFolder);
@@ -77,12 +75,49 @@ export async function PUT(
     // รับข้อมูลจาก FormData (multipart/form-data)
     const form = await req.formData();
     const title = form.get("title") as string;
-    // ตรวจสอบว่ามีข้อมูลที่จำเป็น
-    if (!title) {
-      return NextResponse.json({ error: "Missing required field: title" }, { status: 400 });
+    const sortOrder = form.get("sortOrder") as string;
+    const isActive = form.get("isActive") as string;
+    // รับไฟล์วิดีโอใหม่ (ถ้ามี)
+    const coverVideoDesktopFile = form.get("coverVideoDesktop") as File | null;
+    const coverVideoMobileFile = form.get("coverVideoMobile") as File | null;
+
+    // ตรวจสอบข้อมูลที่จำเป็น
+    const missingFields: string[] = [];
+    if (!title || !title.trim()) missingFields.push("title");
+    if (!sortOrder) missingFields.push("sortOrder");
+    if (!isActive) missingFields.push("isActive");
+
+    if (missingFields.length > 0) {
+      return NextResponse.json(
+        { error: `Missing required fields: ${missingFields.join(", ")}` },
+        { status: 400 }
+      );
     }
-    // รับไฟล์ video (ถ้ามี)
-    const videoFile = form.get("video") as File | null;
+
+    // ตรวจสอบ isActive ให้มีค่าเป็น "0" หรือ "1"
+    if (isActive !== "0" && isActive !== "1") {
+      return NextResponse.json(
+        { error: "isActive ต้องเป็นค่า 0 หรือ 1" },
+        { status: 400 }
+      );
+    }
+
+    // ตรวจสอบ sortOrder ว่าเป็นตัวเลขและอยู่ในช่วง 1 ถึง 6
+    const sortOrderNum = Number(sortOrder);
+    if (sortOrderNum < 1 || sortOrderNum > 6) {
+      return NextResponse.json({ error: "Sort Order ต้องเป็นตัวเลขระหว่าง 1 ถึง 6" }, { status: 400 });
+    }
+
+    // ตรวจสอบว่า sortOrder นี้ถูกใช้งานโดย banner video อื่นหรือไม่ (ยกเว้น record ปัจจุบัน)
+    const duplicateCount = await prisma.bannerVideo.count({
+      where: {
+        sortOrder: sortOrderNum,
+        id: { not: id },
+      },
+    });
+    if (duplicateCount > 0) {
+      return NextResponse.json({ error: "Sort Order นี้ถูกใช้งานไปแล้ว" }, { status: 400 });
+    }
 
     // ดึงข้อมูล banner video เดิมจากฐานข้อมูล
     const existingBanner = await prisma.bannerVideo.findUnique({
@@ -92,47 +127,66 @@ export async function PUT(
       return NextResponse.json({ error: "Banner video not found" }, { status: 404 });
     }
 
-    let updatedVideoUrl = existingBanner.video;
-    // ถ้ามีการอัปโหลดไฟล์วิดีโอใหม่
-    if (videoFile) {
-      // ถ้ามีไฟล์เก่าอยู่แล้ว ให้ลบไฟล์และโฟลเดอร์ที่เกี่ยวข้อง
-      if (existingBanner.video) {
-        deleteFileAndCleanUp(existingBanner.video);
+    let updatedVideoDesktopUrl = existingBanner.videoDesktop;
+    if (coverVideoDesktopFile && coverVideoDesktopFile.size > 0) {
+      if (existingBanner.videoDesktop) {
+        deleteFileAndCleanUp(existingBanner.videoDesktop);
       }
-      // พยายามดึง folder จาก URL ของไฟล์เก่า
       let bannerFolder = "";
-      if (existingBanner.video) {
-        const parts = existingBanner.video.split("/");
+      if (existingBanner.videoDesktop) {
+        const parts = existingBanner.videoDesktop.split("/");
         // ตัวอย่าง URL: /uploads/banner/video/{bannerFolder}/cover/filename.ext
-        // parts: ["", "uploads", "banner", "video", "{bannerFolder}", "cover", "filename.ext"]
         if (parts.length >= 5) {
           bannerFolder = parts[4];
         }
       }
-      // ถ้าไม่พบ folder จากไฟล์เก่า ให้สร้างใหม่
       if (!bannerFolder) {
         bannerFolder = uuidv4();
       }
-      const ext = path.extname(videoFile.name); // เช่น .mp4, .mov, .webm
-      const baseName = path.basename(videoFile.name, ext);
-      // เปลี่ยนชื่อไฟล์ให้ปลอดภัย โดยแทนที่ช่องว่างด้วยเครื่องหมายขีดและแปลงเป็น lowercase
+      const ext = path.extname(coverVideoDesktopFile.name);
+      const baseName = path.basename(coverVideoDesktopFile.name, ext);
       const safeBaseName = slugify(baseName, { lower: true, strict: true });
       const filename = `${Date.now()}-${safeBaseName}${ext}`;
-      const buffer = Buffer.from(await videoFile.arrayBuffer());
-      // บันทึกไฟล์วิดีโอลงในโฟลเดอร์ "cover" ภายใน bannerFolder
-      updatedVideoUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+      const buffer = Buffer.from(await coverVideoDesktopFile.arrayBuffer());
+      updatedVideoDesktopUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
     }
 
-    // ทำการอัปเดตข้อมูลในฐานข้อมูลสำหรับ banner video
+    let updatedVideoMobileUrl = existingBanner.videoMobile;
+    if (coverVideoMobileFile && coverVideoMobileFile.size > 0) {
+      if (existingBanner.videoMobile) {
+        deleteFileAndCleanUp(existingBanner.videoMobile);
+      }
+      let bannerFolder = "";
+      if (existingBanner.videoMobile) {
+        const parts = existingBanner.videoMobile.split("/");
+        if (parts.length >= 5) {
+          bannerFolder = parts[4];
+        }
+      }
+      if (!bannerFolder) {
+        bannerFolder = uuidv4();
+      }
+      const ext = path.extname(coverVideoMobileFile.name);
+      const baseName = path.basename(coverVideoMobileFile.name, ext);
+      const safeBaseName = slugify(baseName, { lower: true, strict: true });
+      const filename = `${Date.now()}-${safeBaseName}${ext}`;
+      const buffer = Buffer.from(await coverVideoMobileFile.arrayBuffer());
+      updatedVideoMobileUrl = await saveFileBuffer(buffer, `${bannerFolder}/cover`, filename);
+    }
+
+    // ทำการอัปเดตข้อมูล banner video ในฐานข้อมูล
     const updatedBanner = await prisma.bannerVideo.update({
       where: { id },
       data: {
         title,
-        video: updatedVideoUrl,
+        sortOrder: sortOrderNum,
+        isActive: Boolean(Number(isActive)),
+        videoDesktop: updatedVideoDesktopUrl,
+        videoMobile: updatedVideoMobileUrl,
       },
     });
 
-    return NextResponse.json({ success: true, bannerVideo: updatedBanner }, { status: 200 });
+    return NextResponse.json({ success: true, banner: updatedBanner }, { status: 200 });
   } catch (error: any) {
     console.error("Error updating banner video:", error);
     return NextResponse.json(
