@@ -35,6 +35,7 @@ const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ management, banners, 
           return (
             <BannerCard
               key={banner.id}
+              management={management}
               banner={banner}
               editLink={`${editLink}/${banner.id}`}
               deleteApi={deleteApi}
@@ -44,6 +45,7 @@ const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ management, banners, 
           return (
             <BannerCard
               key={banner.id}
+              management={management}
               banner={banner}
               editLink={`${editLink}/${banner.id}`}
               deleteApi={deleteApi}

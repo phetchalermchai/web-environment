@@ -1,5 +1,4 @@
-import { TrashIcon } from "@/config/iconConfig";
-import { Banner } from "@/types/publicTypes";
+import { BannerImage,  BannerVideo} from "@/types/publicTypes";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,7 +6,7 @@ import { useState, useRef } from "react";
 
 interface BannerCardProps {
     management: string;
-    banner: (BannerImage | BannerVideo);
+    banner: BannerImage | BannerVideo;
     editLink: string;
     deleteApi: string;
 }
@@ -38,14 +37,14 @@ const BannerCard: React.FC<BannerCardProps> = ({ management, banner, editLink, d
             </div>
             {management === "video" ? (
                 <video className="w-full h-48 object-cover rounded-t-[14px]" autoPlay muted playsInline loop>
-                    <source src={banner.imageDesktop} type="video/mp4" />
+                    <source src={(banner as BannerVideo).videoDesktop} type="video/mp4" />
                 </video>
             ) : (
                 <figure>
                     <Image
                         height={824}
                         width={1440}
-                        src={banner.imageDesktop}
+                        src={(banner as BannerImage).imageDesktop}
                         alt={banner.title}
                         className="w-full h-48 object-cover rounded-t-[14px]"
                     />
