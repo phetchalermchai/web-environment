@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
 
-interface CreateBannerVideoFormData {
+interface EditBannerVideoFormData {
   title: string;
-  sortOrder: number; // 1 ถึง 6
+  sortOrder: number; // 1 to 6
   isActive: string;
   videoMobile: string;
   videoDesktop: string;
@@ -20,10 +21,13 @@ interface FormErrors {
   videoDesktop?: string;
 }
 
-const CreateBannerVideoPage = () => {
-  const [formData, setFormData] = useState<CreateBannerVideoFormData>({
+const page = () => {
+  const { id } = useParams(); // รับ id จาก URL
+  const router = useRouter();
+
+  const [formData, setFormData] = useState<EditBannerVideoFormData>({
     title: "",
-    sortOrder: 0,
+    sortOrder: 1,
     isActive: "",
     videoMobile: "",
     videoDesktop: "",
@@ -33,29 +37,55 @@ const CreateBannerVideoPage = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  // States สำหรับ file input และ preview URLs สำหรับวิดีโอ Desktop และ Mobile
+  // States สำหรับ file inputs และ preview URLs สำหรับวิดีโอ Mobile และ Desktop
   const [videoMobileFile, setVideoMobileFile] = useState<File | null>(null);
   const [videoMobileUrl, setVideoMobileUrl] = useState<string>("");
   const [videoDesktopFile, setVideoDesktopFile] = useState<File | null>(null);
   const [videoDesktopUrl, setVideoDesktopUrl] = useState<string>("");
 
-  // ดึงข้อมูลแบนเนอร์ทั้งหมดเพื่อคำนวณ available sort orders
+  // ดึงข้อมูล Banner Video เดิมจาก API แล้วตั้งค่า state
+  useEffect(() => {
+    const fetchBannerVideo = async () => {
+      try {
+        const res = await axios.get(`/api/banner/video/${id}`);
+        const data = res.data;
+        setFormData({
+          title: data.title || "",
+          sortOrder: data.sortOrder || 1,
+          isActive: data.isActive ? "1" : "0",
+          videoMobile: data.videoMobile || "",
+          videoDesktop: data.videoDesktop || "",
+        });
+        setVideoMobileUrl(data.videoMobile || "");
+        setVideoDesktopUrl(data.videoDesktop || "");
+      } catch (error) {
+        console.error("Error fetching banner video:", error);
+        setMessage("ไม่สามารถดึงข้อมูลแบนเนอร์วิดีโอได้");
+      }
+    };
+
+    if (id) {
+      fetchBannerVideo();
+    }
+  }, [id]);
+
+  // ดึงข้อมูลแบนเนอร์ (วิดีโอ) ทั้งหมดเพื่อคำนวณ available sort orders (1-6)
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const res = await axios.get("/api/banner/video"); // เปลี่ยน endpoint ให้ดึง Banner Video
+        const res = await axios.get("/api/banner/video");
         const banners = res.data as { sortOrder: number }[];
         const usedOrders: number[] = banners.map((banner) => banner.sortOrder);
         const allOrders = Array.from({ length: 6 }, (_, i) => i + 1);
-        const available = allOrders.filter((order) => !usedOrders.includes(order));
-        // ถ้าแก้ไขแบนเนอร์อยู่ (กรณีมีค่า sortOrder ที่มีอยู่) ให้เพิ่มเข้าไปด้วย
+        let available = allOrders.filter((order) => !usedOrders.includes(order));
+        // ถ้าแบนเนอร์ที่แก้ไขมีลำดับอยู่แล้ว ให้เพิ่มกลับเข้าไปใน options
         if (formData.sortOrder && !available.includes(formData.sortOrder)) {
           available.push(formData.sortOrder);
           available.sort((a, b) => a - b);
         }
         setAvailableOrders(available);
       } catch (error) {
-        console.error("Error fetching banner videos:", error);
+        console.error("Error fetching banners for sort order:", error);
       }
     };
 
@@ -74,25 +104,24 @@ const CreateBannerVideoPage = () => {
     if (!formData.isActive) {
       newErrors.isActive = "กรุณาระบุสถานะแบนเนอร์";
     }
-    if (!videoMobileFile) {
-      newErrors.videoMobile = "กรุณาอัปโหลดวิดีโอแบนเนอร์ (Mobile)";
+    // หากไม่มีการเปลี่ยนแปลงไฟล์ใหม่ ให้ใช้วิดีโอเดิมที่มีอยู่แล้ว
+    if (!videoMobileFile && !formData.videoMobile) {
+      newErrors.videoMobile = "กรุณาอัปโหลดวิดีโอ (Mobile)";
     }
-    if (!videoDesktopFile) {
-      newErrors.videoDesktop = "กรุณาอัปโหลดวิดีโอแบนเนอร์ (Desktop)";
+    if (!videoDesktopFile && !formData.videoDesktop) {
+      newErrors.videoDesktop = "กรุณาอัปโหลดวิดีโอ (Desktop)";
     }
     if (
       videoMobileFile &&
       !videoMobileFile.type.startsWith("video/")
     ) {
-      newErrors.videoMobile =
-        "ไฟล์ต้องเป็นวิดีโอเท่านั้น";
+      newErrors.videoMobile = "ไฟล์ต้องเป็นวิดีโอเท่านั้น";
     }
     if (
       videoDesktopFile &&
       !videoDesktopFile.type.startsWith("video/")
     ) {
-      newErrors.videoDesktop =
-        "ไฟล์ต้องเป็นวิดีโอเท่านั้น";
+      newErrors.videoDesktop = "ไฟล์ต้องเป็นวิดีโอเท่านั้น";
     }
 
     setErrors(newErrors);
@@ -163,30 +192,17 @@ const CreateBannerVideoPage = () => {
       formDataUpload.append("sortOrder", formData.sortOrder.toString());
       formDataUpload.append("isActive", formData.isActive);
       if (videoMobileFile) {
-        formDataUpload.append("videoDesktop", videoMobileFile);
+        formDataUpload.append("coverVideoMobile", videoMobileFile);
       }
       if (videoDesktopFile) {
-        formDataUpload.append("videoMobile", videoDesktopFile);
+        formDataUpload.append("coverVideoDesktop", videoDesktopFile);
       }
 
-      // ส่งข้อมูลไปยัง API สำหรับสร้าง Banner Video
-      await axios.post("/api/banner/video/create", formDataUpload, {
+      await axios.put(`/api/banner/video/edit/${id}`, formDataUpload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      setMessage("สร้างแบนเนอร์สำเร็จแล้ว");
-      // รีเซ็ตฟอร์ม
-      setFormData({
-        title: "",
-        sortOrder: 1,
-        isActive: "",
-        videoMobile: "",
-        videoDesktop: "",
-      });
-      setVideoMobileFile(null);
-      setVideoDesktopFile(null);
-      setVideoMobileUrl("");
-      setVideoDesktopUrl("");
-      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/video`;
+      setMessage("แก้ไขแบนเนอร์สำเร็จแล้ว");
+      router.push(`${process.env.NEXT_PUBLIC_API_URL}/admin/banner/video`);
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
@@ -324,7 +340,7 @@ const CreateBannerVideoPage = () => {
               ></path>
             </svg>
             <p>
-              ขนาดวิดีโอแบนเนอร์ (Desktop) <span className="font-bold underline">16:9</span> | ขนาดวิดีโอแบนเนอร์ (Mobile) <span className="font-bold underline">1:1</span>
+              ขนาดวิดีโอ (Desktop) <span className="font-bold underline">16:9</span> | ขนาดวิดีโอ (Mobile) <span className="font-bold underline">1:1</span>
             </p>
           </div>
           <label className="form-control">
@@ -339,13 +355,10 @@ const CreateBannerVideoPage = () => {
             />
             {videoDesktopUrl && (
               <video
-                width={256}
-                height={256}
                 controls
                 className="mt-2 border border-base-300 w-full h-64 object-cover rounded-lg"
               >
                 <source src={videoDesktopUrl} type="video/mp4" />
-                Your browser does not support the video tag.
               </video>
             )}
             <div className="label">
@@ -364,13 +377,10 @@ const CreateBannerVideoPage = () => {
             />
             {videoMobileUrl && (
               <video
-                width={256}
-                height={256}
                 controls
-                className="mt-2 border border-base-300 w-full h-64 sm:w-64 object-cover rounded-lg"
+                className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
               >
                 <source src={videoMobileUrl} type="video/mp4" />
-                Your browser does not support the video tag.
               </video>
             )}
             <div className="label">
@@ -391,7 +401,7 @@ const CreateBannerVideoPage = () => {
         <div
           role="alert"
           className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${
-            message === "สร้างแบนเนอร์สำเร็จแล้ว" ? "alert-success" : "alert-error"
+            message === "แก้ไขแบนเนอร์สำเร็จแล้ว" ? "alert-success" : "alert-error"
           }`}
         >
           <span>{message}</span>
@@ -401,4 +411,4 @@ const CreateBannerVideoPage = () => {
   );
 };
 
-export default CreateBannerVideoPage;
+export default page;

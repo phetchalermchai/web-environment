@@ -56,7 +56,7 @@ const BannerCard: React.FC<BannerCardProps> = ({ management, banner, editLink, d
                     Updated: {new Date(banner.updatedAt).toLocaleString()}
                 </p>
                 <div className="card-actions justify-end">
-                    <Link href={`${editLink}/${banner.id}`} className="btn btn-primary">
+                    <Link href={`${editLink}`} className="btn btn-primary">
                         แก้ไข
                     </Link>
                     <button
