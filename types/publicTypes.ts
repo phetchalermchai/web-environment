@@ -69,7 +69,7 @@ export interface BannerImage {
     sortOrder: string;
     createdAt: string;
     updatedAt: string;
-  }
+}
 
 export interface BannerVideo {
     id: string;
@@ -80,7 +80,29 @@ export interface BannerVideo {
     sortOrder: string;
     createdAt: string;
     updatedAt: string;
-  }
-  
+}
+
+export interface Personnel {
+    id: string;
+    nameTitle: string;
+    firstName: string;
+    lastName: string;
+    position: string;
+    positionName: string;
+    department: string;
+    image: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface E_Service {
+    id: string;
+    title: string;
+    image: String;
+    linkURL: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export type Banner = BannerImage | BannerVideo;
-  
+export type DataItem = Personnel | ActivitiesItems | E_Service;
