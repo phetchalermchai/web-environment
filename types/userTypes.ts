@@ -24,6 +24,20 @@ export interface NewsItems {
     updatedAt: string;
 }
 
+export interface ActivityItems {
+    id: string;
+    title: string;
+    slug: string;
+    author: {
+        firstname: string,
+        lastname: string,
+        department: string
+    };
+    description?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface E_ServiceItems {
     id: string;
     title: string;
@@ -46,4 +60,4 @@ export interface PersonnelItems {
     updatedAt: string;
 }
 
-export type DataItem = PersonnelItems | NewsItems | E_ServiceItems;
+export type DataItem = PersonnelItems | User | NewsItems | ActivityItems | E_ServiceItems;

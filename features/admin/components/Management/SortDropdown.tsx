@@ -1,15 +1,14 @@
 import { ArrowUpDownIcon } from "@/config/iconConfig";
-import { it } from "node:test";
 import { useState } from "react";
 
 interface SortDropdownProps {
     onSort: (option: string) => void;
-    itemType: "Personnel" | "NewsItems" | "E_Service" | null;
+    itemType: "Personnel" | "User" | "NewsItems" | "ActivityItems" | "E_Service" | null;
 }
 
 const SortDropdown = ({ onSort, itemType }: SortDropdownProps) => {
 
-    const [sortOption, setSortOption] = useState(`${itemType === "Personnel" ? "ชื่อ-นามสกุล" : itemType === "NewsItems" ? "ชื่อข่าวสาร" : itemType === "E_Service" ? "ชื่อบริการ" : ""}`);
+    const [sortOption, setSortOption] = useState(`${itemType === "Personnel" ? "ชื่อ-นามสกุล" : itemType === "User" ? "ผู้ใช้งาน" : itemType === "NewsItems" ? "ชื่อข่าวสาร" : itemType === "ActivityItems" ? "ชื่อกิจกรรม" : itemType === "E_Service" ? "ชื่อบริการ" : ""}`);
 
     const handleSortChange = (option: string) => {
         setSortOption(option);
@@ -44,6 +43,22 @@ const SortDropdown = ({ onSort, itemType }: SortDropdownProps) => {
                     </li>
                 </ul>
             )}
+            {itemType === "User" && (
+                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li>
+                        <button onClick={() => handleSortChange("ผู้ใช้งาน")}>ผู้ใช้งาน</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("ส่วนงาน")}>ส่วนงาน</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("วันที่สร้าง")}>วันที่สร้าง</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("วันที่อัปเดต")}>วันที่อัปเดต</button>
+                    </li>
+                </ul>
+            )}
             {itemType === "NewsItems" && (
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                     <li>
@@ -63,10 +78,32 @@ const SortDropdown = ({ onSort, itemType }: SortDropdownProps) => {
                     </li>
                 </ul>
             )}
+            {itemType === "ActivityItems" && (
+                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li>
+                        <button onClick={() => handleSortChange("ชื่อข่าวสาร")}>ชื่อกิจกรรม</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("ผู้เขียน")}>ผู้เขียน</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("ส่วนงาน")}>ส่วนงาน</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("วันที่สร้าง")}>วันที่สร้าง</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("วันที่อัปเดต")}>วันที่อัปเดต</button>
+                    </li>
+                </ul>
+            )}
             {itemType === "E_Service" && (
                 <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                     <li>
                         <button onClick={() => handleSortChange("ชื่อบริการ")}>ชื่อบริการ</button>
+                    </li>
+                    <li>
+                        <button onClick={() => handleSortChange("รูปบริการ")}>รูปบริการ</button>
                     </li>
                     <li>
                         <button onClick={() => handleSortChange("ลิงก์บริการ")}>ลิงก์บริการ</button>

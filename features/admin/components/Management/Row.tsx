@@ -2,26 +2,12 @@ import { EllipsisHorizontalIcon } from "@/config/iconConfig";
 import axios from "axios";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Personnel, E_Service } from "@/types/publicTypes";
-
-interface NewsItems {
-    id: string;
-    title: string;
-    author: {
-        firstname: string,
-        lastname: string,
-        department: string
-    };
-    description?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-type DataItem = NewsItems | Personnel | E_Service;
+import { DataItem, User, PersonnelItems, NewsItems, ActivityItems, E_ServiceItems } from "@/types/userTypes";
+import Image from "next/image";
 
 interface DataItemRowProps {
     dataItem: DataItem;
-    ItemType: "Personnel" | "NewsItems" | "E_Service" | null;
+    ItemType: "Personnel" | "User" | "NewsItems" | "ActivityItems" | "E_Service" | null;
     editLink: string;
     deleteApi: string;
 }
@@ -34,7 +20,7 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
     const handleDelete = async () => {
         setDeleting(true);
         try {
-            await axios.delete(`${deleteApi}${dataItem.id}`);
+            await axios.delete(`${deleteApi}${ItemType === "User" ? `${(dataItem as User).email}` : `${dataItem.id}`}`);
             window.location.reload();
         } catch (error: any) {
             setMessage(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบข้อมูลบุคลากร");
@@ -57,12 +43,50 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
         <tr key={dataItem.id} className="text-nowrap hover:bg-base-200/40 cursor-pointer">
             {ItemType === "Personnel" && (
                 <>
-                    <td className="px-4 py-2">{(dataItem as Personnel).firstName} {(dataItem as Personnel).lastName}</td>
-                    <td className="px-4 py-2">{(dataItem as Personnel).position}</td>
-                    <td className="px-4 py-2">{(dataItem as Personnel).positionName}</td>
-                    <td className="px-4 py-2">{(dataItem as Personnel).department}</td>
-                    <td className="px-4 py-2">{new Date((dataItem as Personnel).createdAt).toLocaleDateString("th-TH")}</td>
-                    <td className="px-4 py-2">{new Date((dataItem as Personnel).updatedAt).toLocaleDateString("th-TH")}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).firstName} {(dataItem as PersonnelItems).lastName}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).position}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).positionName}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).department}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).createdAt).toLocaleDateString("th-TH")}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).updatedAt).toLocaleDateString("th-TH")}</td>
+                </>
+            )}
+            {ItemType === "User" && (
+                <>
+                    {/* <td className="px-4 py-2">{(dataItem as PersonnelItems).firstName} {(dataItem as PersonnelItems).lastName}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).position}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).positionName}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).department}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).createdAt).toLocaleDateString("th-TH")}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).updatedAt).toLocaleDateString("th-TH")}</td> */}
+                    <td>
+                        <div className="flex items-center gap-3">
+                            {
+                                (dataItem as User).avatar ?
+                                    <div className="avatar">
+                                        <div className="mask mask-circle h-12 w-12 bg-base-300">
+                                            <Image
+                                                src={`${(dataItem as User).avatar}`}
+                                                width={48}
+                                                height={48}
+                                                alt={`${(dataItem as User).email}`} />
+                                        </div>
+                                    </div> :
+                                    <div className="avatar placeholder">
+                                        <div className="bg-neutral text-neutral-content w-12 rounded-full">
+                                            <span className="text-base">{(dataItem as User).email.slice(0, 2).toUpperCase()}</span>
+                                        </div>
+                                    </div>
+                            }
+                            <div>
+                                <div className="font-bold">{(dataItem as User).firstname} {(dataItem as User).lastname}</div>
+                                <div className="text-xs md:text-sm opacity-50">{(dataItem as User).email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{(dataItem as User).department}</td>
+                    <td>{(dataItem as User).createdAt && new Date((dataItem as User).createdAt).toLocaleDateString("th-TH")}</td>
+                    <td>{(dataItem as User).updatedAt && new Date((dataItem as User).updatedAt).toLocaleDateString("th-TH")}</td>
                 </>
             )}
             {ItemType === "NewsItems" && (
@@ -74,12 +98,30 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
                     <td className="px-4 py-2">{new Date((dataItem as NewsItems).updatedAt).toLocaleDateString("th-TH")}</td>
                 </>
             )}
+            {ItemType === "ActivityItems" && (
+                <>
+                    <td className="px-4 py-2">{(dataItem as ActivityItems).title}</td>
+                    <td className="px-4 py-2">{(dataItem as ActivityItems).author.firstname} {(dataItem as ActivityItems).author.lastname}</td>
+                    <td className="px-4 py-2">{(dataItem as ActivityItems).author.department}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as ActivityItems).createdAt).toLocaleDateString("th-TH")}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as ActivityItems).updatedAt).toLocaleDateString("th-TH")}</td>
+                </>
+            )}
             {ItemType === "E_Service" && (
                 <>
-                    <td className="px-4 py-2">{(dataItem as E_Service).title}</td>
-                    <td className="px-4 py-2">{(dataItem as E_Service).linkURL}</td>
-                    <td className="px-4 py-2">{new Date((dataItem as E_Service).createdAt).toLocaleDateString("th-TH")}</td>
-                    <td className="px-4 py-2">{new Date((dataItem as E_Service).updatedAt).toLocaleDateString("th-TH")}</td>
+                    <td className="px-4 py-2">{(dataItem as E_ServiceItems).title}</td>
+                    <td className="px-4 py-2">
+                        <div className="avatar">
+                            <div className="mask mask-squircle h-12 w-12">
+                                <img
+                                    src={`${(dataItem as E_ServiceItems).image}`}
+                                    alt={`${(dataItem as E_ServiceItems).title}`} />
+                            </div>
+                        </div>
+                    </td>
+                    <td className="px-4 py-2">{(dataItem as E_ServiceItems).linkURL}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as E_ServiceItems).createdAt).toLocaleDateString("th-TH")}</td>
+                    <td className="px-4 py-2">{new Date((dataItem as E_ServiceItems).updatedAt).toLocaleDateString("th-TH")}</td>
                 </>
             )}
             <td>
@@ -88,24 +130,24 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
                         <EllipsisHorizontalIcon />
                     </div>
                     <div tabIndex={0} className="dropdown-content card card-compact bg-base-100 rounded-lg z-[1] w-52 p-2 shadow">
-                        <Link href={`${editLink}${dataItem.id}`} className='btn btn-ghost btn-sm'>
-                            {`แก้ไข${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "NewsItems" ? "ข่าวสาร" : ""}${ItemType === "E_Service" ? "E_Service" : ""}`}
+                        <Link href={`${editLink}${ItemType === "User" ? `${(dataItem as User).email}` : `${dataItem.id}`}`} className='btn btn-ghost btn-sm'>
+                            {`แก้ไข${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "User" ? "ผู้ใช้งาน" : ""}${ItemType === "NewsItems" ? "ข่าวสาร" : ""}${ItemType === "ActivityItems" ? "กิจกรรม" : ""}${ItemType === "E_Service" ? " E_Service" : ""}`}
                         </Link>
                         <button
                             className='btn btn-ghost btn-sm hover:bg-error/15 text-error'
                             onClick={openModal}
                             disabled={deleting}
                         >
-                            {deleting ? `กำลังลบ${ItemType === "Personnel" ? "บุคลากร..." : ""}${ItemType === "NewsItems" ? "ข่าวสาร..." : ""}${ItemType === "E_Service" ? "E_Service..." : ""}` : `ลบ${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "NewsItems" ? "ข่าวสาร" : ""}${ItemType === "E_Service" ? "E_Service" : ""}`}
+                            {deleting ? `กำลังลบ${ItemType === "Personnel" ? "บุคลากร..." : ""}${ItemType === "User" ? "ผู้ใช้งาน..." : ""}${ItemType === "NewsItems" ? "ข่าวสาร..." : ""}${ItemType === "ActivityItems" ? "กิจกรรม..." : ""}${ItemType === "E_Service" ? "E_Service..." : ""}` : `ลบ${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "User" ? "ผู้ใช้งาน" : ""}${ItemType === "NewsItems" ? "ข่าวสาร" : ""}${ItemType === "ActivityItems" ? "กิจกรรม" : ""}${ItemType === "E_Service" ? " E_Service" : ""}`}
                         </button>
                         <dialog ref={modalRef} className="modal">
                             <div className="modal-box">
-                                <h3 className="font-bold text-lg">{`ลบ${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "NewsItems" ? "ข่าวสาร" : ""}${ItemType === "E_Service" ? "E_Service" : ""}`}</h3>
-                                <p className="py-4">{`คุณแน่ใจหรือไม่ว่าต้องการลบ${ItemType === "Personnel" ? "บุคลากร?" : ""}${ItemType === "NewsItems" ? "ข่าวสาร?" : ""}${ItemType === "E_Service" ? "E_Service?" : ""}`}</p>
+                                <h3 className="font-bold text-lg">{`ลบ${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "User" ? "ผู้ใช้งาน" : ""}${ItemType === "NewsItems" ? "ข่าวสาร" : ""}${ItemType === "ActivityItems" ? "กิจกรรม" : ""}${ItemType === "E_Service" ? "E_Service" : ""}`}</h3>
+                                <p className="py-4">{`คุณแน่ใจหรือไม่ว่าต้องการลบ${ItemType === "Personnel" ? "บุคลากร?" : ""}${ItemType === "User" ? "ผู้ใช้งาน?" : ""}${ItemType === "NewsItems" ? "ข่าวสาร?" : ""}${ItemType === "ActivityItems" ? "กิจกรรม?" : ""}${ItemType === "E_Service" ? "E_Service?" : ""}`}</p>
                                 <div className="modal-action">
                                     <form method="dialog" className="flex gap-2">
                                         <button className="btn btn-error" onClick={handleDelete}>
-                                            {deleting ? `กำลังลบ${ItemType === "Personnel" ? "บุคลากร..." : ""}${ItemType === "NewsItems" ? "ข่าวสาร..." : ""}${ItemType === "E_Service" ? "E_Service..." : ""}` : `ตกลง`}
+                                            {deleting ? `กำลังลบ${ItemType === "Personnel" ? "บุคลากร..." : ""}${ItemType === "User" ? "ผู้ใช้งาน..." : ""}${ItemType === "NewsItems" ? "ข่าวสาร..." : ""}${ItemType === "ActivityItems" ? "กิจกรรม..." : ""}${ItemType === "E_Service" ? "E_Service..." : ""}` : `ตกลง`}
                                         </button>
                                         <button className="btn" onClick={closeModal}>ยกเลิก</button>
                                     </form>
