@@ -4,13 +4,12 @@ import { DataItem } from "@/types/userTypes";
 
 export type ItemType = "Personnel" | "User" | "NewsItems" | "ActivityItems" | "E_Service";
 
-function getItemType(item: DataItem): "Personnel" | "User" | "NewsItems" | "ActivityItems" | "E_Service" {
+function getItemType(item: DataItem): ItemType {
   if ("firstName" in item) {
     return "Personnel";
   } else if ("role" in item) {
     return "User";
   } else if ("author" in item) {
-    // ถ้ามี slug แสดงว่าเป็น ActivityItems, ไม่เช่นนั้นถือว่าเป็น NewsItems
     if ("content" in item && item.content != null) {
       return "NewsItems";
     }
@@ -39,13 +38,17 @@ export const useDataItems = (getsApi: string) => {
           createdAt: a.createdAt && !isNaN(Date.parse(a.createdAt)) ? new Date(a.createdAt) : null,
           updatedAt: a.updatedAt && !isNaN(Date.parse(a.updatedAt)) ? new Date(a.updatedAt) : null,
         }));
-        setDataItems(dataItemsWithDate);
-        console.log("dataItemsWithDate", dataItemsWithDate);
+        const filteredItems = dataItemsWithDate.filter((item: any) => {
+          if ("role" in item) {
+            return item.role === "USER";
+          }
+          return true;
+        });
+        setDataItems(filteredItems);
 
-        if (dataItemsWithDate.length > 0) {
-          const currentItemType = getItemType(dataItemsWithDate[0]);
+        if (filteredItems.length > 0) {
+          const currentItemType = getItemType(filteredItems[0]);
           setItemType(currentItemType);
-          console.log("currentItemType", currentItemType);
           switch (currentItemType) {
             case "Personnel":
               setSort("ชื่อ-นามสกุล");
@@ -65,13 +68,15 @@ export const useDataItems = (getsApi: string) => {
             default:
               break;
           }
+        } else {
+          setError(new Error("ไม่มีข้อมูลให้แสดง กรุณาติดต่อผู้ดูแลระบบ"));
         }
       } catch (error) {
         console.error(error);
         setError(new Error(
           axios.isAxiosError(error)
-            ? error.response?.data?.message || "Failed to fetch data"
-            : "An unexpected error occurred"
+            ? error.response?.data?.message || "ไม่สามารถดึงข้อมูลได้"
+            : "กรุณาติดต่อผู้ดูแลระบบ"
         ));
       } finally {
         setLoading(false);

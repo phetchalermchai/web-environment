@@ -4,9 +4,8 @@ import CreateButton from "./CreateButton";
 import SearchBar from "./SearchBar";
 import SortDropdown from "./SortDropdown";
 import Table from "./Table";
-import { useState, useEffect, useMemo, use } from "react";
+import { useState, useMemo } from "react";
 import { DataItem, User, PersonnelItems, NewsItems, ActivityItems, E_ServiceItems } from "@/types/userTypes";
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useDataItems, ItemType } from "../../hooks/useDataItems";
@@ -74,10 +73,9 @@ const ManagementPage = ({
         new Date((a as PersonnelItems).updatedAt).getTime() - new Date((b as PersonnelItems).updatedAt).getTime(),
     },
     User: {
-      "Email": (a, b) => {
-        return (a as User).email.localeCompare((b as User).email);
-      },
-      "Department": (a, b) =>
+      "ผู้ใช้งาน": (a, b) => 
+        (a as User).email.localeCompare((b as User).email),
+      "ส่วนงาน": (a, b) =>
         ((a as User).department || "").localeCompare(((b as User).department || "")),
       "วันที่สร้าง": (a, b) =>
         new Date((a as User).createdAt).getTime() - new Date((b as User).createdAt).getTime(),
