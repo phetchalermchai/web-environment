@@ -5,25 +5,25 @@ import Image from "next/image";
 import { PencilIcon, XMarkIcon } from "@/config/iconConfig";
 
 const UserSettings = () => {
-  // สมมุติว่าเราได้รับข้อมูลจากเซิร์ฟเวอร์
-  const initialAvatarUrl = ""; // ถ้าไม่มีรูป จะได้ค่าว่าง
+  // สมมุติว่าเราได้รับข้อมูลจากเซิร์ฟเวอร์หรือ context มาก่อน
+  const initialAvatarUrl =
+    "/uploads/avatar/1741236557116-hello-kitty-face-cutest-sanrio-character-transparent-png-735811696670113twezxpuujz.png"; // หรือถ้าไม่มี ให้เปลี่ยนเป็นค่าว่าง
   const initialEmail = "Abc123@gmail.com";
-  const initialUserLevel = "User"; // หรือ "Superuser"
+  const initialUserLevel = "User"; // หรือ "Superuser" ตามสิทธิ์จริง
 
-  // State สำหรับเก็บ avatar URL (หรือไฟล์ที่เลือกใหม่)
+  // State สำหรับเก็บ URL ของ avatar และไฟล์ avatar ที่เลือกใหม่
   const [avatarUrl, setAvatarUrl] = useState<string>(initialAvatarUrl);
-  // State สำหรับเก็บ avatar file ที่เลือกใหม่ (ถ้ามี)
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
-  // useRef สำหรับ file input ที่ถูกซ่อนไว้
+  // useRef สำหรับเข้าถึง file input ซ่อนอยู่
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // เมื่อคลิกที่ Avatar หรือปุ่มดินสอ ให้เปิด file input
+  // เมื่อคลิกที่ Avatar หรือปุ่มแก้ไข ให้เปิด file input
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
   };
 
-  // เมื่อมีการเปลี่ยนแปลงไฟล์ที่เลือก
+  // เมื่อมีการเปลี่ยนแปลงไฟล์
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -36,7 +36,7 @@ const UserSettings = () => {
     }
   };
 
-  // ฟังก์ชันสำหรับยกเลิกการเปลี่ยนแปลง avatar แล้วกลับไปใช้ค่าเดิม
+  // ยกเลิกการเปลี่ยน avatar และกลับไปใช้ค่าเริ่มต้น
   const handleCancelAvatar = () => {
     setAvatarFile(null);
     setAvatarUrl(initialAvatarUrl);
@@ -45,7 +45,7 @@ const UserSettings = () => {
     }
   };
 
-  // ดึงตัวอักษร 2 ตัวจากอีเมล (ใช้เมื่อไม่มีรูป avatar)
+  // ถ้าไม่มีรูป avatar ให้แสดงตัวอักษร 2 ตัวจากอีเมล (อยู่ตรงกลาง พร้อมพื้นหลังและข้อความที่กำหนด)
   const getEmailInitials = (email: string): string => {
     const trimmed = email.trim();
     return trimmed.length >= 2 ? trimmed.slice(0, 2).toUpperCase() : trimmed.toUpperCase();
@@ -53,12 +53,7 @@ const UserSettings = () => {
 
   return (
     <div className="m-3 p-3 bg-base-100 rounded-lg shadow">
-      {/* Alert สำหรับข้อมูลบัญชีและการตั้งค่า */}
-      <div className="alert alert-info mb-4">
-        <h3 className="font-bold text-xl">ตั้งค่าผู้ใช้งาน</h3>
-        <p>จัดการข้อมูลบัญชีและการตั้งค่าของคุณ</p>
-      </div>
-      {/* ฟอร์มแบบ 1 คอลัมน์ */}
+      {/* Layout แบบ 1 คอลัมน์: Avatar อยู่ด้านบน แล้วอินพุตในส่วนอื่น */}
       <div className="flex flex-col gap-6">
         {/* Avatar */}
         <div className="relative self-center">
@@ -79,7 +74,7 @@ const UserSettings = () => {
               )}
             </div>
           </div>
-          {/* แสดงปุ่มดินสอหรือกากบาท */}
+          {/* แสดงปุ่มแก้ไข (ดินสอ) เมื่อยังไม่มีการเลือกรูปใหม่ และปุ่มกากบาท เมื่อมีการเปลี่ยนรูป */}
           {!avatarFile ? (
             <button
               onClick={handleAvatarClick}
@@ -97,6 +92,7 @@ const UserSettings = () => {
               <XMarkIcon />
             </button>
           )}
+          {/* File input ซ่อนอยู่ */}
           <input
             type="file"
             accept="image/*"
@@ -105,8 +101,8 @@ const UserSettings = () => {
             className="hidden"
           />
         </div>
-        {/* ฟอร์มข้อมูลผู้ใช้งาน */}
-        <div className="space-y-4">
+        {/* ส่วนข้อมูลผู้ใช้งาน */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="form-control">
             <label className="label">
               <span className="label-text">ชื่อจริง</span>
