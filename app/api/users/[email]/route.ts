@@ -7,21 +7,22 @@ export async function GET(req: NextRequest, { params }: { params: { email: strin
     try {
         // ตรวจสอบ session และ role ของผู้ใช้
         const session = await getServerSession({ req, ...authOptions });
-        if (
-            !session ||
-            !session.user ||
-            (session.user.role !== "USER" && session.user.role !== "SUPERUSER")
-        ) {
+        if (!session || !session.user) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { email } = await params; 
+        const { email } = await params;
         if (!email) {
-            return NextResponse.json({ error: "Email is required" }, { status: 400 });
+            return NextResponse.json({ error: "จำเป็นต้องระบุ Email" }, { status: 400 });
         }
 
         // Normalize email (หาก email ในฐานข้อมูลเก็บเป็น lowercase)
         const normalizedEmail = email.toLowerCase();
+
+        // เงื่อนไข: หากผู้ใช้มี role เป็น USER ให้ดึงข้อมูลเฉพาะของตัวเอง
+        if (session.user.role === "USER" && session.user.email.toLowerCase() !== normalizedEmail) {
+            return NextResponse.json({ error: "ผู้ใช้สามารถเข้าถึงข้อมูลของตัวเองได้เท่านั้น" }, { status: 403 });
+        }
 
         // ค้นหา user ตาม normalized email
         const user = await prisma.user.findUnique({
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: { email: strin
         });
 
         if (!user) {
-            return NextResponse.json({ error: "User not found" }, { status: 404 });
+            return NextResponse.json({ error: "ไม่พบผู้ใช้" }, { status: 404 });
         }
 
         // (Optional) แปลงค่า timestamp เป็น ISO string
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest, { params }: { params: { email: strin
 
         return NextResponse.json(responseData, { status: 200 });
     } catch (error: any) {
-        console.error("Error fetching user:", error);
-        return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 });
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:", error);
+        return NextResponse.json({ error: "ไม่สามารถดึงข้อมูลผู้ใช้ได้" }, { status: 500 });
     }
 }

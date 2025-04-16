@@ -27,7 +27,7 @@ const ManagementPage = ({
   // กำหนด filter configuration ตาม itemType
   const filterConfig: { [key in ItemType]: string[] } = {
     Personnel: ["firstName", "lastName", "position", "positionName", "department"],
-    User: ["firstName", "lastName", "email"],
+    User: ["firstname", "lastname", "email", "department"],
     NewsItems: ["title", "author.firstname", "author.department"],
     ActivityItems: ["title", "author.firstname", "author.department"],
     E_Service: ["title", "linkURL"],

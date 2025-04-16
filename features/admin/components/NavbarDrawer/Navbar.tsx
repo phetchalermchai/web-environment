@@ -41,7 +41,7 @@ const Navbar = async () => {
                                     src={user.avatar}
                                     width={40}
                                     height={40}
-                                    alt="Avatar Tailwind CSS Component" />
+                                    alt={`${user.firstname} ${user.lastname} Avatar`} />
                             </div>
                         </div>
                         :
