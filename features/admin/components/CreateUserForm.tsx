@@ -1,147 +1,99 @@
 "use client";
 
-import Link from "next/link";
 import useCreateUserForm from "@/features/admin/hooks/useCreateUserForm";
+import { PencilIcon, XMarkIcon } from "@/config/iconConfig";
 import Image from "next/image";
+import { useEffect } from "react";
+import InputField from "./UserForm/Create/InputField";
+import { useRouter } from "next/navigation";
 
 const CreateUserForm = () => {
-
+  const router = useRouter();
   const {
     formData,
     errors,
     loading,
     message,
-    fileUrl,
+    avatarFile,
+    previewUrl,
+    fileInputRef,
     handleChange,
     handleFileChange,
+    handleAvatarClick,
+    handleCancelAvatar,
     handleSubmit,
   } = useCreateUserForm();
 
-  if (loading) {
-    return (
-      <div className="flex flex-col">
-        <div className="flex flex-col lg:flex-row">
-          <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
-            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-          </div>
-          <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
-            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-          </div>
-        </div>
-        <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:mx-5 xl:my-4 xl:p-5">
-          <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-          <div className="skeleton h-12 w-full rounded-lg"></div>
-          <div className="py-2"></div>
-        </div>
-        <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
-          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
-          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
-        </div>
-      </div>
-    );
-  }
+  // ทำ clean‑up URL เมื่อคอมโพเนนท์ unmount หรือ previewUrl เปลี่ยน
+  // useEffect(() => {
+  //   return () => {
+  //     if (previewUrl && previewUrl.startsWith("blob:")) {
+  //       URL.revokeObjectURL(previewUrl);
+  //     }
+  //   };
+  // }, [previewUrl]);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col">
-      <div className="flex flex-col lg:flex-row">
-        <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">ชื่อจริง</span>
+    <div className="m-5 p-16 bg-base-100 rounded-lg shadow">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+        {/* Avatar Section */}
+        <div className="relative self-center">
+          <div className="avatar cursor-pointer" onClick={handleAvatarClick}>
+            <div className="w-24 h-24 relative rounded-full overflow-hidden ring-primary ring-offset-base-100 ring ring-offset-2">
+              {previewUrl ? (
+                <Image
+                  src={previewUrl}
+                  alt="Avatar"
+                  fill
+                  sizes="(max-width: 768px) 100px, 150px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-neutral text-neutral-content">
+                  <span className="text-3xl font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+
+                  </span>
+                </div>
+              )}
             </div>
-            <input
-              type="text"
-              name="firstname"
-              placeholder="ตัวอย่าง เทศบาล"
-              value={formData.firstname}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.firstname ? "input-error" : ""}`} />
-            {errors.firstname && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.firstname}</span>
-              </div>
-            )}
-          </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">นามสกุล</span>
-            </div>
-            <input
-              type="text"
-              name="lastname"
-              placeholder="ตัวอย่าง นครนนทบุรี"
-              value={formData.lastname}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.lastname ? "input-error" : ""}`} />
-            {errors.lastname && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.lastname}</span>
-              </div>
-            )}
-          </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">แผนก</span>
-            </div>
-            <input
-              type="text"
-              name="department"
-              placeholder="ตัวอย่าง งานบริหารจัดการมูลฝอย"
-              value={formData.department}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.department ? "input-error" : ""}`} />
-            {errors.department && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.department}</span>
-              </div>
-            )}
-          </label>
+          </div>
+          {!previewUrl ? (
+            <button
+              type="button"
+              onClick={handleAvatarClick}
+              className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border border-white hover:bg-primary-focus focus:outline-none tooltip tooltip-bottom"
+              data-tip="แก้ไขรูป avatar"
+            >
+              <PencilIcon />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleCancelAvatar}
+              className="absolute top-0 right-0 bg-error text-white rounded-full p-1 border border-white hover:bg-red-600 focus:outline-none tooltip"
+              data-tip="ยกเลิกการเปลี่ยนรูป"
+            >
+              <XMarkIcon />
+            </button>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
-        <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">อีเมล</span>
-            </div>
-            <input
-              type="text"
-              name="email"
-              placeholder="ตัวอย่าง Abc123@gmail.com"
-              value={formData.email}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.email ? "input-error" : ""}`} />
-            {errors.email && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.email}</span>
-              </div>
-            )}
-          </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">รหัสผ่าน</span>
-            </div>
-            <input
-              type="password"
-              name="password"
-              placeholder="ตัวอย่าง Abc123456789@"
-              value={formData.password}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.password ? "input-error" : ""}`} />
-            {errors.password && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.password}</span>
-              </div>
-            )}
-          </label>
+        {/* User form for details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+          <InputField label="ชื่อจริง" name="firstname" placeholder="ชื่อจริง" value={formData.firstname} error={errors.firstname} onChange={handleChange} />
+          <InputField label="นามสกุล" name="lastname" placeholder="นามสกุล" value={formData.lastname} error={errors.lastname} onChange={handleChange} />
+          <InputField label="อีเมล" name="email" type="email" placeholder="อีเมล" value={formData.email} error={errors.email} onChange={handleChange} />
+          <InputField label="รหัสผ่าน" name="password" type="password" placeholder="รหัสผ่านใหม่" value={formData.password} error={errors.password} onChange={handleChange} />
+          <InputField label="แผนก" name="department" placeholder="แผนกของคุณ" value={formData.department} error={errors.department} onChange={handleChange} />
           <label className="form-control">
             <div className="label">
               <span className="label-text">ระดับผู้ใช้งาน</span>
@@ -156,46 +108,27 @@ const CreateUserForm = () => {
               <option value="SUPERUSER">Superuser</option>
             </select>
           </label>
-
         </div>
-
-      </div>
-      <div className="flex flex-col bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">รูปโปรไฟล์</span>
-          </div>
-          <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.avatar ? "file-input-error" : ""}`} />
-          {fileUrl && (
-            <Image
-              src={fileUrl}
-              width={256}
-              height={256}
-              alt="Preview"
-              className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
-            />
-          )}
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.avatar}</span>
-          </div>
-        </label>
-      </div>
-      <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
-        <button type="submit" className="btn btn-success" disabled={loading}>
-          {loading ? "กำลังดำเนินการ..." : "ยืนยัน"}
-        </button>
-        <Link href={`/admin/users`} className="btn btn-error">ยกเลิก</Link>
-      </div>
-      {
-        message && <div
+        {/* Buttons */}
+        <div className="flex justify-end gap-4">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+          {loading ? "กำลังดำเนินการ..." : "สร้างผู้ใช้"}
+          </button>
+          <button type="button" className="btn btn-neutral" onClick={() => router.push("/admin/users")}>
+            ยกเลิก
+          </button>
+        </div>
+      </form>
+      {message && (
+        <div
           role="alert"
-          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "สร้างผู้ใช้สำเร็จแล้ว" ? "alert-success" : "alert-error"
+          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message.includes("สำเร็จ") ? "alert-success" : "alert-error"
             }`}
         >
           <span>{message}</span>
         </div>
-      }
-    </form>
+      )}
+    </div>
   );
 };
 

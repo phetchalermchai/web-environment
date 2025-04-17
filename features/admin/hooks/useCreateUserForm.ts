@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, useRef } from "react";
 import axios from "axios";
 import { uploadAvatar } from "@/features/admin/server/uploadAction";
+import { useRouter } from "next/navigation";
 
 interface CreateUserFormData {
     firstname: string;
@@ -24,6 +25,7 @@ interface FormErrors {
 }
 
 const useCreateUserForm = () => {
+    const router = useRouter();
     const [formData, setFormData] = useState<CreateUserFormData>({
         firstname: "",
         lastname: "",
@@ -36,129 +38,91 @@ const useCreateUserForm = () => {
     const [errors, setErrors] = useState<FormErrors>({});
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
-    const [file, setFile] = useState<File | null>(null);
-    const [fileUrl, setFileUrl] = useState<string>("");
+
+    // เก็บไฟล์ avatar ใน hook
+    const [previewUrl, setPreviewUrl] = useState<string>("");
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
+        if (!formData.firstname.trim()) newErrors.firstname = "กรุณาระบุชื่อ";
 
-        if (!formData.firstname.trim()) {
-            newErrors.firstname = "กรุณาระบุชื่อ";
-        }
+        if (!formData.lastname.trim()) newErrors.lastname = "กรุณาระบุนามสกุล";
 
-        if (!formData.lastname.trim()) {
-            newErrors.lastname = "กรุณาระบุนามสกุล";
-        }
+        if (!formData.email.trim()) newErrors.email = "กรุณาระบุอีเมล";
+        else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
 
-        if (!formData.email.trim()) {
-            newErrors.email = "กรุณาระบุอีเมล";
-        } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-            newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
-        }
-
-        if (!formData.password) {
-            newErrors.password = "กรุณาระบุพาสเวิร์ด";
-        } else if (formData.password.length < 12) {
-            newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
-        } else if (
+        if (!formData.password) newErrors.password = "กรุณาระบุพาสเวิร์ด";
+        else if (formData.password.length < 12) newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
+        else if (
             !/(?=.*[A-Z])/.test(formData.password) ||
             !/(?=.*[a-z])/.test(formData.password) ||
             !/(?=.*\d)/.test(formData.password) ||
             !/(?=.*[@$!%*?&#])/.test(formData.password)
-        ) {
-            newErrors.password =
-                "รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และอักขระพิเศษ";
-        }
+        ) newErrors.password = "รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และอักขระพิเศษ";
 
-        if (!formData.department.trim()) {
-            newErrors.department = "กรุณาระบุแผนกงาน";
-        }
-
-        if (file && !["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-            newErrors.avatar = "ไฟล์ต้องเป็นรูปภาพประเภท .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
-        }
-        //  else if (!file) {
-        //     newErrors.avatar = "กรุณาอัพโหลดรูปภาพต้องมีนามสกุล .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
-        // }
+        if (!formData.department.trim()) newErrors.department = "กรุณาระบุแผนกงาน";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-        setErrors((prev) => ({
-            ...prev,
-            [name]: "",
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "", }));
     };
 
-    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
-    // };
-
-    const handleFileChange = async (
-        e: React.ChangeEvent<HTMLInputElement>
-      ) => {
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-          if (!file.type.startsWith("image/")) {
-            setErrors((prev) => ({
-              ...prev,
-              coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
-            }));
+        if (!file) return;
+        // ตรวจชนิดและขนาดไฟล์
+        if (!file.type.startsWith("image/")) {
+            setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
             return;
-          }
-          setFile(file);
-          setFileUrl(URL.createObjectURL(file)); // แสดง preview
         }
-      };
+        if (file.size > 500 * 1024) {
+            setMessage("ไฟล์ avatar ต้องมีขนาดไม่เกิน 500 KB");
+            return;
+        }
+        setMessage(null);
+        const objectUrl = URL.createObjectURL(file);
+        setAvatarFile(file);
+        setPreviewUrl(objectUrl);
+    };
+
+    function handleCancelAvatar() {
+        if (previewUrl.startsWith("blob:")) {
+            URL.revokeObjectURL(previewUrl);
+        }
+        setAvatarFile(null);
+        setPreviewUrl("");
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+
+    const handleAvatarClick = () => fileInputRef.current?.click();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!validateForm()) return;
         setLoading(true);
         setMessage(null);
 
-        if (!validateForm()) {
-            setLoading(false);
-            return;
-        }
+        // สร้าง FormData สำหรับ multipart
+        const form = new FormData();
+        form.append("firstname", formData.firstname);
+        form.append("lastname", formData.lastname);
+        form.append("email", formData.email.trim().toLowerCase());
+        form.append("password", formData.password);
+        form.append("department", formData.department);
+        form.append("role", formData.role);
+        if (avatarFile) form.append("avatar", avatarFile);
 
         try {
-            let avatarUrl = formData.avatar;
-
-            if (file) {
-                // อัปโหลดรูปภาพก่อนสร้างผู้ใช้
-                const uniqueFilename = `${Date.now()}-${file.name}`;
-                const formDataUpload = new FormData();
-                formDataUpload.append("file", file);
-                formDataUpload.append("filename", uniqueFilename);
-
-                // เรียกใช้งาน server action อัปโหลดไฟล์
-                await uploadAvatar(formDataUpload);
-
-                // สร้าง URL สำหรับรูปภาพที่อัปโหลด
-                avatarUrl = `/uploads/avatar/${uniqueFilename}`;
-            }
-
-            // สร้าง payload ใหม่โดยรวม avatarUrl ที่อัปโหลดแล้ว
-            const payload = { ...formData, avatar: avatarUrl };
-
-            // ส่งข้อมูลไปยัง API route ที่จะสร้างผู้ใช้งานใหม่
-            await axios.post("/api/superuser/create-user", payload, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
+            await axios.post("/api/users/create", form);
             setMessage("สร้างผู้ใช้สำเร็จแล้ว");
-            // Reset ฟอร์ม
+            // รีเซ็ตฟอร์ม
             setFormData({
                 firstname: "",
                 lastname: "",
@@ -168,24 +132,23 @@ const useCreateUserForm = () => {
                 role: "USER",
                 avatar: "",
             });
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/users`;
+            setAvatarFile(null);
+            router.push("/admin/users");
         } catch (error: any) {
-            // หากเกิด error, ตรวจสอบ error.response.data.error จาก axios
-            if (error.response && error.response.data && error.response.data.error) {
-                setMessage(error.response.data.error);
-            } else {
-                setMessage("An unexpected error occurred");
-            }
+            const errMsg = error?.response?.data?.error || "เกิดข้อผิดพลาด";
+            setMessage(errMsg);
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => () => {
+        if (previewUrl.startsWith("blob:")) URL.revokeObjectURL(previewUrl);
+    }, [previewUrl]);
+
     useEffect(() => {
         if (message) {
-            const timer = setTimeout(() => {
-                setMessage(null);
-            }, 5000);
+            const timer = setTimeout(() => setMessage(null), 5000);
             return () => clearTimeout(timer);
         }
     }, [message]);
@@ -195,13 +158,14 @@ const useCreateUserForm = () => {
         errors,
         loading,
         message,
-        fileUrl,
+        avatarFile,
+        previewUrl,
+        fileInputRef,
         handleChange,
         handleFileChange,
+        handleAvatarClick,
+        handleCancelAvatar,
         handleSubmit,
-        setErrors,
-        setMessage,
-        validateForm,
     };
 };
 
