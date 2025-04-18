@@ -15,7 +15,7 @@ const UserSettings = () => {
     const { data: session } = useSession();
     const router = useRouter();
     const email = session?.user?.email || "";
-
+    
     // ดึงข้อมูลผู้ใช้ด้วย custom hook
     const { userData, setUserData, loading, error, originalAvatarRef, setAvatarPreview } = useUserData(email);
     const [newPassword, setNewPassword] = useState<string>("");
@@ -87,15 +87,17 @@ const UserSettings = () => {
         if (avatarFile) formData.append("avatar", avatarFile);
 
         try {
-            await axios.put(`/api/users/edit/${email}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            });
+            await axios.put(`/api/users/edit/${email}`, formData);
             setMessage("อัพเดทข้อมูลผู้ใช้งานสำเร็จ");
             router.push("/admin/dashboard");
             router.refresh(); 
-        } catch (err) {
-            console.error("Error updating user data:", err);
-            setMessage("เกิดข้อผิดพลาดในการอัพเดทข้อมูล");
+        } catch (error) {
+            console.error("Error updating user data:", error);
+            if (axios.isAxiosError(error)) {
+                setMessage(error.response?.data?.error);
+            } else {
+                setMessage("เกิดข้อผิดพลาดในการอัพเดทข้อมูลผู้ใช้");
+            }
         }
     };
 

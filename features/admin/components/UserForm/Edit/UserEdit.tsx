@@ -93,9 +93,13 @@ const UserEdit = () => {
             setMessage("อัพเดทข้อมูลผู้ใช้งานสำเร็จ");
             router.push("/admin/users");
             router.refresh();
-        } catch (err) {
-            console.error("Error updating user data:", err);
-            setMessage("เกิดข้อผิดพลาดในการอัพเดทข้อมูล");
+        } catch (error) {
+            console.error("Error updating user data:", error);
+            if (axios.isAxiosError(error)) {
+                setMessage(error.response?.data?.error);
+            } else {
+                setMessage("เกิดข้อผิดพลาดในการอัพเดทข้อมูลผู้ใช้");
+            }
         }
     };
 

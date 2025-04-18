@@ -3,7 +3,6 @@
 import useCreateUserForm from "@/features/admin/hooks/useCreateUserForm";
 import { PencilIcon, XMarkIcon } from "@/config/iconConfig";
 import Image from "next/image";
-import { useEffect } from "react";
 import InputField from "./UserForm/Create/InputField";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +13,6 @@ const CreateUserForm = () => {
     errors,
     loading,
     message,
-    avatarFile,
     previewUrl,
     fileInputRef,
     handleChange,
@@ -23,15 +21,6 @@ const CreateUserForm = () => {
     handleCancelAvatar,
     handleSubmit,
   } = useCreateUserForm();
-
-  // ทำ clean‑up URL เมื่อคอมโพเนนท์ unmount หรือ previewUrl เปลี่ยน
-  // useEffect(() => {
-  //   return () => {
-  //     if (previewUrl && previewUrl.startsWith("blob:")) {
-  //       URL.revokeObjectURL(previewUrl);
-  //     }
-  //   };
-  // }, [previewUrl]);
 
   return (
     <div className="m-5 p-16 bg-base-100 rounded-lg shadow">

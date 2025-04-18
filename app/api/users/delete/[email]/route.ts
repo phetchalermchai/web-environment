@@ -5,17 +5,33 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import fs from "fs";
 import path from "path";
 
+// ลบไฟล์ และถ้าโฟลเดอร์ว่างให้ลบโฟลเดอร์ด้วย
 function deleteFileIfExists(fileUrl: string) {
     const filePath = path.join(process.cwd(), "public", fileUrl);
-    if (fs.existsSync(filePath)) {
-        try {
-            fs.unlinkSync(filePath);
-            console.log(`Deleted avatar file: ${filePath}`);
-        } catch (err) {
-            console.error("Error deleting avatar file:", err);
-        }
+    if (!fs.existsSync(filePath)) return;
+    // 1) ลบไฟล์
+    try {
+      fs.unlinkSync(filePath);
+      console.log(`Deleted avatar file: ${filePath}`);
+    } catch (err) {
+      console.error("Error deleting avatar file:", err);
+      return;
     }
-}
+    // 2) ตรวจสอบและลบโฟลเดอร์ถ้าว่างเปล่า
+    const folderPath = path.dirname(filePath);
+    try {
+      // fs.rmdirSync จะลบเฉพาะถ้าว่างเท่านั้น
+      fs.rmdirSync(folderPath);
+      console.log(`Deleted empty folder: ${folderPath}`);
+    } catch (err: any) {
+      // โฟลเดอร์อาจไม่ว่างหรือมีไฟล์อื่นอยู่ ถ้าอยากลบ recursive ให้ใช้ options recursive: true
+      if (err.code === 'ENOTEMPTY') {
+        console.log(`Folder not empty, skip deleting: ${folderPath}`);
+      } else {
+        console.error("Error deleting folder:", err);
+      }
+    }
+  }
 
 export async function DELETE(req: NextRequest, { params }: { params: { email: string } }) {
     try {
