@@ -4,10 +4,10 @@ import { ChangeEvent, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { PencilIcon, XMarkIcon } from "@/config/iconConfig";
 import axios from "axios";
-
-
+import { useRouter } from "next/navigation";
 
 const CreateEServiceForm: React.FC = () => {
+    const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewUrl, setPreviewUrl] = useState<string>("");
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -26,7 +26,6 @@ const CreateEServiceForm: React.FC = () => {
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
         if (!file.type.startsWith("image/")) {
             setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
             return;
@@ -35,7 +34,6 @@ const CreateEServiceForm: React.FC = () => {
             setMessage("ขนาดไฟล์ต้องไม่เกิน 2 MB");
             return;
         }
-
         setErrors((e) => ({ ...e, image: undefined }));
         setImageFile(file);
         setPreviewUrl(URL.createObjectURL(file));
@@ -48,27 +46,39 @@ const CreateEServiceForm: React.FC = () => {
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
-    // ส่งฟอร์ม
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const newErrors: typeof errors = {};
+    const handleCancel = () => {
+        router.push("/admin/e-service");
+    };
+
+    const validateForm = (): boolean => {
+        const newErrors: { image?: string; name?: string; link?: string } = {};
         if (!imageFile) newErrors.image = "กรุณาอัปโหลดรูปภาพ";
         if (!name.trim()) newErrors.name = "กรุณาระบุชื่อบริการ";
         if (!link.trim()) newErrors.link = "กรุณาระบุลิงก์บริการ";
         setErrors(newErrors);
-        if (Object.keys(newErrors).length) return;
+        return Object.keys(newErrors).length === 0;
+    }
+
+    // ส่งฟอร์ม
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
         setLoading(true);
         setMessage(null);
 
         const form = new FormData();
-        form.append("image", imageFile!);
-        form.append("name", name);
-        form.append("link", link);
+        form.append("coverImage", imageFile!);
+        form.append("title", name);
+        form.append("linkURL", link);
         try {
-            // const res = await axios.post("/api/eservice/create", form);
+            await axios.post("/api/eservice/create", form);
             setMessage("สร้าง E‑Service สำเร็จแล้ว");
-            // ถ้ามีการ rediect หลังสร้าง
-            // router.push("/admin/eservices");
+            setImageFile(null);
+            setPreviewUrl("");
+            setName("");
+            setLink("");
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            router.push("/admin/e-service");
         } catch (err: any) {
             setMessage(err?.response?.data?.error || "เกิดข้อผิดพลาดในการสร้าง E‑Service");
         } finally {
@@ -93,11 +103,11 @@ const CreateEServiceForm: React.FC = () => {
     }, [message]);
 
     return (
-        <div className="m-5 p-16 bg-base-100 rounded-lg shadow">
+        <div className="m-5 px-8 md:px-16 py-16 bg-base-100 rounded-lg shadow">
             <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6">
                 {/* Image section */}
                 <div
-                    className="relative w-52 h-72 self-center cursor-pointer"
+                    className="relative w-52 h-72 mx-auto cursor-pointer"
                     onClick={handleEditClick}
                 >
                     <div className="w-52 h-72 rounded-lg relative overflow-hidden border border-dashed border-base-300">
@@ -143,7 +153,7 @@ const CreateEServiceForm: React.FC = () => {
                         className="hidden"
                     />
                 </div>
-                {errors.image && <p className="text-sm text-error">{errors.image}</p>}
+                {errors.image && <p className="text-sm text-error text-center">{errors.image}</p>}
 
                 {/* Service name */}
                 <div className="form-control">
@@ -176,9 +186,18 @@ const CreateEServiceForm: React.FC = () => {
                 </div>
 
                 {/* Submit */}
-                <button type="submit" className="btn btn-primary w-full">
-                    สร้าง E‑Service
-                </button>
+                <div className="flex justify-end gap-4">
+                    <button type="submit" className="btn btn-primary">
+                        {loading ? "กำลังสร้าง..." : "สร้าง E‑Service"}
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-neutral"
+                        onClick={handleCancel}
+                    >
+                        ยกเลิก
+                    </button>
+                </div>
             </form>
             {message && (
                 <div
