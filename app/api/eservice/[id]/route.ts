@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: "Forbidden: Insufficient permissions" }, { status: 403 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     const eservice = await prisma.eService.findUnique({
       where: { id },
     });

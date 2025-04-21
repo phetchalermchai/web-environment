@@ -51,9 +51,9 @@ export async function POST(req: NextRequest) {
     const coverImageFile = form.get("coverImage") as File;
 
     // ตรวจสอบข้อมูลที่จำเป็น
-    if (!nameTitle || !firstName || !lastName || !position || !positionName || !department || !coverImageFile) {
+    if (!nameTitle || !firstName || !lastName || !position || !positionName || !coverImageFile) {
       return NextResponse.json(
-        { error: "Missing required fields: nameTitle, firstName, lastName, position, positionName, department, image" },
+        { error: "Missing required fields: nameTitle, firstName, lastName, position, positionName, image" },
         { status: 400 }
       );
     }
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, personnel: newPersonnel }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json(
-      { error: "Failed to create agency personnel", message: error.message || error },
+      { error: "ไม่สามารถสร้างบุคลากรของหน่วยงานได้", message: error.message || error },
       { status: 500 }
     );
   }

@@ -20,7 +20,6 @@ const Table = ({ dataItem, ItemType, sort, editLink, deleteApi }: DataItemTableP
                         <th><span className="inline-flex gap-1">ชื่อ-นามสกุล {sort === "ชื่อ-นามสกุล" ? <ArrowDownIcon /> : ""}</span></th>
                         <th><span className="inline-flex gap-1">ตำแหน่ง {sort === "ตำแหน่ง" ? <ArrowDownIcon /> : ""}</span></th>
                         <th><span className="inline-flex gap-1">ชื่อตำแหน่ง {sort === "ชื่อตำแหน่ง" ? <ArrowDownIcon /> : ""}</span></th>
-                        <th><span className="inline-flex gap-1">ส่วนงาน {sort === "ส่วนงาน" ? <ArrowDownIcon /> : ""}</span></th>
                         <th><span className="inline-flex gap-1">วันที่สร้าง {sort === "วันที่สร้าง" ? <ArrowDownIcon /> : ""}</span></th>
                         <th><span className="inline-flex gap-1">วันที่อัปเดต {sort === "วันที่อัปเดต" ? <ArrowDownIcon /> : ""}</span></th>
                         <th></th>

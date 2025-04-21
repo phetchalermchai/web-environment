@@ -43,22 +43,29 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
         <tr key={dataItem.id} className="text-nowrap hover:bg-base-200/40 cursor-pointer">
             {ItemType === "Personnel" && (
                 <>
-                    <td className="px-4 py-2">{(dataItem as PersonnelItems).firstName} {(dataItem as PersonnelItems).lastName}</td>
+                    <td className="px-4 py-2">
+                        <div className="flex items-center gap-3">
+                            <div className="avatar">
+                                <div className="mask mask-squircle h-12 w-12 bg-base-300">
+                                    <Image
+                                        src={`${(dataItem as PersonnelItems).image}`}
+                                        className="object-top"
+                                        width={48}
+                                        height={48}
+                                        alt={`${(dataItem as PersonnelItems).firstName} ${(dataItem as PersonnelItems).lastName}`} />
+                                </div>
+                            </div>
+                            {(dataItem as PersonnelItems).firstName} {(dataItem as PersonnelItems).lastName}
+                        </div>
+                    </td>
                     <td className="px-4 py-2">{(dataItem as PersonnelItems).position}</td>
                     <td className="px-4 py-2">{(dataItem as PersonnelItems).positionName}</td>
-                    <td className="px-4 py-2">{(dataItem as PersonnelItems).department}</td>
                     <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).createdAt).toLocaleDateString("th-TH")}</td>
                     <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).updatedAt).toLocaleDateString("th-TH")}</td>
                 </>
             )}
             {ItemType === "User" && (
                 <>
-                    {/* <td className="px-4 py-2">{(dataItem as PersonnelItems).firstName} {(dataItem as PersonnelItems).lastName}</td>
-                    <td className="px-4 py-2">{(dataItem as PersonnelItems).position}</td>
-                    <td className="px-4 py-2">{(dataItem as PersonnelItems).positionName}</td>
-                    <td className="px-4 py-2">{(dataItem as PersonnelItems).department}</td>
-                    <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).createdAt).toLocaleDateString("th-TH")}</td>
-                    <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).updatedAt).toLocaleDateString("th-TH")}</td> */}
                     <td>
                         <div className="flex items-center gap-3">
                             {
@@ -149,7 +156,7 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
                                         <button className="btn btn-error" onClick={handleDelete}>
                                             {deleting ? `กำลังลบ${ItemType === "Personnel" ? "บุคลากร..." : ""}${ItemType === "User" ? "ผู้ใช้งาน..." : ""}${ItemType === "NewsItems" ? "ข่าวสาร..." : ""}${ItemType === "ActivityItems" ? "กิจกรรม..." : ""}${ItemType === "E_Service" ? "E_Service..." : ""}` : `ตกลง`}
                                         </button>
-                                        <button className="btn" onClick={closeModal}>ยกเลิก</button>
+                                        <button className="btn btn-neutral" onClick={closeModal}>ยกเลิก</button>
                                     </form>
                                 </div>
                             </div>

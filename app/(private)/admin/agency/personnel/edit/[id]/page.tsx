@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { PencilIcon, XMarkIcon } from "@/config/iconConfig";
+import InputField from "@/features/admin/components/UserForm/Create/InputField";
 import axios from "axios";
 
 interface CreateUserFormData {
@@ -12,8 +14,7 @@ interface CreateUserFormData {
   lastname: string;
   position: string;
   positionname: string;
-  department: string;
-  image: string;
+  department: string
 }
 
 interface FormErrors {
@@ -35,14 +36,17 @@ const page = () => {
     lastname: "",
     position: "",
     positionname: "",
-    department: "",
-    image: "",
+    department: ""
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [fileUrl, setFileUrl] = useState<string>("");
+
+  // เก็บไฟล์ avatar ใน hook
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const originalPreviewRef = useRef('')
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchPersonnel = async () => {
@@ -60,10 +64,10 @@ const page = () => {
             lastname: personnel.lastName || "",
             position: personnel.position || "",
             positionname: personnel.positionName || "",
-            department: personnel.department || "",
-            image: personnel.image || "",
+            department: personnel.department || ""
           });
-          setFileUrl(personnel.image || "");
+          setPreviewUrl(personnel.image || "");
+          originalPreviewRef.current = personnel.image || "";
         }
       } catch (error: any) {
         setMessage("เกิดข้อผิดพลาดในการดึงข้อมูล");
@@ -83,24 +87,21 @@ const page = () => {
     if (!formData.nametitle.trim()) {
       newErrors.nametitle = "กรุณาระบุคำนำหน้า";
     }
+
     if (!formData.firstname.trim()) {
-      newErrors.firstname = "กรุณาระบุชื่อ";
+      newErrors.firstname = "กรุณาระบุชื่อจริง";
     }
+
     if (!formData.lastname.trim()) {
       newErrors.lastname = "กรุณาระบุนามสกุล";
     }
+
     if (!formData.position.trim()) {
       newErrors.position = "กรุณาระบุตำแหน่ง";
     }
+
     if (!formData.positionname.trim()) {
       newErrors.positionname = "กรุณาระบุชื่อตำแหน่ง";
-    }
-    if (!formData.department.trim()) {
-      newErrors.department = "กรุณาระบุส่วนงาน";
-    }
-
-    if (file && !["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-      newErrors.image = "ไฟล์ต้องเป็นรูปภาพประเภท .jpg, .jpeg, .png, หรือ .gif เท่านั้น";
     }
 
     setErrors(newErrors);
@@ -121,22 +122,35 @@ const page = () => {
     }));
   };
 
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      if (!selectedFile.type.startsWith("image/")) {
-        setErrors((prev) => ({
-          ...prev,
-          image: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
-        }));
-        return;
-      }
-      setFile(selectedFile);
-      setFileUrl(URL.createObjectURL(selectedFile)); // แสดง preview
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // ตรวจชนิดและขนาดไฟล์
+    if (!file.type.startsWith("image/")) {
+      setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+      return;
     }
+    if (file.size > 2048 * 2048) {
+      setMessage("ไฟล์ avatar ต้องมีขนาดไม่เกิน 2 MB");
+      return;
+    }
+    setMessage(null);
+    const objectUrl = URL.createObjectURL(file);
+    setAvatarFile(file);
+    setPreviewUrl(objectUrl);
+    setErrors((e) => ({ ...e, image: undefined }));
   };
+
+  function handleCancelAvatar() {
+    if (previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setAvatarFile(null);
+    setPreviewUrl(originalPreviewRef.current);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  const handleAvatarClick = () => fileInputRef.current?.click();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -157,10 +171,7 @@ const page = () => {
       formDataUpload.append("position", formData.position);
       formDataUpload.append("positionName", formData.positionname);
       formDataUpload.append("department", formData.department);
-
-      if (file) {
-        formDataUpload.append("coverImage", file);
-      }
+      if (avatarFile) formDataUpload.append("coverImage", avatarFile!);
 
       await axios.put(`/api/agency/personnel/edit/${id}`, formDataUpload, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -174,11 +185,12 @@ const page = () => {
         lastname: "",
         position: "",
         positionname: "",
-        department: "",
-        image: "",
+        department: ""
       });
-      // window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/agency/personnel`;
-      router.push(`${process.env.NEXT_PUBLIC_API_URL}/admin/agency/personnel`);
+      setAvatarFile(null);
+      setPreviewUrl("");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      router.push("/admin/agency/personnel");
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
@@ -201,99 +213,108 @@ const page = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col">
-        <div className="flex flex-col lg:flex-row">
-          <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
-            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-16 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
+      <div className="m-5 px-8 md:px-16 py-16 bg-base-100 rounded-lg shadow">
+        <div className="flex flex-col gap-10">
+          {/* Avatar Section */}
+          <div className="relative self-center">
+            <div className="skeleton w-[100px] h-[100px] rounded-full"></div>
           </div>
-          <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
-            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
-            <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-            <div className="skeleton h-12 w-full rounded-lg"></div>
+
+          {/* User form for details */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+            <div>
+              <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+              <div className="skeleton h-12 w-full rounded-lg"></div>
+            </div>
+            <div>
+              <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+              <div className="skeleton h-12 w-full rounded-lg"></div>
+            </div>
+            <div>
+              <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+              <div className="skeleton h-12 w-full rounded-lg"></div>
+            </div>
+            <div>
+              <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+              <div className="skeleton h-12 w-full rounded-lg"></div>
+            </div>
+            <div>
+              <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+              <div className="skeleton h-12 w-full rounded-lg"></div>
+            </div>
+            <div>
+              <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
+              <div className="skeleton h-12 w-full rounded-lg"></div>
+            </div>
           </div>
-        </div>
-        <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:mx-5 xl:my-4 xl:p-5">
-          <div className="skeleton my-2 mx-1 h-5 w-32 rounded-lg"></div>
-          <div className="skeleton h-12 w-full rounded-lg"></div>
-          <div className="py-2"></div>
-        </div>
-        <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
-          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
-          <div className="skeleton h-12 w-[72px] rounded-lg"></div>
+          <div className="flex justify-end gap-4">
+            <div className="skeleton h-12 w-[117px] rounded-lg"></div>
+            <div className="skeleton h-12 w-[72px] rounded-lg"></div>
+          </div>
         </div>
       </div>
     );
   }
 
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col">
-      <div className="flex flex-col lg:flex-row">
-        <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">คำนำหน้า</span>
+    <div className="m-5 px-8 md:px-16 py-16 bg-base-100 rounded-lg shadow">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+        {/* Avatar Section */}
+        <div className="relative self-center">
+          <div className="avatar cursor-pointer" onClick={handleAvatarClick}>
+            <div className={`w-24 h-24 relative rounded-full overflow-hidden ring-primary ring-offset-base-100 ring ring-offset-2 ${errors.image ? "ring-error" : ""}`}>
+              {previewUrl ? (
+                <Image
+                  src={previewUrl}
+                  alt="Avatar"
+                  fill
+                  sizes="(max-width: 768px) 100px, 150px"
+                  className="object-top"
+                />
+              ) : (
+                <div className={`w-full h-full flex items-center justify-center bg-neutral text-neutral-content`}>
+                  <span className="text-3xl font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                    </svg>
+
+                  </span>
+                </div>
+              )}
             </div>
-            <input
-              type="text"
-              name="nametitle"
-              placeholder="ตัวอย่าง นาย, นาง, นางสาว"
-              value={formData.nametitle}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.nametitle ? "input-error" : ""}`}
-            />
-            {errors.nametitle && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.nametitle}</span>
-              </div>
-            )}
-          </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">ชื่อจริง</span>
-            </div>
-            <input
-              type="text"
-              name="firstname"
-              placeholder="ตัวอย่าง ชื่อจริง"
-              value={formData.firstname}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.firstname ? "input-error" : ""}`}
-            />
-            {errors.firstname && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.firstname}</span>
-              </div>
-            )}
-          </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">นามสกุล</span>
-            </div>
-            <input
-              type="text"
-              name="lastname"
-              placeholder="ตัวอย่าง นามสกุล"
-              value={formData.lastname}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.lastname ? "input-error" : ""}`}
-            />
-            {errors.lastname && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.lastname}</span>
-              </div>
-            )}
-          </label>
+          </div>
+          {!previewUrl ? (
+            <button
+              type="button"
+              onClick={handleAvatarClick}
+              className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border border-white hover:bg-primary-focus focus:outline-none tooltip tooltip-bottom"
+              data-tip="แก้ไขรูปบุคลากร"
+            >
+              <PencilIcon />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleCancelAvatar}
+              className="absolute top-0 right-0 bg-error text-white rounded-full p-1 border border-white hover:bg-red-600 focus:outline-none tooltip"
+              data-tip="ยกเลิกการเปลี่ยนรูป"
+            >
+              <XMarkIcon />
+            </button>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
-        <div className="flex flex-col lg:w-1/2 bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
+        {/* User form for details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+          <InputField label="คำนำหน้า" name="nametitle" placeholder="ตัวอย่าง นาย, นาง, นางสาว" value={formData.nametitle} error={errors.nametitle} onChange={handleChange} />
+          <InputField label="ชื่อจริง" name="firstname" placeholder="ตัวอย่าง ชื่อจริง" value={formData.firstname} error={errors.firstname} onChange={handleChange} />
+          <InputField label="นามสกุล" name="lastname" placeholder="ตัวอย่าง นามสกุล" value={formData.lastname} error={errors.lastname} onChange={handleChange} />
           <label className="form-control">
             <div className="label">
               <span className="label-text">ตำแหน่ง</span>
@@ -310,80 +331,29 @@ const page = () => {
               </div>
             )}
           </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">ชื่อตำแหน่ง</span>
-            </div>
-            <input
-              type="text"
-              name="positionname"
-              placeholder="ตัวอย่าง ผู้อำนวยการส่วนส่งเสริมสาธารณสุข"
-              value={formData.positionname}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.positionname ? "input-error" : ""}`}
-            />
-            {errors.positionname && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.positionname}</span>
-              </div>
-            )}
-          </label>
-          <label className="form-control">
-            <div className="label">
-              <span className="label-text">ส่วนงาน</span>
-            </div>
-            <input
-              type="text"
-              name="department"
-              placeholder="ตัวอย่าง ส่วนบริการอนามัยสิ่งแวดล้อม"
-              value={formData.department}
-              onChange={handleChange}
-              className={`input input-bordered ${errors.department ? "input-error" : ""}`}
-            />
-            {errors.department && (
-              <div className="label">
-                <span className="label-text-alt text-error">{errors.department}</span>
-              </div>
-            )}
-          </label>
+          <InputField label="ชื่อตำแหน่ง" name="positionname" placeholder="ตัวอย่าง ผู้อำนวยการส่วนส่งเสริมสาธารณสุข" value={formData.positionname} error={errors.positionname} onChange={handleChange} />
+          <InputField label="ส่วนงาน" name="department" placeholder="ตัวอย่าง ส่วนบริการอนามัยสิ่งแวดล้อม" value={formData.department} onChange={handleChange} />
         </div>
-      </div>
-      <div className="flex flex-col bg-base-100 m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 rounded-lg shadow">
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">รูปบุคลากร</span>
-          </div>
-          <input type="file" accept="image/*" onChange={handleFileChange} className={`file-input file-input-bordered ${errors.image ? "file-input-error" : ""}`} />
-          {fileUrl && (
-            <Image
-              src={fileUrl}
-              width={256}
-              height={256}
-              alt="Preview"
-              className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
-            />
-          )}
-          <div className="label">
-            <span className="label-text-alt text-error">{errors.image}</span>
-          </div>
-        </label>
-      </div>
-      <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
-        <button type="submit" className="btn btn-success" disabled={loading}>
-          {loading ? "กำลังดำเนินการ..." : "แก้ไข"}
-        </button>
-        <Link href="/admin/agency/personnel" className="btn btn-error">ยกเลิก</Link>
-      </div>
-      {
-        message && <div
+        {/* Buttons */}
+        <div className="flex justify-end gap-4">
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? "กำลังดำเนินการ..." : "สร้างบุคลากร"}
+          </button>
+          <button type="button" className="btn btn-neutral" onClick={() => router.push("/admin/agency/personnel")}>
+            ยกเลิก
+          </button>
+        </div>
+      </form>
+      {message && (
+        <div
           role="alert"
-          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message === "แก้ไขบุคลากรสำเร็จแล้ว" ? "alert-success" : "alert-error"
+          className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message.includes("สำเร็จ") ? "alert-success" : "alert-error"
             }`}
         >
           <span>{message}</span>
         </div>
-      }
-    </form>
+      )}
+    </div>
   )
 }
 

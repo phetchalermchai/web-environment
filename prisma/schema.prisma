@@ -66,7 +66,7 @@ model AgencyPersonnel {
   lastName     String
   position     String
   positionName String
-  department   String
+  department   String?
   image        String // สามารถเป็น null ได้ถ้าไม่มีรูป
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

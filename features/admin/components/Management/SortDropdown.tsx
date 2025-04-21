@@ -33,9 +33,6 @@ const SortDropdown = ({ onSort, itemType }: SortDropdownProps) => {
                         <button onClick={() => handleSortChange("ชื่อตำแหน่ง")}>ชื่อตำแหน่ง</button>
                     </li>
                     <li>
-                        <button onClick={() => handleSortChange("ส่วนงาน")}>ส่วนงาน</button>
-                    </li>
-                    <li>
                         <button onClick={() => handleSortChange("วันที่สร้าง")}>วันที่สร้าง</button>
                     </li>
                     <li>
