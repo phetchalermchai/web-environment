@@ -1,7 +1,6 @@
 "use client";
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import Image from '@tiptap/extension-image'
 import TextStyle from "@tiptap/extension-text-style"
 import { Color } from "@tiptap/extension-color"
 import TextAlign from '@tiptap/extension-text-align'
@@ -9,6 +8,7 @@ import Highlight from '@tiptap/extension-highlight'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
 import Underline from '@tiptap/extension-underline'
+import { ResizableImage } from "tiptap-extension-resizable-image";
 import {
     H1Icon,
     H2Icon,
@@ -31,13 +31,21 @@ import { useRef, useState } from "react";
 
 const Tiptap = () => {
     const [pickedColor, setPickedColor] = useState("#000000");
-    
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const editor = useEditor({
         extensions: [
             StarterKit,
-            Image.configure({             // เปิดใช้งานการแทรกรูปภาพ :contentReference[oaicite:3]{index=3}
-                inline: false,                       // ระบุว่ารูปเป็นบล็อก (ไม่ใช่ inline)
-                allowBase64: true,                   // ถ้าต้องการแทรกภาพแบบ base64
+            ResizableImage.configure({
+                defaultWidth: 500,
+                defaultHeight: 500,
+                async onUpload(file: File) {
+                    /* replace with your own upload handler */
+                    const src = URL.createObjectURL(file);
+                    return {
+                        src,
+                        'data-keep-ratio': true,
+                    };
+                },
             }),
             TextStyle,
             Color.configure({ types: ["textStyle"] }),
@@ -72,18 +80,6 @@ const Tiptap = () => {
         },
     });
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-            const src = reader.result as string;
-            editor?.chain().focus().setImage({ src }).run();
-        };
-        reader.readAsDataURL(file);
-    };
-
     if (!editor) {
         return null
     }
@@ -91,6 +87,30 @@ const Tiptap = () => {
     const applyColor = (color: string) => {
         // สั่ง editor ให้เปลี่ยนสีข้อความ
         editor.chain().focus().setColor(color).run();
+    };
+
+    const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            const src = reader.result as string;
+            const img = new window.Image();
+            img.onload = () => {
+                editor.chain().focus()
+                    .setResizableImage({
+                        src,
+                        alt: file.name,
+                        title: file.name,
+                        width: 500,
+                        height: 500,
+                        'data-keep-ratio': true,
+                    })
+                    .run();
+            };
+            img.src = src;
+        };
+        reader.readAsDataURL(file);
     };
 
     return (
@@ -106,14 +126,25 @@ const Tiptap = () => {
                         className="hidden"
                     />
                 </label>
-                <button
-                    onClick={() => {
-                        const url = window.prompt('Enter image URL')
-                        if (url) {
-                            editor.chain().focus().setImage({ src: url }).run()
-                        }
-                    }}
-                    className="btn btn-sm">
+                <button onClick={() => {
+                    const url = window.prompt('Enter image URL');
+                    if (url) {
+                        const img = new window.Image();
+                        img.onload = () => {
+                            editor.chain().focus()
+                                .setResizableImage({
+                                    src: url,
+                                    alt: '',
+                                    title: '',
+                                    width: img.width,
+                                    height: img.height,
+                                    'data-keep-ratio': true,
+                                })
+                                .run();
+                        };
+                        img.src = url;
+                    }
+                }} className="btn btn-sm">
                     <PhotoIcon />
                 </button>
                 <div className="tooltip tooltip-bottom" data-tip="ย้อนกลับ">

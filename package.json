@@ -40,7 +40,8 @@
     "react-dom": "^19.0.0",
     "react-quill-new": "^3.3.3",
     "reactflow": "^11.11.4",
-    "slugify": "^1.6.6"
+    "slugify": "^1.6.6",
+    "tiptap-extension-resizable-image": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
