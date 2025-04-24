@@ -15,6 +15,7 @@ import SubScript from '@tiptap/extension-subscript'
 import LinkTipTap from '@tiptap/extension-link'
 import Youtube from '@tiptap/extension-youtube'
 import { Resizable } from 're-resizable';
+import  ReactComponent  from './Extension'
 import {
     H1Icon,
     H2Icon,
@@ -99,7 +100,7 @@ const Tiptap = () => {
 
             Color.configure({ types: ["textStyle"] }),
             TextAlign.configure({
-                types: ['heading', 'paragraph'],
+                types: ['heading', 'paragraph', 'customVideo'],
             }),
             Highlight.configure({
                 multicolor: true,
@@ -111,13 +112,18 @@ const Tiptap = () => {
                     },
                 }
             ),
-            customVideo
+            customVideo,
+            ReactComponent
         ],
         editorProps: {
             attributes: {
                 class: 'p-6 min-h-24 border input-bordered rounded-lg focus:ring-primary focus:ring-offset-base-100 focus:ring focus:ring-offset-2 focus:outline-none',
             },
         },
+        content: `
+    <react-component count="0"></react-component>
+    `,
+        immediatelyRender: false
     });
 
     if (!editor) {

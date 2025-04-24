@@ -1,10 +1,11 @@
+"use client";
 import React, { useState } from 'react';
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import { Resizable } from 're-resizable';
 
 // VideoComponent: Custom NodeView for resizing and alignment
 // Props provided by ReactNodeViewRenderer: node (ProseMirror node), updateAttributes (to change attrs)
-const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, editor }) => {
+const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, editor , HTMLAttributes }) => {
     // Extract attributes from the node
     const { src, width: initialWidth, height: initialHeight, align: initialAlign } = node.attrs as {
         src: string;
@@ -16,7 +17,6 @@ const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, edito
     // Local state for interactive resizing
     const [size, setSize] = useState({ width: initialWidth, height: initialHeight });
     // Local state for alignment
-    const [align, setAlign] = useState(initialAlign);
 
     // Handler when resizing stops: update both local and node attributes
     const handleResizeStop = (_e: any, _direction: any, ref: HTMLElement) => {
@@ -28,27 +28,26 @@ const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, edito
 
     // Handler to change alignment: update both local state and node attributes
     const handleAlign = (newAlign: 'left' | 'center' | 'right') => {
-        setAlign(newAlign);
         updateAttributes({ align: newAlign });
     };
 
     return (
-        <NodeViewWrapper className={`video-wrapper video-wrapper--${align} w-[${size.width}px] h-[${size.height}px]`}>
+        <NodeViewWrapper className={`video-wrapper video-wrapper--${node.attrs.align} block w-full`}>
             {/* Alignment Controls */}
-            <div className="video-menu absolute top-0 right-0 flex space-x-1 z-10">
+            <div className="video-menu absolute top-0 left-0 flex space-x-1 z-10">
                 <button
                     type="button"
-                    className={`btn btn-xs ${align === 'left' ? 'btn-primary' : 'btn-outline'}`}
+                    className={`btn btn-xs ${node.attrs.align === 'left' ? 'btn-primary' : 'btn-outline'}`}
                     onClick={() => handleAlign('left')}
                 >ซ้าย</button>
                 <button
                     type="button"
-                    className={`btn btn-xs ${align === 'center' ? 'btn-primary' : 'btn-outline'}`}
+                    className={`btn btn-xs ${node.attrs.align === 'center' ? 'btn-primary' : 'btn-outline'}`}
                     onClick={() => handleAlign('center')}
                 >กลาง</button>
                 <button
                     type="button"
-                    className={`btn btn-xs ${align === 'right' ? 'btn-primary' : 'btn-outline'}`}
+                    className={`btn btn-xs ${node.attrs.align === 'right' ? 'btn-primary' : 'btn-outline'}`}
                     onClick={() => handleAlign('right')}
                 >ขวา</button>
             </div>
@@ -68,7 +67,8 @@ const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, edito
                     bottomLeft: true,
                     topLeft: true,
                 }}
-                className={`w-[${size.width}px] h-[${size.height}px]`}
+                className={`relative inline-block overflow-hidden`}
+                style={{ width: size.width, height: size.height }}
             >
                 <iframe
                     src={src}

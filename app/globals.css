@@ -44,22 +44,16 @@
 }
 
 .video-wrapper {
-    display: inline-block;
     position: relative;
-    overflow: hidden;
-    border: 3px solid transparent;
-    transition: border-color 0.2s ease;
 }
 
-.video-wrapper:hover {
-    border-color: #1e90ff;
-}
 
 @layer components {
     .video-wrapper.ProseMirror-selectednode {
-      @apply border-red-500;  /* เปลี่ยนเป็นกรอบสีแดงเมื่อ node ถูกเลือก */
+        @apply border-red-500;
+        /* เปลี่ยนเป็นกรอบสีแดงเมื่อ node ถูกเลือก */
     }
-  }
+}
 
 .video-wrapper--left {
     text-align: left;
