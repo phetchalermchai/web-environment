@@ -3,10 +3,7 @@ import React, { useState } from 'react';
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import { Resizable } from 're-resizable';
 
-// VideoComponent: Custom NodeView for resizing and alignment
-// Props provided by ReactNodeViewRenderer: node (ProseMirror node), updateAttributes (to change attrs)
-const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, editor , HTMLAttributes }) => {
-    // Extract attributes from the node
+const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, editor, HTMLAttributes }) => {
     const { src, width: initialWidth, height: initialHeight, align: initialAlign } = node.attrs as {
         src: string;
         width: number;
@@ -14,11 +11,8 @@ const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, edito
         align: 'left' | 'center' | 'right';
     };
 
-    // Local state for interactive resizing
     const [size, setSize] = useState({ width: initialWidth, height: initialHeight });
-    // Local state for alignment
 
-    // Handler when resizing stops: update both local and node attributes
     const handleResizeStop = (_e: any, _direction: any, ref: HTMLElement) => {
         const newWidth = ref.offsetWidth;
         const newHeight = ref.offsetHeight;
@@ -26,7 +20,6 @@ const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, edito
         updateAttributes({ width: newWidth, height: newHeight });
     };
 
-    // Handler to change alignment: update both local state and node attributes
     const handleAlign = (newAlign: 'left' | 'center' | 'right') => {
         updateAttributes({ align: newAlign });
     };
@@ -51,8 +44,6 @@ const VideoComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, edito
                     onClick={() => handleAlign('right')}
                 >ขวา</button>
             </div>
-
-            {/* Resizable Container */}
             <Resizable
                 size={size}
                 lockAspectRatio={true}

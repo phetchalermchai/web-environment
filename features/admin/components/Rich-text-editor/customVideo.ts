@@ -47,7 +47,7 @@ export const CustomVideo = Node.create<CustomVideoOptions>({
   parseHTML() {
     return [
       {
-        tag: 'p[data-type="customVideo"]',
+        tag: 'div[data-type="customVideo"]',
       },
     ]
   },
@@ -55,7 +55,7 @@ export const CustomVideo = Node.create<CustomVideoOptions>({
   renderHTML({ node, HTMLAttributes }) {
     const { src, width, height, align } = node.attrs
     return [
-      'p',
+      'div',
       mergeAttributes(
         { 'data-type': 'customVideo', class: `video-wrapper video-wrapper--${align}` },
         HTMLAttributes

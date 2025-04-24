@@ -13,9 +13,8 @@ import Code from '@tiptap/extension-code'
 import SuperScript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
 import LinkTipTap from '@tiptap/extension-link'
-import Youtube from '@tiptap/extension-youtube'
-import { Resizable } from 're-resizable';
-import  ReactComponent  from './Extension'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import {
     H1Icon,
     H2Icon,
@@ -28,28 +27,30 @@ import {
 } from '@/config/iconConfig'
 import {
     TextQuote, CodeSquare, Bold, Italic, Strikethrough, CodeXml, Underline, Highlighter, Link, Superscript, Subscript,
-    ListOrdered, ListOrderedIcon, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
-    Link2, Baseline
+    ListOrdered, List, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
+    Link2, Baseline, Youtube, ListTodo, ChevronDown, Heading, Heading1, Heading2, Heading3
 } from 'lucide-react'
 import { useRef, useState } from "react";
-import customVideo from "./customVideo";
+import { YoutubeExtension } from "./Youtube";
 
 const Tiptap = () => {
     const [pickedColor, setPickedColor] = useState("#000000");
     const [urlImg, setUrlImg] = useState("");
     const [urlLink, setUrlLink] = useState("");
+    const [urlYoutube, setUrlYoutube] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+    
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
                 bulletList: {
                     HTMLAttributes: {
-                        class: 'list-disc ml-3'
+                        class: 'ml-3'
                     }
                 },
                 orderedList: {
                     HTMLAttributes: {
-                        class: 'list-decimal ml-3'
+                        class: 'ml-3'
                     }
                 },
             }),
@@ -97,10 +98,13 @@ const Tiptap = () => {
                 },
                 openOnClick: false,
             }),
-
+            TaskList,
+            TaskItem.configure({
+                nested: true,
+            }),
             Color.configure({ types: ["textStyle"] }),
             TextAlign.configure({
-                types: ['heading', 'paragraph', 'customVideo'],
+                types: ['heading', 'paragraph', 'youtube'],
             }),
             Highlight.configure({
                 multicolor: true,
@@ -112,17 +116,13 @@ const Tiptap = () => {
                     },
                 }
             ),
-            customVideo,
-            ReactComponent
+            YoutubeExtension,
         ],
         editorProps: {
             attributes: {
-                class: 'p-6 min-h-24 border input-bordered rounded-lg focus:ring-primary focus:ring-offset-base-100 focus:ring focus:ring-offset-2 focus:outline-none',
+                class: 'ProseMirror p-6 min-h-24 border input-bordered rounded-lg focus:ring-primary focus:ring-offset-base-100 focus:ring focus:ring-offset-2 focus:outline-none',
             },
         },
-        content: `
-    <react-component count="0"></react-component>
-    `,
         immediatelyRender: false
     });
 
@@ -148,8 +148,8 @@ const Tiptap = () => {
                         src,
                         alt: file.name,
                         title: file.name,
-                        width: 500,
-                        height: 500,
+                        width: 300,
+                        height: 300,
                         'data-keep-ratio': true,
                     })
                     .run();
@@ -159,39 +159,26 @@ const Tiptap = () => {
         reader.readAsDataURL(file);
     };
 
-    const addYoutubeVideo = () => {
-        const url = prompt('Enter YouTube URL')
-        if (!url) return;
-        const urlObj = new URL(url);
+    const addYoutubeVideo = (urlYoutube: string) => {
+        if (!urlYoutube) return;
+        const urlObj = new URL(urlYoutube);
         const id = urlObj.searchParams.get('v')
-            || url.split('/').pop();
+            || urlYoutube.split('/').pop();
         const embedSrc = `https://www.youtube.com/embed/${id}`;
         if (embedSrc) {
-            editor
-                .chain()
+            editor.chain()
                 .focus()
-                .setCustomVideo({
-                    src: embedSrc,
-                    width: 800,
-                    height: 450,
-                    align: 'center',    // 'left' | 'center' | 'right'
+                .insertContent({
+                    type: 'youtube',
+                    attrs: {
+                        src: embedSrc,
+                        width: 560,
+                        height: 315,
+                    },
                 })
-                .run();
+                .run()
         }
     }
-
-    const insertVideo = () => {
-        editor
-            .chain()
-            .focus()
-            .setCustomVideo({
-                src: 'https://www.youtube.com/embed/QVffer2fRfg',
-                width: 800,
-                height: 450,
-                align: 'center',    // 'left' | 'center' | 'right'
-            })
-            .run();
-    };
 
     return (
         <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
@@ -218,73 +205,88 @@ const Tiptap = () => {
                     <div className="mx-0 divider divider-horizontal"></div>
                     <div className="dropdown">
                         <div className="tooltip tooltip-bottom" data-tip="หัวเรื่อง">
-                            <div tabIndex={0} role="button" className="btn btn-sm m-1">
+                            <div tabIndex={0} role="button" className={`${editor.isActive("heading") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
                                 <span className="text-base">
-                                    H
-                                    <sub>1</sub>
+                                    {editor.isActive("heading", { level: 1 }) ? <Heading1 size={20} /> :
+                                        editor.isActive("heading", { level: 2 }) ? <Heading2 size={20} /> :
+                                            editor.isActive("heading", { level: 3 }) ? <Heading3 size={20} /> :
+                                                <Heading size={15} />
+                                    }
                                 </span>
-                                <ChevronDownIcon className="w-3 h-3" />
+                                <ChevronDown size={12} />
                             </div>
                         </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow">
-                            <li className="mb-1">
+                        <div tabIndex={0} className="dropdown-content flex flex-col gap-1 menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow">
+                            <div className="tooltip tooltip-bottom" data-tip="Heading 1 Ctrl+Alt+1">
                                 <button
                                     onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                                     className={editor.isActive('heading', { level: 1 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
                                     <span className="flex gap-1 items-center text-sm font-normal">
-                                        <H1Icon className="w-4 h-4" /> Heading 1
+                                        <Heading1 size={16} /> Heading 1
                                     </span>
                                 </button>
-                            </li>
-                            <li className="mb-1">
+                            </div>
+                            <div className="tooltip tooltip-bottom" data-tip="Heading 2 Ctrl+Alt+2">
                                 <button
                                     onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                                     className={editor.isActive('heading', { level: 2 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
                                     <span className="flex gap-1 items-center text-sm font-normal">
-                                        <H2Icon className="w-4 h-4" /> Heading 2
+                                        <Heading2 size={16} /> Heading 2
                                     </span>
                                 </button>
-                            </li>
-                            <li>
+                            </div>
+                            <div className="tooltip tooltip-bottom" data-tip="Heading 3 Ctrl+Alt+3">
                                 <button
                                     onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                                     className={editor.isActive('heading', { level: 3 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
                                     <span className="flex gap-1 items-center text-sm font-normal">
-                                        <H3Icon className="w-4 h-4" /> Heading 3
+                                        <Heading3 size={16} /> Heading 3
                                     </span>
                                 </button>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
                     </div>
                     <div className="dropdown">
                         <div className="tooltip tooltip-bottom" data-tip="รายการ">
-                            <div tabIndex={0} role="button" className="btn btn-sm m-1">
-                                <ListBulletIcon className="w-5 h-5" />
-                                <ChevronDownIcon className="w-3 h-3" />
+                            <div tabIndex={0} role="button" className={`${editor.isActive("bulletList") || editor.isActive("orderedList") || editor.isActive("taskList") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
+                                {
+                                    editor.isActive("bulletList") ? <List size={20} /> :
+                                        editor.isActive("orderedList") ? <ListOrdered size={20} /> :
+                                            editor.isActive("taskList") ? <ListTodo size={20} /> : <List size={20} />
+                                }
+                                <ChevronDown size={12} />
                             </div>
                         </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-16 p-2 shadow">
-                            <li className="mb-1">
+                        <div tabIndex={0} className="dropdown-content flex flex-col gap-1 menu bg-base-100 rounded-box z-[1] w-16 p-2 shadow">
+                            <div className="tooltip tooltip-bottom" data-tip="BulletList Ctrl+Shift+8">
                                 <button
                                     onClick={() => editor.chain().focus().toggleBulletList().run()}
                                     className={editor.isActive('bulletList') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
                                 >
-                                    <ListBulletIcon className="w-4 h-4" />
+                                    <List size={16} />
                                 </button>
-                            </li>
-                            <li className="mb-1">
+                            </div>
+                            <div className="tooltip tooltip-bottom" data-tip="OrderedList Ctrl+Shift+7">
                                 <button
                                     onClick={() => editor.chain().focus().toggleOrderedList().run()}
                                     className={editor.isActive('orderedList') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
                                 >
                                     <span className="flex gap-1 items-center text-sm font-normal">
-                                        <NumberedListIcon className="w-4 h-4" />
+                                        <ListOrdered size={16} />
                                     </span>
                                 </button>
-                            </li>
-                        </ul>
+                            </div>
+                            <div className="tooltip tooltip-bottom" data-tip="TaskList Ctrl+Shift+9">
+                                <button
+                                    onClick={() => editor.chain().focus().toggleTaskList().run()}
+                                    className={editor.isActive('taskList') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
+                                >
+                                    <ListTodo size={16} />
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div className="tooltip tooltip-bottom" data-tip="Code Block">
+                    <div className="tooltip tooltip-bottom" data-tip="Code Block Ctrl+Alt+C">
                         <button
                             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                             className={editor.isActive('codeBlock') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
@@ -371,7 +373,9 @@ const Tiptap = () => {
                         </button>
                     </div>
                     <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button" className={editor.isActive('link') ? 'btn btn-sm btn-primary m-1' : 'btn btn-sm'}><Link size={20} /></div>
+                        <div className="tooltip tooltip-bottom" data-tip="ลิงค์">
+                            <div tabIndex={0} role="button" className={editor.isActive('link') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}><Link size={20} /></div>
+                        </div>
                         <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
                             <div className="flex items-center gap-2">
                                 <input type="text" placeholder="วางลิงค์" className="input input-sm w-32" value={urlLink} onChange={(e) => setUrlLink(e.target.value)} />
@@ -403,25 +407,7 @@ const Tiptap = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
-                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
-                        <button
-                            onClick={() => editor.chain().focus().toggleSuperscript().run()}
-                            className={editor.isActive('superscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <Superscript size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรลง Ctrl+,">
-                        <button
-                            onClick={() => editor.chain().focus().toggleSubscript().run()}
-                            className={editor.isActive('subscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <Subscript size={20} />
-                            </span>
-                        </button>
-                    </div>
+
                     <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="จัดชิดซ้าย Ctrl+Shift+L">
                         <button
@@ -460,6 +446,25 @@ const Tiptap = () => {
                         </button>
                     </div>
                     <div className="mx-0 divider divider-horizontal"></div>
+                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
+                        <button
+                            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                            className={editor.isActive('superscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <Superscript size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรลง Ctrl+,">
+                        <button
+                            onClick={() => editor.chain().focus().toggleSubscript().run()}
+                            className={editor.isActive('subscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <Subscript size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="เพิ่มรูปภาพ">
                         <label className="btn btn-sm">
                             <ImagePlus size={20} />
@@ -474,7 +479,7 @@ const Tiptap = () => {
                     </div>
                     <div className="dropdown dropdown-end">
                         <div className="tooltip tooltip-bottom" data-tip="ลิงค์รูปภาพ">
-                            <div tabIndex={0} role="button" className="btn btn-sm m-1"><Link2 size={20} /></div>
+                            <div tabIndex={0} role="button" className={`btn btn-sm`}><Link2 size={20} /></div>
                         </div>
                         <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
                             <div className="flex items-center gap-2">
@@ -511,6 +516,28 @@ const Tiptap = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="dropdown dropdown-end">
+                        <div className="tooltip tooltip-bottom" data-tip="ลิงค์ Youtube">
+                            <div tabIndex={0} role="button" className={`${editor.isActive('youtube') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}`}><Youtube size={20} /></div>
+                        </div>
+                        <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
+                            <div className="flex items-center gap-2">
+                                <input type="text" placeholder="วางลิงค์" className="input input-sm w-32" value={urlYoutube} onChange={(e) => setUrlYoutube(e.target.value)} />
+                                <div className="tooltip tooltip-bottom" data-tip="เพิ่มลิงค์Youtube">
+                                    <button
+                                        className="btn btn-sm btn-ghost"
+                                        onClick={() => addYoutubeVideo(urlYoutube)}
+                                    ><CornerDownLeft size={20} />
+                                    </button>
+                                </div>
+                                <div className="tooltip tooltip-bottom" data-tip="ลบลิงค์Youtube">
+                                    <button className="btn btn-sm btn-ghost" onClick={() => setUrlYoutube("")}>
+                                        <Trash size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div className="tooltip tooltip-bottom" data-tip="ลบข้อความที่เลือก">
                         <button
                             onClick={() => editor.chain().focus().deleteSelection().run()}
@@ -519,30 +546,11 @@ const Tiptap = () => {
                             <Trash size={20} />
                         </button>
                     </div>
-                    <button id="add" onClick={addYoutubeVideo}>Add YouTube video</button>
-                    <button onClick={insertVideo} className="btn btn-sm mb-2">
-                        แทรกวิดีโอ
-                    </button>
                 </div>
-                <Resizable
-                    defaultSize={{
-                        width: 320,
-                        height: 200,
-                    }}
-                    className="border-2 border-dashed border-base-content/50 rounded-md p-2 mb-2 bg-base-100"
-                >
-                    <iframe
-                        src={"https://www.youtube.com/embed/QVffer2fRfg"}
-                        width={300}
-                        height={200}
-                        allowFullScreen
-                        className="block"
-                    />
-                </Resizable>
             </div>
             {/* Editor Content */}
-            <EditorContent editor={editor} />
-        </div>
+            <EditorContent editor={editor}/>
+        </div >
     )
 }
 
