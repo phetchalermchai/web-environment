@@ -7,39 +7,31 @@ import TextAlign from '@tiptap/extension-text-align'
 import Highlight from '@tiptap/extension-highlight'
 import UnderLine from '@tiptap/extension-underline'
 import { ResizableImage } from "tiptap-extension-resizable-image";
-import CodeBlock from '@tiptap/extension-code-block'
-import Blockquote from '@tiptap/extension-blockquote'
-import Code from '@tiptap/extension-code'
 import SuperScript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
-import LinkTipTap from '@tiptap/extension-link'
+import Link from '@tiptap/extension-link'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
-import {
-    H1Icon,
-    H2Icon,
-    H3Icon,
-    ListBulletIcon,
-    NumberedListIcon,
-    UndoIcon,
-    RedoIcon,
-    ChevronDownIcon,
-} from '@/config/iconConfig'
-import {
-    TextQuote, CodeSquare, Bold, Italic, Strikethrough, CodeXml, Underline, Highlighter, Link, Superscript, Subscript,
-    ListOrdered, List, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
-    Link2, Baseline, Youtube, ListTodo, ChevronDown, Heading, Heading1, Heading2, Heading3
-} from 'lucide-react'
 import { useRef, useState } from "react";
 import { YoutubeExtension } from "./Youtube";
+import {
+    TextQuote, CodeSquare, Bold, Italic, Strikethrough, CodeXml, Underline as UnderlineIcon, Highlighter, Link as LinkIcon, Superscript, Subscript,
+    ListOrdered, List, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
+    Link2, Baseline, Youtube, ListTodo, ChevronDown, Heading, Heading1, Heading2, Heading3, Undo, Redo
+} from 'lucide-react'
 
-const Tiptap = () => {
+interface TiptapProps {
+    content: string;
+    onChange: (e: string) => void;
+}
+
+const Tiptap = ({ content, onChange }: TiptapProps ) => {
     const [pickedColor, setPickedColor] = useState("#000000");
     const [urlImg, setUrlImg] = useState("");
     const [urlLink, setUrlLink] = useState("");
     const [urlYoutube, setUrlYoutube] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
-    
+
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -53,35 +45,27 @@ const Tiptap = () => {
                         class: 'ml-3'
                     }
                 },
+                codeBlock: {
+                    HTMLAttributes: {
+                        class: 'bg-base-200 border input-bordered p-4 rounded-md overflow-x-auto text-sm',
+                    }
+                },
+                code: {
+                    HTMLAttributes: {
+                        class: 'bg-base-200 border input-bordered p-1 rounded-md text-sm',
+                    },
+                },
+                blockquote: {
+                    HTMLAttributes: {
+                        class: 'border-l-4 border-base-content pl-4 italic text-base-content/50',
+                    },
+                },
             }),
             ResizableImage.configure({
                 defaultWidth: 500,
                 defaultHeight: 500,
-                async onUpload(file: File) {
-                    /* replace with your own upload handler */
-                    const src = URL.createObjectURL(file);
-                    return {
-                        src,
-                        'data-keep-ratio': true,
-                    };
-                },
             }),
             TextStyle,
-            CodeBlock.configure({
-                HTMLAttributes: {
-                    class: 'bg-base-200 border input-bordered p-4 rounded-md overflow-x-auto text-sm',
-                },
-            }),
-            Code.configure({
-                HTMLAttributes: {
-                    class: 'bg-base-200 border input-bordered p-1 rounded-md text-sm',
-                },
-            }),
-            Blockquote.configure({
-                HTMLAttributes: {
-                    class: 'border-l-4 border-base-content pl-4 italic text-base-content/50',
-                },
-            }),
             SuperScript.configure({
                 HTMLAttributes: {
                     class: 'text-sm align-super',
@@ -92,7 +76,7 @@ const Tiptap = () => {
                     class: 'text-sm align-sub',
                 },
             }),
-            LinkTipTap.configure({
+            Link.configure({
                 HTMLAttributes: {
                     class: 'text-primary underline decoration-primary decoration-2 underline-offset-4 cursor-pointer'
                 },
@@ -123,7 +107,12 @@ const Tiptap = () => {
                 class: 'ProseMirror p-6 min-h-24 border input-bordered rounded-lg focus:ring-primary focus:ring-offset-base-100 focus:ring focus:ring-offset-2 focus:outline-none',
             },
         },
-        immediatelyRender: false
+        immediatelyRender: false,
+        shouldRerenderOnTransaction: false,
+        content: content,
+        onUpdate({ editor }) {
+            onChange(editor.getHTML())
+        },
     });
 
     if (!editor) {
@@ -131,7 +120,6 @@ const Tiptap = () => {
     }
 
     const applyColor = (color: string) => {
-        // สั่ง editor ให้เปลี่ยนสีข้อความ
         editor.chain().focus().setColor(color).run();
     };
 
@@ -190,7 +178,7 @@ const Tiptap = () => {
                             disabled={!editor.can().undo()}
                             className={`btn btn-sm ${editor.can().undo() ? '' : 'btn-disabled'}`}
                         >
-                            <UndoIcon className="w-5 h-5" />
+                            <Undo size={20}/>
                         </button>
                     </div>
                     <div className="tooltip tooltip-bottom" data-tip="ไปข้างหน้า">
@@ -199,7 +187,7 @@ const Tiptap = () => {
                             disabled={!editor.can().redo()}
                             className={`btn btn-sm ${editor.can().redo() ? '' : 'btn-disabled'}`}
                         >
-                            <RedoIcon className="w-5 h-5" />
+                            <Redo size={20}/>
                         </button>
                     </div>
                     <div className="mx-0 divider divider-horizontal"></div>
@@ -359,7 +347,7 @@ const Tiptap = () => {
                             onClick={() => editor.chain().focus().toggleUnderline().run()}
                             className={editor.isActive('underline') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
                             <span className="text-sm">
-                                <Underline size={20} />
+                                <UnderlineIcon size={20} />
                             </span>
                         </button>
                     </div>
@@ -374,7 +362,7 @@ const Tiptap = () => {
                     </div>
                     <div className="dropdown dropdown-end">
                         <div className="tooltip tooltip-bottom" data-tip="ลิงค์">
-                            <div tabIndex={0} role="button" className={editor.isActive('link') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}><Link size={20} /></div>
+                            <div tabIndex={0} role="button" className={editor.isActive('link') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}><LinkIcon size={20} /></div>
                         </div>
                         <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
                             <div className="flex items-center gap-2">
@@ -549,7 +537,7 @@ const Tiptap = () => {
                 </div>
             </div>
             {/* Editor Content */}
-            <EditorContent editor={editor}/>
+            <EditorContent editor={editor} className="tiptap"/>
         </div >
     )
 }

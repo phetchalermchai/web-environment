@@ -1,13 +1,14 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper, NodeViewProps } from '@tiptap/react'
+import Image from 'next/image'
 import { Resizable } from 're-resizable'
 
-export interface YoutubeOptions {
+export interface ImageOptions {
     HTMLAttributes: Record<string, any>,
 }
 
-export const YoutubeExtension = Node.create<YoutubeOptions>({
-    name: 'youtube',
+export const ImageExtension = Node.create<ImageOptions>({
+    name: 'image',
     group: 'block',
     atom: true,
     draggable: true,
@@ -19,57 +20,44 @@ export const YoutubeExtension = Node.create<YoutubeOptions>({
     addAttributes() {
         return {
             src: { default: null },
-            width: { default: 560, parseHTML: el => Number(el.style.width?.replace('px', '')) },
-            height: { default: 315, parseHTML: el => Number(el.style.height?.replace('px', '')) },
+            alt: { default: '' },
+            width: { default: 560 },
+            height: { default: 315 },
             textAlign: { default: 'left' },
         }
     },
 
     parseHTML() {
-        return [{
-            tag: 'div[data-type="youtube"]',
-            getAttrs: el => ({ width: parseInt(el.style.width), height: parseInt(el.style.height) })
-        }]
+        return [{ tag: 'img[src]' }]
     },
 
     renderHTML({ HTMLAttributes }) {
         return [
-            'div',
+            'img',
             mergeAttributes(this.options.HTMLAttributes, {
-                'data-type': 'youtube',
-                style: `text-align: ${HTMLAttributes.textAlign}; 
-                width: ${HTMLAttributes.width}px; 
-                height: ${HTMLAttributes.height}px;`,
-                class: [
-                    'max-w-[315px]',
-                    'max-h-[315px]',                        // base: เติมเต็มความกว้างของ parent :contentReference[oaicite:1]{index=1}
-                    'sm:max-w-[530px]',
-                    `sm:max-h-[530px]`,              // มือถือ ≤315px :contentReference[oaicite:2]{index=2}
-                    'md:max-w-[658px]',
-                    `md:max-h-[658px]`,              // md ≤658px :contentReference[oaicite:3]{index=3}
-                    'lg:max-w-[914px]',
-                    `lg:max-h-[914px]`,              // lg ≤914px :contentReference[oaicite:4]{index=4}
-                    'xl:max-w-[1090px]',
-                    `xl:max-h-[1090px]`,             // xl ≤1090px :contentReference[oaicite:5]{index=5}
-                    '2xl:max-w-full',                // 2xl >1090px เต็ม :contentReference[oaicite:6]{index=6}
-                ].join(' '),
+                ...HTMLAttributes,
+                loading: 'lazy',
+                style: `display: block; margin: 0 auto;`  // inline block-center; actual alignment via textAlign wrapper
             }),
-            ['iframe', {
-                src: HTMLAttributes.src,
-                class: 'w-full h-full',
-                frameborder: 0,
-                allowfullscreen: 'true',
-            }],
         ]
     },
 
+    addCommands() {
+        return {
+            // ช่วยให้ใช้ง่าย: editor.chain().focus().setImage(attrs).run()
+            setImage: attrs => ({ commands }) => {
+                return commands.insertContent({ type: this.name, attrs })
+            },
+        }
+    },
+
     addNodeView() {
-        return ReactNodeViewRenderer(YoutubeComponent)
+        return ReactNodeViewRenderer(ImageComponent)
     },
 })
 
-const YoutubeComponent = ({ node, updateAttributes }: NodeViewProps) => {
-    const { src, width, height, textAlign } = node.attrs
+const ImageComponent = ({ node, updateAttributes }: NodeViewProps) => {
+    const { src, alt, width, height, textAlign } = node.attrs
 
     return (
         <NodeViewWrapper style={{ textAlign }}>
@@ -101,12 +89,12 @@ const YoutubeComponent = ({ node, updateAttributes }: NodeViewProps) => {
                 className="border-2 border-info box-border"
 
             >
-                <iframe
+                <Image
                     src={src}
-                    width="100%"
-                    height="100%"
-                    className={`${width} ${height}`}
-                    allowFullScreen
+                    alt={alt}
+                    width={width}
+                    height={height}
+                    layout="responsive" 
                 />
             </Resizable>
         </NodeViewWrapper>

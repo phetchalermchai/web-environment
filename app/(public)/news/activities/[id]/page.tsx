@@ -70,7 +70,8 @@ async function page({ params }: { params: { id: string } }) {
                     </div>
                 </div>
                 <div className="ql-editor prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
-                    <div className="[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:mx-auto" dangerouslySetInnerHTML={{ __html: activity.description }} />
+                    {/* <div className="[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:mx-auto" dangerouslySetInnerHTML={{ __html: activity.description }} /> */}
+                    <div className="max-w-[1440px]" dangerouslySetInnerHTML={{ __html: activity.description }} />
                 </div>
             </div>
         </div>

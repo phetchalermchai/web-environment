@@ -30,6 +30,10 @@
 }
 
 @layer base {
+    .ProseMirror {
+        @apply overflow-auto;
+    }
+
     .ProseMirror h1 {
         @apply text-2xl font-bold text-base-content;
     }
@@ -43,7 +47,7 @@
     }
 
     .ProseMirror ul {
-        list-style-type: disc;
+        @apply list-disc
     }
 
     .ProseMirror ul ul {
@@ -65,6 +69,8 @@
     .ProseMirror ol ol ol {
         list-style-type: decimal;
     }
+
+
 
     ul[data-type="taskList"] {
         list-style: none;
@@ -94,13 +100,11 @@
             margin: 0;
         }
     }
-
 }
-/* .image-component {
-    max-width: 100%;
-    overflow: hidden;
-  } */
 
-  /* .tiptap {
-    overflow: auto;
-  } */
+.image-resizer-n,
+.image-resizer-e,
+.image-resizer-s,
+.image-resizer-w {
+    visibility: hidden;
+}
