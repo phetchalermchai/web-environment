@@ -14,6 +14,8 @@ import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import { useRef, useState } from "react";
 import { YoutubeExtension } from "./Youtube";
+import { CustomBulletList, CustomListItem, CustomOrderedList } from './CustomList'
+import { Indent, ClearIndentOnEnter } from './indent'
 import {
     TextQuote, CodeSquare, Bold, Italic, Strikethrough, CodeXml, Underline as UnderlineIcon, Highlighter, Link as LinkIcon, Superscript, Subscript,
     ListOrdered, List, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
@@ -25,7 +27,7 @@ interface TiptapProps {
     onChange: (e: string) => void;
 }
 
-const Tiptap = ({ content, onChange }: TiptapProps ) => {
+const Tiptap = ({ content, onChange }: TiptapProps) => {
     const [pickedColor, setPickedColor] = useState("#000000");
     const [urlImg, setUrlImg] = useState("");
     const [urlLink, setUrlLink] = useState("");
@@ -35,16 +37,9 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
-                bulletList: {
-                    HTMLAttributes: {
-                        class: 'ml-3'
-                    }
-                },
-                orderedList: {
-                    HTMLAttributes: {
-                        class: 'ml-3'
-                    }
-                },
+                bulletList: false,
+                listItem: false,
+                orderedList: false,
                 codeBlock: {
                     HTMLAttributes: {
                         class: 'bg-base-200 border input-bordered p-4 rounded-md overflow-x-auto text-sm',
@@ -61,10 +56,19 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
                     },
                 },
             }),
+            CustomBulletList,
+            CustomOrderedList,
+            CustomListItem,
             ResizableImage.configure({
                 defaultWidth: 500,
                 defaultHeight: 500,
             }),
+            Indent.configure({
+                types: ['paragraph', 'heading', 'listItem'],
+                minLevel: 0,
+                maxLevel: 8,
+            }),
+            ClearIndentOnEnter,
             TextStyle,
             SuperScript.configure({
                 HTMLAttributes: {
@@ -88,7 +92,7 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
             }),
             Color.configure({ types: ["textStyle"] }),
             TextAlign.configure({
-                types: ['heading', 'paragraph', 'youtube'],
+                types: ['heading', 'paragraph', 'youtube', 'bulletList', 'listItem'],
             }),
             Highlight.configure({
                 multicolor: true,
@@ -170,24 +174,24 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
 
     return (
         <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
-            <div className="border input-bordered rounded-md p-2 mb-2 bg-base-100 space-x-2 z-50">
+            <div className="sticky top-16 border input-bordered rounded-md p-2 mb-2 bg-base-100 space-x-2 z-50">
                 <div className="flex flex-wrap items-center gap-2">
-                    <div className="tooltip tooltip-bottom" data-tip="ย้อนกลับ">
+                    <div className="tooltip tooltip-bottom" data-tip="ย้อนกลับ Ctrl+Z">
                         <button
                             onClick={() => editor.chain().focus().undo().run()}
                             disabled={!editor.can().undo()}
                             className={`btn btn-sm ${editor.can().undo() ? '' : 'btn-disabled'}`}
                         >
-                            <Undo size={20}/>
+                            <Undo size={20} />
                         </button>
                     </div>
-                    <div className="tooltip tooltip-bottom" data-tip="ไปข้างหน้า">
+                    <div className="tooltip tooltip-bottom" data-tip="ไปข้างหน้า Ctrl+Shift+Z">
                         <button
                             onClick={() => editor.chain().focus().redo().run()}
                             disabled={!editor.can().redo()}
                             className={`btn btn-sm ${editor.can().redo() ? '' : 'btn-disabled'}`}
                         >
-                            <Redo size={20}/>
+                            <Redo size={20} />
                         </button>
                     </div>
                     <div className="mx-0 divider divider-horizontal"></div>
@@ -395,64 +399,6 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
                             </div>
                         </div>
                     </div>
-
-                    <div className="mx-0 divider divider-horizontal"></div>
-                    <div className="tooltip tooltip-bottom" data-tip="จัดชิดซ้าย Ctrl+Shift+L">
-                        <button
-                            onClick={() => editor.chain().focus().setTextAlign('left').run()}
-                            className={editor.isActive({ textAlign: 'left' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <AlignLeft size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="จัดกึ่งกลาง Ctrl+Shift+E">
-                        <button
-                            onClick={() => editor.chain().focus().setTextAlign('center').run()}
-                            className={editor.isActive({ textAlign: 'center' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <AlignCenter size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="จัดชิดขวา Ctrl+Shift+R">
-                        <button
-                            onClick={() => editor.chain().focus().setTextAlign('right').run()}
-                            className={editor.isActive({ textAlign: 'right' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <AlignRight size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="จัดข้อความให้เต็มบรรทัด Ctrl+Shift+J">
-                        <button
-                            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
-                            className={editor.isActive({ textAlign: 'justify' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <AlignJustify size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
-                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
-                        <button
-                            onClick={() => editor.chain().focus().toggleSuperscript().run()}
-                            className={editor.isActive('superscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <Superscript size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรลง Ctrl+,">
-                        <button
-                            onClick={() => editor.chain().focus().toggleSubscript().run()}
-                            className={editor.isActive('subscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
-                                <Subscript size={20} />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="เพิ่มรูปภาพ">
                         <label className="btn btn-sm">
                             <ImagePlus size={20} />
@@ -526,8 +472,67 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
                             </div>
                         </div>
                     </div>
+
+                    <div className="mx-0 divider divider-horizontal"></div>
+                    <div className="tooltip tooltip-bottom" data-tip="จัดชิดซ้าย Ctrl+Shift+L">
+                        <button
+                            onClick={() => editor.chain().focus().setTextAlign('left').run()}
+                            className={editor.isActive({ textAlign: 'left' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <AlignLeft size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="จัดกึ่งกลาง Ctrl+Shift+E">
+                        <button
+                            onClick={() => editor.chain().focus().setTextAlign('center').run()}
+                            className={editor.isActive({ textAlign: 'center' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <AlignCenter size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="จัดชิดขวา Ctrl+Shift+R">
+                        <button
+                            onClick={() => editor.chain().focus().setTextAlign('right').run()}
+                            className={editor.isActive({ textAlign: 'right' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <AlignRight size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="จัดข้อความให้เต็มบรรทัด Ctrl+Shift+J">
+                        <button
+                            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+                            className={editor.isActive({ textAlign: 'justify' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <AlignJustify size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="mx-0 divider divider-horizontal"></div>
+                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
+                        <button
+                            onClick={() => editor.chain().focus().toggleSuperscript().run()}
+                            className={editor.isActive('superscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <Superscript size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรลง Ctrl+,">
+                        <button
+                            onClick={() => editor.chain().focus().toggleSubscript().run()}
+                            className={editor.isActive('subscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                            <span className="text-sm">
+                                <Subscript size={20} />
+                            </span>
+                        </button>
+                    </div>
+                    <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="ลบข้อความที่เลือก">
                         <button
+                            onMouseDown={e => e.preventDefault()}
                             onClick={() => editor.chain().focus().deleteSelection().run()}
                             className={`btn btn-sm ${editor.can().deleteSelection() ? '' : 'btn-disabled'}`}
                         >
@@ -537,7 +542,7 @@ const Tiptap = ({ content, onChange }: TiptapProps ) => {
                 </div>
             </div>
             {/* Editor Content */}
-            <EditorContent editor={editor} className="tiptap"/>
+            <EditorContent editor={editor} className="tiptap" />
         </div >
     )
 }

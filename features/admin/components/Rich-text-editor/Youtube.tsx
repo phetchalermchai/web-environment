@@ -33,25 +33,27 @@ export const YoutubeExtension = Node.create<YoutubeOptions>({
     },
 
     renderHTML({ HTMLAttributes }) {
+        const left = HTMLAttributes.textAlign === "left" ? "ml-0 mr-auto" : ""
+        const center = HTMLAttributes.textAlign === "center" ? "mx-auto" : ""
+        const right = HTMLAttributes.textAlign === "right" ? "ml-auto mr-0" : ""
         return [
             'div',
             mergeAttributes(this.options.HTMLAttributes, {
                 'data-type': 'youtube',
-                style: `text-align: ${HTMLAttributes.textAlign}; 
-                width: ${HTMLAttributes.width}px; 
-                height: ${HTMLAttributes.height}px;`,
+                style: `width: ${HTMLAttributes.width}px; height: ${HTMLAttributes.height}px;`,
                 class: [
-                    'max-w-[315px]',
-                    'max-h-[315px]',                        // base: เติมเต็มความกว้างของ parent :contentReference[oaicite:1]{index=1}
+                    `${left}${center}${right}`,
+                    'max-w-[265px]',
+                    'max-h-[150px]',                   
                     'sm:max-w-[530px]',
-                    `sm:max-h-[530px]`,              // มือถือ ≤315px :contentReference[oaicite:2]{index=2}
+                    `sm:max-h-[298px]`,              
                     'md:max-w-[658px]',
-                    `md:max-h-[658px]`,              // md ≤658px :contentReference[oaicite:3]{index=3}
+                    `md:max-h-[370px]`,             
                     'lg:max-w-[914px]',
-                    `lg:max-h-[914px]`,              // lg ≤914px :contentReference[oaicite:4]{index=4}
+                    `lg:max-h-[514px]`,              
                     'xl:max-w-[1090px]',
-                    `xl:max-h-[1090px]`,             // xl ≤1090px :contentReference[oaicite:5]{index=5}
-                    '2xl:max-w-full',                // 2xl >1090px เต็ม :contentReference[oaicite:6]{index=6}
+                    `xl:max-h-[613px]`,            
+                    '2xl:max-w-full',                
                 ].join(' '),
             }),
             ['iframe', {
