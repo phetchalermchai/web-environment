@@ -21,9 +21,9 @@ export const Indent = Extension.create<IndentOptions>({
 
     addOptions() {
         return {
-            types: ['paragraph', 'heading', 'listItem'],
+            types: ['paragraph', 'heading', 'listItem', 'bulletList', 'orderedList'],
             minLevel: 0,
-            maxLevel: 8,
+            maxLevel: 16,
         }
     },
 
@@ -126,20 +126,18 @@ export const ClearIndentOnEnter = Extension.create({
             Enter: () => {
                 const { editor } = this
 
+                // หากอยู่ใน listItem ➞ splitListItem ปกติ
                 if (editor.isActive('listItem')) {
-                    return editor
-                        .chain()
-                        .focus()
-                        .splitListItem('listItem')
-                        .run()
+                    return editor.chain().focus().splitListItem('listItem').run()
                 }
 
+                // สำหรับ paragraph/heading ➞ แยกบล็อกใหม่ แล้วรีเซ็ต indent
                 return editor
                     .chain()
                     .focus()
-                    .splitBlock()
-                    .resetAttributes('paragraph', ['indent'])
-                    .resetAttributes('heading', ['indent']) 
+                    .splitBlock()                                // แยก paragraph/heading ใหม่ :contentReference[oaicite:2]{index=2}
+                    .resetAttributes('paragraph', ['indent'])    // รีเซ็ต indent ของ paragraph :contentReference[oaicite:3]{index=3}
+                    .resetAttributes('heading', ['indent'])    // รีเซ็ต indent ของ heading :contentReference[oaicite:4]{index=4}
                     .run()
             },
         }

@@ -10,8 +10,6 @@ import { ResizableImage } from "tiptap-extension-resizable-image";
 import SuperScript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
 import Link from '@tiptap/extension-link'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
 import { useRef, useState } from "react";
 import { YoutubeExtension } from "./Youtube";
 import { CustomBulletList, CustomListItem, CustomOrderedList } from './CustomList'
@@ -19,8 +17,9 @@ import { Indent, ClearIndentOnEnter } from './indent'
 import {
     TextQuote, CodeSquare, Bold, Italic, Strikethrough, CodeXml, Underline as UnderlineIcon, Highlighter, Link as LinkIcon, Superscript, Subscript,
     ListOrdered, List, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
-    Link2, Baseline, Youtube, ListTodo, ChevronDown, Heading, Heading1, Heading2, Heading3, Undo, Redo
+    Link2, Baseline, Youtube, ListTodo, ChevronDown, Heading, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Undo, Redo
 } from 'lucide-react'
+import Ruler from "./Ruler";
 
 interface TiptapProps {
     content: string;
@@ -64,9 +63,9 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                 defaultHeight: 500,
             }),
             Indent.configure({
-                types: ['paragraph', 'heading', 'listItem'],
+                types: ['paragraph', 'heading', 'listItem', 'bulletList', 'orderedList', "taskList"],
                 minLevel: 0,
-                maxLevel: 8,
+                maxLevel: 16,
             }),
             ClearIndentOnEnter,
             TextStyle,
@@ -86,13 +85,9 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                 },
                 openOnClick: false,
             }),
-            TaskList,
-            TaskItem.configure({
-                nested: true,
-            }),
             Color.configure({ types: ["textStyle"] }),
             TextAlign.configure({
-                types: ['heading', 'paragraph', 'youtube', 'bulletList', 'listItem'],
+                types: ['heading', 'paragraph', 'youtube', 'bulletList', 'listItem', "taskItem", "taskList"],
             }),
             Highlight.configure({
                 multicolor: true,
@@ -202,7 +197,10 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                                     {editor.isActive("heading", { level: 1 }) ? <Heading1 size={20} /> :
                                         editor.isActive("heading", { level: 2 }) ? <Heading2 size={20} /> :
                                             editor.isActive("heading", { level: 3 }) ? <Heading3 size={20} /> :
-                                                <Heading size={15} />
+                                                editor.isActive("heading", { level: 4 }) ? <Heading4 size={20} /> :
+                                                    editor.isActive("heading", { level: 5 }) ? <Heading5 size={20} /> :
+                                                        editor.isActive("heading", { level: 6 }) ? <Heading6 size={20} /> :
+                                                            <Heading size={15} />
                                     }
                                 </span>
                                 <ChevronDown size={12} />
@@ -236,6 +234,42 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                                     </span>
                                 </button>
                             </div>
+                            <div className="tooltip tooltip-bottom" data-tip="Heading 4 Ctrl+Alt+4">
+                                <button
+                                    onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+                                    className={editor.isActive('heading', { level: 4 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                                    <span className="flex gap-1 items-center text-sm font-normal">
+                                        <Heading4 size={16} /> Heading 4
+                                    </span>
+                                </button>
+                            </div>
+                            <div className="tooltip tooltip-bottom" data-tip="Heading 5 Ctrl+Alt+5">
+                                <button
+                                    onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+                                    className={editor.isActive('heading', { level: 5 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                                    <span className="flex gap-1 items-center text-sm font-normal">
+                                        <Heading5 size={16} /> Heading 5
+                                    </span>
+                                </button>
+                            </div>
+                            <div className="tooltip tooltip-bottom" data-tip="Heading 6 Ctrl+Alt+6">
+                                <button
+                                    onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+                                    className={editor.isActive('heading', { level: 6 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                                    <span className="flex gap-1 items-center text-sm font-normal">
+                                        <Heading6 size={16} /> Heading 6
+                                    </span>
+                                </button>
+                            </div>
+                            <div className="tooltip tooltip-bottom min-w-full" data-tip="Paragraph Ctrl+Alt+0">
+                                <button
+                                    onClick={() => editor.chain().focus().setParagraph().run()}
+                                    className={editor.isActive('paragraph') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                                    <span className="flex gap-1 items-center text-sm font-normal">
+                                        <Heading size={14} /> Paragraph
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div className="dropdown">
@@ -266,14 +300,6 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                                     <span className="flex gap-1 items-center text-sm font-normal">
                                         <ListOrdered size={16} />
                                     </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom" data-tip="TaskList Ctrl+Shift+9">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleTaskList().run()}
-                                    className={editor.isActive('taskList') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
-                                >
-                                    <ListTodo size={16} />
                                 </button>
                             </div>
                         </div>
@@ -540,6 +566,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                         </button>
                     </div>
                 </div>
+                <Ruler editor={editor} />
             </div>
             {/* Editor Content */}
             <EditorContent editor={editor} className="tiptap" />

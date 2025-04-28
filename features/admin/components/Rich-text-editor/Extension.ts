@@ -1,35 +1,63 @@
-import { mergeAttributes, Node, NodeViewProps } from '@tiptap/core'
-import { ReactNodeViewRenderer } from '@tiptap/react'
-import Component from './Component'
+import Paragraph from '@tiptap/extension-paragraph'
+import Heading from '@tiptap/extension-heading'
+import { ListItem } from '@tiptap/extension-list-item'
 
-export default Node.create({
-  name: 'reactComponent',
-
-  group: 'block',
-
-  atom: true,
-
+// 2.A: ขยาย Paragraph
+export const CustomParagraph = Paragraph.extend({
   addAttributes() {
     return {
-      count: {
-        default: 0,
-      },
+      ...this.parent?.(),
+      paddingLeft: { default: 0 },
+      paddingRight: { default: 0 },
     }
   },
-
-  parseHTML() {
+  renderHTML({ HTMLAttributes }) {
     return [
+      'p',
       {
-        tag: 'react-component',
+        style: `padding-left: ${HTMLAttributes.paddingLeft}%; padding-right: ${HTMLAttributes.paddingRight}%;`,
       },
+      0,
     ]
   },
+})
 
-  renderHTML({ HTMLAttributes }) {
-    return ['react-component', mergeAttributes(HTMLAttributes)]
+// 2.B: ขยาย Heading
+export const CustomHeading = Heading.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      paddingLeft: { default: 0 },
+      paddingRight: { default: 0 },
+    }
   },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'h2',
+      {
+        style: `padding-left: ${HTMLAttributes.paddingLeft}%; padding-right: ${HTMLAttributes.paddingRight}%;`,
+      },
+      0,
+    ]
+  },
+})
 
-  addNodeView() {
-    return ReactNodeViewRenderer(Component as React.FC<NodeViewProps>, { contentDOMElementTag: 'main' })
+// 2.C: ขยาย ListItem
+export const CustomListItem = ListItem.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      paddingLeft: { default: 0 },
+      paddingRight: { default: 0 },
+    }
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'li',
+      {
+        style: `padding-left: ${HTMLAttributes.paddingLeft}%; padding-right: ${HTMLAttributes.paddingRight}%;`,
+      },
+      0,
+    ]
   },
 })
