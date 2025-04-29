@@ -1,7 +1,7 @@
 "use client";
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import TextStyle from "@tiptap/extension-text-style"
+import TextStyle from '@tiptap/extension-text-style'
 import { Color } from "@tiptap/extension-color"
 import TextAlign from '@tiptap/extension-text-align'
 import Highlight from '@tiptap/extension-highlight'
@@ -14,12 +14,15 @@ import { useRef, useState } from "react";
 import { YoutubeExtension } from "./Youtube";
 import { CustomBulletList, CustomListItem, CustomOrderedList } from './CustomList'
 import { Indent, ClearIndentOnEnter } from './indent'
+import { CustomTextStyle } from './CustomTextStyle'
 import {
     TextQuote, CodeSquare, Bold, Italic, Strikethrough, CodeXml, Underline as UnderlineIcon, Highlighter, Link as LinkIcon, Superscript, Subscript,
     ListOrdered, List, AlignLeft, AlignCenter, AlignRight, AlignJustify, CornerDownLeft, Trash, ImagePlus,
     Link2, Baseline, Youtube, ListTodo, ChevronDown, Heading, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Undo, Redo
 } from 'lucide-react'
 import Ruler from "./Ruler";
+import ButtonFontSize from "./ButtonFontSize";
+import ButtonLineHeight from "./ButtonLineHeight";
 
 interface TiptapProps {
     content: string;
@@ -32,6 +35,8 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
     const [urlLink, setUrlLink] = useState("");
     const [urlYoutube, setUrlYoutube] = useState("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const sizes = ['10px', '11px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '36px', '48px', '72px']
+
 
     const editor = useEditor({
         extensions: [
@@ -68,7 +73,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                 maxLevel: 16,
             }),
             ClearIndentOnEnter,
-            TextStyle,
+            CustomTextStyle,
             SuperScript.configure({
                 HTMLAttributes: {
                     class: 'text-sm align-super',
@@ -189,7 +194,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             <Redo size={20} />
                         </button>
                     </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
+                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
                     <div className="dropdown">
                         <div className="tooltip tooltip-bottom" data-tip="หัวเรื่อง">
                             <div tabIndex={0} role="button" className={`${editor.isActive("heading") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
@@ -272,6 +277,8 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             </div>
                         </div>
                     </div>
+                    <ButtonFontSize editor={editor}/>
+                    <ButtonLineHeight editor={editor}/>
                     <div className="dropdown">
                         <div className="tooltip tooltip-bottom" data-tip="รายการ">
                             <div tabIndex={0} role="button" className={`${editor.isActive("bulletList") || editor.isActive("orderedList") || editor.isActive("taskList") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
@@ -320,7 +327,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             <TextQuote size={20} />
                         </button>
                     </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
+                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
                     <div className="tooltip tooltip-bottom" data-tip="เลือกสีข้อความ">
                         <label className="btn btn-sm">
                             <Baseline size={20} color={pickedColor} />
@@ -499,7 +506,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                         </div>
                     </div>
 
-                    <div className="mx-0 divider divider-horizontal"></div>
+                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
                     <div className="tooltip tooltip-bottom" data-tip="จัดชิดซ้าย Ctrl+Shift+L">
                         <button
                             onClick={() => editor.chain().focus().setTextAlign('left').run()}
@@ -536,7 +543,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             </span>
                         </button>
                     </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
+                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
                     <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
                         <button
                             onClick={() => editor.chain().focus().toggleSuperscript().run()}
@@ -553,16 +560,6 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             <span className="text-sm">
                                 <Subscript size={20} />
                             </span>
-                        </button>
-                    </div>
-                    <div className="mx-0 divider divider-horizontal"></div>
-                    <div className="tooltip tooltip-bottom" data-tip="ลบข้อความที่เลือก">
-                        <button
-                            onMouseDown={e => e.preventDefault()}
-                            onClick={() => editor.chain().focus().deleteSelection().run()}
-                            className={`btn btn-sm ${editor.can().deleteSelection() ? '' : 'btn-disabled'}`}
-                        >
-                            <Trash size={20} />
                         </button>
                     </div>
                 </div>

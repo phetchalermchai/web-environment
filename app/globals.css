@@ -35,27 +35,22 @@
     }
 
     .ProseMirror h1 {
-        @apply text-2xl font-bold text-base-content;
+        @apply text-2xl font-bold text-base-content my-8;
     }
 
     .ProseMirror h2 {
-        @apply text-xl font-bold text-base-content;
+        @apply text-xl font-bold text-base-content my-6;
     }
 
-    .ProseMirror h3 {
-        @apply text-lg font-bold text-base-content;
-    }
-
-    .ProseMirror h4 {
-        @apply text-lg font-bold text-base-content;
-    }
-
-    .ProseMirror h5 {
-        @apply text-lg font-bold text-base-content;
-    }
-
+    .ProseMirror h3,
+    .ProseMirror h4,
+    .ProseMirror h5,
     .ProseMirror h6 {
-        @apply text-lg font-bold text-base-content;
+        @apply text-lg font-bold text-base-content my-2;
+    }
+
+    .ProseMirror p {
+        @apply text-base-content my-2;
     }
 
     .ProseMirror .custom-bullet-list,
@@ -198,34 +193,42 @@
     [data-indent="8"] {
         padding-left: 50%;
     }
+
     /* ระดับ 9 */
     [data-indent="9"] {
         padding-left: 56.25%;
     }
+
     /* ระดับ 10 */
     [data-indent="10"] {
         padding-left: 62.5%;
     }
+
     /* ระดับ 11 */
     [data-indent="11"] {
         padding-left: 68.75%;
     }
+
     /* ระดับ 12 */
     [data-indent="12"] {
         padding-left: 75%;
     }
+
     /* ระดับ 13 */
     [data-indent="13"] {
         padding-left: 81.25%;
     }
+
     /* ระดับ 14 */
     [data-indent="14"] {
         padding-left: 87.5%;
     }
+
     /* ระดับ 15 */
     [data-indent="15"] {
         padding-left: 93.75%;
     }
+
     /* ระดับ 16 */
     [data-indent="16"] {
         padding-left: 100%;
