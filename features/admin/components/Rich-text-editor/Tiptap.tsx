@@ -23,6 +23,7 @@ import {
 import Ruler from "./Ruler";
 import ButtonFontSize from "./ButtonFontSize";
 import ButtonLineHeight from "./ButtonLineHeight";
+import ButtonHeading from "./ButtonHeading";
 
 interface TiptapProps {
     content: string;
@@ -194,91 +195,10 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             <Redo size={20} />
                         </button>
                     </div>
-                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
-                    <div className="dropdown">
-                        <div className="tooltip tooltip-bottom" data-tip="หัวเรื่อง">
-                            <div tabIndex={0} role="button" className={`${editor.isActive("heading") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
-                                <span className="text-base">
-                                    {editor.isActive("heading", { level: 1 }) ? <Heading1 size={20} /> :
-                                        editor.isActive("heading", { level: 2 }) ? <Heading2 size={20} /> :
-                                            editor.isActive("heading", { level: 3 }) ? <Heading3 size={20} /> :
-                                                editor.isActive("heading", { level: 4 }) ? <Heading4 size={20} /> :
-                                                    editor.isActive("heading", { level: 5 }) ? <Heading5 size={20} /> :
-                                                        editor.isActive("heading", { level: 6 }) ? <Heading6 size={20} /> :
-                                                            <Heading size={15} />
-                                    }
-                                </span>
-                                <ChevronDown size={12} />
-                            </div>
-                        </div>
-                        <div tabIndex={0} className="dropdown-content flex flex-col gap-1 menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow">
-                            <div className="tooltip tooltip-bottom" data-tip="Heading 1 Ctrl+Alt+1">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                                    className={editor.isActive('heading', { level: 1 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading1 size={16} /> Heading 1
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom" data-tip="Heading 2 Ctrl+Alt+2">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                                    className={editor.isActive('heading', { level: 2 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading2 size={16} /> Heading 2
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom" data-tip="Heading 3 Ctrl+Alt+3">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                                    className={editor.isActive('heading', { level: 3 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading3 size={16} /> Heading 3
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom" data-tip="Heading 4 Ctrl+Alt+4">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-                                    className={editor.isActive('heading', { level: 4 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading4 size={16} /> Heading 4
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom" data-tip="Heading 5 Ctrl+Alt+5">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-                                    className={editor.isActive('heading', { level: 5 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading5 size={16} /> Heading 5
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom" data-tip="Heading 6 Ctrl+Alt+6">
-                                <button
-                                    onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-                                    className={editor.isActive('heading', { level: 6 }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading6 size={16} /> Heading 6
-                                    </span>
-                                </button>
-                            </div>
-                            <div className="tooltip tooltip-bottom min-w-full" data-tip="Paragraph Ctrl+Alt+0">
-                                <button
-                                    onClick={() => editor.chain().focus().setParagraph().run()}
-                                    className={editor.isActive('paragraph') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                                    <span className="flex gap-1 items-center text-sm font-normal">
-                                        <Heading size={14} /> Paragraph
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <ButtonFontSize editor={editor}/>
-                    <ButtonLineHeight editor={editor}/>
+                    <div className="mx-0 divider divider-horizontal"></div>
+                    <ButtonHeading editor={editor} />
+                    <ButtonFontSize editor={editor} />
+                    <ButtonLineHeight editor={editor} />
                     <div className="dropdown">
                         <div className="tooltip tooltip-bottom" data-tip="รายการ">
                             <div tabIndex={0} role="button" className={`${editor.isActive("bulletList") || editor.isActive("orderedList") || editor.isActive("taskList") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
@@ -327,7 +247,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             <TextQuote size={20} />
                         </button>
                     </div>
-                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
+                    <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="เลือกสีข้อความ">
                         <label className="btn btn-sm">
                             <Baseline size={20} color={pickedColor} />
@@ -505,8 +425,7 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             </div>
                         </div>
                     </div>
-
-                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
+                    <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="จัดชิดซ้าย Ctrl+Shift+L">
                         <button
                             onClick={() => editor.chain().focus().setTextAlign('left').run()}
@@ -534,16 +453,14 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                             </span>
                         </button>
                     </div>
-                    <div className="tooltip tooltip-bottom" data-tip="จัดข้อความให้เต็มบรรทัด Ctrl+Shift+J">
+                    <div className="tooltip tooltip-bottom " data-tip="จัดข้อความให้เต็มบรรทัด Ctrl+Shift+J">
                         <button
                             onClick={() => editor.chain().focus().setTextAlign('justify').run()}
                             className={editor.isActive({ textAlign: 'justify' }) ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
-                            <span className="text-sm">
                                 <AlignJustify size={20} />
-                            </span>
                         </button>
                     </div>
-                    {/* <div className="mx-0 divider divider-horizontal"></div> */}
+                    <div className="mx-0 divider divider-horizontal"></div>
                     <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
                         <button
                             onClick={() => editor.chain().focus().toggleSuperscript().run()}
