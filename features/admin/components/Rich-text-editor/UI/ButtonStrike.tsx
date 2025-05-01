@@ -1,0 +1,18 @@
+import { Editor } from '@tiptap/react'
+import { Strikethrough } from 'lucide-react'
+
+const ButtonStrike = ({ editor }: { editor: Editor }) => {
+    return (
+        <div className="tooltip tooltip-bottom" data-tip="ขีดทับ Ctrl+Shift+S">
+            <button
+                onClick={() => editor.chain().focus().toggleStrike().run()}
+                className={editor.isActive('strike') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>
+                <span className="text-sm">
+                    <Strikethrough size={20} />
+                </span>
+            </button>
+        </div>
+    )
+}
+
+export default ButtonStrike
