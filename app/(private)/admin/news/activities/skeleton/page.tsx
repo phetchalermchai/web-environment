@@ -1,18 +1,21 @@
 "use client"
 import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import 'tiptap-extension-resizable-image/styles.css';
 import Image from "next/image";
 import Link from "next/link";
+import { Pencil, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
-  const [description, setDescription] = useState<any>({ ops: [] });
+  const [description, setDescription] = useState<string>("<p></p>");
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [coverImageUrl, setCoverImageUrl] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
@@ -22,6 +25,11 @@ const page = () => {
     coverImage?: string;
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // image
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   useEffect(() => {
     setIsPageLoading(false);
@@ -33,6 +41,10 @@ const page = () => {
       });
     });
   }, []);
+
+  const handleEditClick = () => {
+    fileInputRef.current?.click();
+  };
 
   // กำหนด modules ของ Quill
   const Editor = {
@@ -76,25 +88,51 @@ const page = () => {
     }
   };
 
+  // เมื่อเลือกไฟล์แล้ว
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+      return;
+    }
+    if (file.size > 2048 * 2048) {
+      setMessage("ขนาดไฟล์ต้องไม่เกิน 2 MB");
+      return;
+    }
+    setErrors((e) => ({ ...e, image: undefined }));
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const handleCancelImage = () => {
+    setImageFile(null);
+    setPreviewUrl("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleValidation = () => {
     let newErrors: { title?: string; description?: string; coverImage?: string } = {};
     if (!title.trim()) newErrors.title = "กรุณากรอกชื่อกิจกรรม";
     // ตรวจสอบ Delta: ถ้า ops ว่างหรือมีแค่หนึ่ง op ที่เป็นการเว้นว่าง
     if (
-      !description.trim()
+      value === "<p></p>" || value === ``
     ) {
       newErrors.description = "กรุณากรอกรายละเอียดกิจกรรม";
     }
-    if (!coverImage) newErrors.coverImage = "กรุณาอัปโหลดรูปปกกิจกรรม";
+    if (!imageFile) newErrors.coverImage = "กรุณาอัปโหลดรูปปกกิจกรรม";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const onChange = ( content: string) => {
+  const onChange = (content: string) => {
     setValue(content);
-    setDescription("ทดสอบ")
-    console.log(value);
+    setDescription(content)
   }
+
+  const handleCancel = () => {
+    router.push("/admin/news/activities");
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,8 +144,8 @@ const page = () => {
     formData.append("title", title);
     formData.append("description", JSON.stringify(description));
     formData.append("authorId", String(session?.user.id));
-    if (coverImage) {
-      formData.append("coverImage", coverImage);
+    if (imageFile) {
+      formData.append("coverImage", imageFile);
     }
     formData.append("htmlContent", value);
 
@@ -129,6 +167,14 @@ const page = () => {
   };
 
   useEffect(() => {
+    return () => {
+      if (previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
         setMessage(null);
@@ -140,27 +186,8 @@ const page = () => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col">
       {/* Input สำหรับชื่อกิจกรรม */}
-      <div className="flex flex-col lg:flex-row">
-        <label className="form-control bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
-          <div className="label">
-            <span className="label-text">ชื่อกิจกรรม</span>
-          </div>
-          <input
-            type="text"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="input input-bordered w-full"
-          />
-          {errors.title && (
-            <div className="label">
-              <span className={`label-text-alt ${errors.title ? "text-error" : ""}`}>
-                {errors.title}
-              </span>
-            </div>
-          )}
-        </label>
-        <label className="form-control bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 lg:w-1/2">
+      <div className="flex flex-col space-y-6 bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
+        {/* <label className="form-control">
           <div className="label">
             <span className="label-text">อัปโหลดรูปปกกิจกรรม</span>
           </div>
@@ -183,33 +210,88 @@ const page = () => {
               <span className="label-text-alt text-error">{errors.coverImage}</span>
             </div>
           )}
-        </label>
-      </div>
-      {/* <div className="custom-quill bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
-        <div className="py-2 px-1 "><span className="text-sm">รายละเอียดกิจกรรม</span></div>
-        <ReactQuill
-          theme="snow"
-          value={value}
-          onChange={(content, delta, source, editor) => {
-            setValue(content); // เก็บ HTML content สำหรับ preview
-            setDescription(editor.getContents()); // เก็บ Delta สำหรับการบันทึก
-          }}
-          modules={Editor.modules}
-        />
-      </div> */}
-        <Tiptap content={value} onChange={onChange} />
-      {errors.description && (
-        <div className="label">
-          <span className="label-text-alt text-error">{errors.description}</span>
+        </label> */}
+        <div
+          className="relative w-64 h-72 mx-auto cursor-pointer"
+          onClick={handleEditClick}
+        >
+          <div className="w-64 h-72 rounded-lg relative overflow-hidden border border-dashed border-base-300">
+            {previewUrl ? (
+              <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-base-200">
+                <span className="text-gray-400">รูปแนวตั้ง</span>
+              </div>
+            )}
+          </div>
+
+          {!previewUrl ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditClick();
+              }}
+              className="absolute bottom-2 right-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full p-1 border border-white tooltip"
+              data-tip="แก้ไขรูป"
+            >
+              <Pencil size={16} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCancelImage();
+              }}
+              className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 border border-white tooltip"
+              data-tip="ยกเลิกการเปลี่ยนรูป"
+            >
+              <X size={16} />
+            </button>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
-      )}
-      <div className="flex justify-end gap-4 p-2 mb-3 mx-3 md:p-3 lg:mb-4 lg:mx-4 xl:p-5 xl:mb-5 xl:mx-5">
-        <button type="submit" className="btn btn-success" disabled={isSubmitting}>
-          {isSubmitting ? "กำลังบันทึก..." : "ยืนยัน"}
-        </button>
-        <Link href={`/admin/news/activities`} className="btn btn-error">
-          ยกเลิก
-        </Link>
+        {errors.coverImage && <p className="text-sm text-error text-center">{errors.coverImage}</p>}
+        <label className="form-control">
+          <div className="label">
+            <span className="label-text">ชื่อกิจกรรม</span>
+          </div>
+          <input
+            type="text"
+            name="title"
+            placeholder="ชื่อกิจกรรม"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className={`input input-bordered w-full ${errors.title ? "input-error" : ""}`}
+          />
+          {errors.title && (
+            <div className="label">
+              <span className={`label-text-alt ${errors.title ? "text-error" : ""}`}>
+                {errors.title}
+              </span>
+            </div>
+          )}
+        </label>
+        <Tiptap content={value} onChange={onChange} errors={errors.description} />
+        <div className="flex justify-end gap-4">
+          <button type="submit" className="btn btn-primary">
+            {isSubmitting ? "กำลังบันทึก..." : "ยืนยัน"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-neutral"
+            onClick={handleCancel}
+          >
+            ยกเลิก
+          </button>
+        </div>
       </div>
       {message && (
         <div

@@ -8,6 +8,7 @@ import UnderLine from '@tiptap/extension-underline'
 import { ResizableImage } from "tiptap-extension-resizable-image";
 import SuperScript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
+import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
 import { YoutubeExtension } from "./Extension/Youtube";
 import { CustomBulletList, CustomListItem, CustomOrderedList } from './Extension/CustomList'
@@ -18,9 +19,10 @@ import MenuBar from "./UI/MenuBar";
 interface TiptapProps {
     content: string;
     onChange: (e: string) => void;
+    errors?: string
 }
 
-const Tiptap = ({ content, onChange }: TiptapProps) => {
+const Tiptap = ({ content, onChange, errors }: TiptapProps) => {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -88,10 +90,11 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
                 }
             ),
             YoutubeExtension,
+            Placeholder.configure({ placeholder: 'ข้อความกิจกรรม, รูปภาพ, วิดีโอ'})
         ],
         editorProps: {
             attributes: {
-                class: 'ProseMirror p-6 min-h-24 border input-bordered rounded-lg focus:ring-primary focus:ring-offset-base-100 focus:ring focus:ring-offset-2 focus:outline-none',
+                class: `ProseMirror p-6 min-h-24 border ${errors ? "border-error" : "input-bordered"} rounded-lg focus:ring-primary focus:ring-offset-base-100 focus:ring focus:ring-offset-2 focus:outline-none`,
             },
         },
         immediatelyRender: false,
@@ -107,10 +110,15 @@ const Tiptap = ({ content, onChange }: TiptapProps) => {
     }
 
     return (
-        <div className="bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
+        <div className="">
             <MenuBar editor={editor} />
             {/* Editor Content */}
             <EditorContent editor={editor} className="tiptap" />
+            {errors && (
+                <div className="label">
+                    <span className="label-text-alt text-error">{errors}</span>
+                </div>
+            )}
         </div >
     )
 }

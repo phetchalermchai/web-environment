@@ -3,7 +3,7 @@ import { CornerDownLeft, Trash, Youtube } from 'lucide-react'
 import { useState } from 'react';
 
 const ButtonYoutube = ({ editor }: { editor: Editor }) => {
-      const [urlYoutube, setUrlYoutube] = useState("");
+    const [urlYoutube, setUrlYoutube] = useState("");
     const addYoutubeVideo = (urlYoutube: string) => {
         if (!urlYoutube) return;
         const urlObj = new URL(urlYoutube);
@@ -24,30 +24,30 @@ const ButtonYoutube = ({ editor }: { editor: Editor }) => {
                 .run()
         }
     }
-  return (
-    <div className="dropdown dropdown-end">
-                        <div className="tooltip tooltip-bottom" data-tip="ลิงค์ Youtube">
-                            <div tabIndex={0} role="button" className={`${editor.isActive('youtube') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}`}><Youtube size={20} /></div>
-                        </div>
-                        <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
-                            <div className="flex items-center gap-2">
-                                <input type="text" placeholder="วางลิงค์" className="input input-sm w-32" value={urlYoutube} onChange={(e) => setUrlYoutube(e.target.value)} />
-                                <div className="tooltip tooltip-bottom" data-tip="เพิ่มลิงค์Youtube">
-                                    <button
-                                        className="btn btn-sm btn-ghost"
-                                        onClick={() => addYoutubeVideo(urlYoutube)}
-                                    ><CornerDownLeft size={20} />
-                                    </button>
-                                </div>
-                                <div className="tooltip tooltip-bottom" data-tip="ลบลิงค์Youtube">
-                                    <button className="btn btn-sm btn-ghost" onClick={() => setUrlYoutube("")}>
-                                        <Trash size={20} />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+    return (
+        <div className="dropdown dropdown-end min-w-0 shrink-0">
+            <div className="tooltip tooltip-bottom" data-tip="ลิงค์ Youtube">
+                <div tabIndex={0} role="button" className={`${editor.isActive('youtube') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}`}><Youtube size={20} /></div>
+            </div>
+            <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
+                <div className="flex items-center gap-2">
+                    <input type="text" placeholder="วางลิงค์" className="input input-sm w-32" value={urlYoutube} onChange={(e) => setUrlYoutube(e.target.value)} />
+                    <div className="tooltip tooltip-bottom" data-tip="เพิ่มลิงค์Youtube">
+                        <button
+                            className="btn btn-sm btn-ghost"
+                            onClick={() => addYoutubeVideo(urlYoutube)}
+                        ><CornerDownLeft size={20} />
+                        </button>
                     </div>
-  )
+                    <div className="tooltip tooltip-bottom" data-tip="ลบลิงค์Youtube">
+                        <button className="btn btn-sm btn-ghost" onClick={() => setUrlYoutube("")}>
+                            <Trash size={20} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default ButtonYoutube

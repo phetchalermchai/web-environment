@@ -41,7 +41,7 @@ const ButtonFontSize = ({ editor }: { editor: Editor }) => {
     }, [editor])
 
     return (
-        <div className="dropdown">
+        <div className="dropdown min-w-0 shrink-0">
             <div className="tooltip tooltip-bottom" data-tip="ขนาดฟอนต์">
                 <div tabIndex={0} role="button" className="btn btn-sm">
                     {label}
@@ -54,16 +54,16 @@ const ButtonFontSize = ({ editor }: { editor: Editor }) => {
             >
                 {sizes.map(size => (
                     <button key={size}
-                            className={`btn btn-sm ${label === size ? 'btn-primary' : ''}`}
-                            onClick={() =>
-                                editor
-                                    ?.chain()
-                                    .focus()
-                                    .setMark('textStyle', { fontSize: size })
-                                    .run()
-                            }
-                        >
-                            {size}
+                        className={`btn btn-sm ${label === size ? 'btn-primary' : ''}`}
+                        onClick={() =>
+                            editor
+                                ?.chain()
+                                .focus()
+                                .setMark('textStyle', { fontSize: size })
+                                .run()
+                        }
+                    >
+                        {size}
                     </button>
                 ))}
             </div>

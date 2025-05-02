@@ -3,7 +3,7 @@ import { Highlighter } from 'lucide-react'
 
 const ButtonHighlight = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="tooltip tooltip-bottom" data-tip="เน้นข้อความ Ctrl+Shift+H">
+        <div className="tooltip tooltip-bottom min-w-0 shrink-0" data-tip="เน้นข้อความ Ctrl+Shift+H">
             <button
                 onClick={() => editor.chain().focus().toggleHighlight().run()}
                 className={editor.isActive('highlight') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>

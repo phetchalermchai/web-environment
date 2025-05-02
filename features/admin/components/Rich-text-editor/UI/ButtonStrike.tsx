@@ -3,7 +3,7 @@ import { Strikethrough } from 'lucide-react'
 
 const ButtonStrike = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="tooltip tooltip-bottom" data-tip="ขีดทับ Ctrl+Shift+S">
+        <div className="tooltip tooltip-bottom min-w-0 shrink-0" data-tip="ขีดทับ Ctrl+Shift+S">
             <button
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 className={editor.isActive('strike') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>

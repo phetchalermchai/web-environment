@@ -5,7 +5,7 @@ import { useState } from 'react';
 const ButtonLinkImage = ({ editor }: { editor: Editor }) => {
     const [urlImg, setUrlImg] = useState("");
     return (
-        <div className="dropdown dropdown-end">
+        <div className="dropdown dropdown-end min-w-0 shrink-0">
             <div className="tooltip tooltip-bottom" data-tip="ลิงค์รูปภาพ">
                 <div tabIndex={0} role="button" className={`btn btn-sm`}><Link2 size={20} /></div>
             </div>

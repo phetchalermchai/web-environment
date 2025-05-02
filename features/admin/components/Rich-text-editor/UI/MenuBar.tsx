@@ -28,18 +28,18 @@ import { Editor } from '@tiptap/react'
 
 const MenuBar = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="sticky top-16 border input-bordered rounded-md p-2 mb-2 bg-base-100 space-x-2 z-50">
+        <div className="sticky top-16 border input-bordered rounded-md p-2 mb-2 bg-base-100 space-x-2 z-50 overflow-hidden">
             <div className="flex flex-wrap items-center gap-2">
                 <ButtonUndo editor={editor} />
                 <ButtonRedo editor={editor} />
-                <div className="mx-0 divider divider-horizontal"></div>
+                <div className="mx-0 divider divider-horizontal min-w-0 flex-none"></div>
                 <ButtonHeading editor={editor} />
                 <ButtonFontSize editor={editor} />
                 <ButtonLineHeight editor={editor} />
                 <ButtonList editor={editor} />
                 <ButtonCodeBlock editor={editor} />
                 <ButtonBlockQuote editor={editor} />
-                <div className="mx-0 divider divider-horizontal"></div>
+                <div className="mx-0 divider divider-horizontal min-w-0 flex-none"></div>
                 <ButtonFontColor editor={editor} />
                 <ButtonBold editor={editor} />
                 <ButtonItalic editor={editor} />
@@ -51,12 +51,12 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
                 <ButtonImage editor={editor} />
                 <ButtonLinkImage editor={editor} />
                 <ButtonYoutube editor={editor} />
-                <div className="mx-0 divider divider-horizontal"></div>
+                <div className="mx-0 divider divider-horizontal min-w-0 flex-none"></div>
                 <ButtonAlignLeft editor={editor} />
                 <ButtonAlignCenter editor={editor} />
                 <ButtonAlignRight editor={editor} />
                 <ButtonAlignJustify editor={editor} />
-                <div className="mx-0 divider divider-horizontal"></div>
+                <div className="mx-0 divider divider-horizontal min-w-0 shrink-0"></div>
                 <ButtonSuperscript editor={editor} />
                 <ButtonSubscript editor={editor} />
             </div>

@@ -34,6 +34,14 @@
         @apply overflow-auto;
     }
 
+    .ProseMirror p.is-editor-empty:first-child::before {
+        color: var(--fallback-bc,oklch(var(--bc)/0.5));
+        content: attr(data-placeholder);
+        float: left;
+        height: 0;
+        pointer-events: none;
+      }
+
     .ProseMirror h1 {
         @apply text-2xl font-bold text-base-content my-8;
     }

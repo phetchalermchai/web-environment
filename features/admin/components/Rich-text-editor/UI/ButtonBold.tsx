@@ -3,7 +3,7 @@ import { Bold } from 'lucide-react'
 
 const ButtonBold = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="tooltip tooltip-bottom" data-tip="ตัวหนา Ctrl+B">
+        <div className="tooltip tooltip-bottom min-w-0 shrink-0" data-tip="ตัวหนา Ctrl+B">
             <button
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 className={editor.isActive('bold') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>

@@ -30,7 +30,7 @@ const ButtonImage = ({ editor }: { editor: Editor }) => {
     };
     
     return (
-        <div className="tooltip tooltip-bottom" data-tip="เพิ่มรูปภาพ">
+        <div className="tooltip tooltip-bottom min-w-0 shrink-0" data-tip="เพิ่มรูปภาพ">
             <label className="btn btn-sm">
                 <ImagePlus size={20} />
                 <input

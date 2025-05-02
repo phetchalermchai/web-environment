@@ -3,7 +3,7 @@ import { Superscript } from 'lucide-react'
 
 const ButtonSuperscript = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="tooltip tooltip-bottom" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
+        <div className="tooltip tooltip-bottom min-w-0 shrink-0" data-tip="ยกตัวอักษรขึ้น Ctrl+.">
             <button
                 onClick={() => editor.chain().focus().toggleSuperscript().run()}
                 className={editor.isActive('superscript') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}>

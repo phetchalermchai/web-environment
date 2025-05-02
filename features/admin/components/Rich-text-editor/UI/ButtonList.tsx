@@ -3,7 +3,7 @@ import { ChevronDown, List, ListOrdered, ListTodo } from 'lucide-react'
 
 const ButtonList = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="dropdown">
+        <div className="dropdown min-w-0 shrink-0">
             <div className="tooltip tooltip-bottom" data-tip="รายการ">
                 <div tabIndex={0} role="button" className={`${editor.isActive("bulletList") || editor.isActive("orderedList") || editor.isActive("taskList") ? "btn btn-sm btn-primary" : "btn btn-sm"}`}>
                     {
