@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import 'tiptap-extension-resizable-image/styles.css';
 import Image from "next/image";
-import Link from "next/link";
 import { Pencil, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -16,8 +15,6 @@ const page = () => {
   const [title, setTitle] = useState("");
   const [value, setValue] = useState("");
   const [description, setDescription] = useState<string>("<p></p>");
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverImageUrl, setCoverImageUrl] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<{
     title?: string;
@@ -31,64 +28,10 @@ const page = () => {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    setIsPageLoading(false);
-    // ดำเนินการ import quill-resize-image และลงทะเบียนโมดูลในฝั่ง client เท่านั้น
-    import("quill-resize-image").then((module) => {
-      const QuillResizeImage = module.default;
-      import("react-quill-new").then(({ Quill }) => {
-        Quill.register("modules/resize", QuillResizeImage);
-      });
-    });
-  }, []);
-
   const handleEditClick = () => {
     fileInputRef.current?.click();
   };
 
-  // กำหนด modules ของ Quill
-  const Editor = {
-    modules: {
-      toolbar: {
-        container: [
-          [{ 'font': [] }],
-          [{ 'size': ['small', false, 'large', 'huge'] }],
-          [{ 'align': [] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ 'color': [] }, { 'background': [] }],
-          [{ 'script': 'sub' }, { 'script': 'super' }],
-          ['blockquote', 'code-block'],
-          ['link', 'image', 'video'],
-          [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-          ['clean'],
-        ],
-      },
-      resize: {
-        locale: {
-          altTip: "คลิกและลากเพื่อปรับขนาดภาพ",
-        },
-      },
-    },
-  };
-
-  const handleCoverImageUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        setErrors((prev) => ({
-          ...prev,
-          coverImage: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น",
-        }));
-        return;
-      }
-      setCoverImage(file);
-      setCoverImageUrl(URL.createObjectURL(file)); // แสดง preview
-    }
-  };
-
-  // เมื่อเลือกไฟล์แล้ว
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -114,7 +57,6 @@ const page = () => {
   const handleValidation = () => {
     let newErrors: { title?: string; description?: string; coverImage?: string } = {};
     if (!title.trim()) newErrors.title = "กรุณากรอกชื่อกิจกรรม";
-    // ตรวจสอบ Delta: ถ้า ops ว่างหรือมีแค่หนึ่ง op ที่เป็นการเว้นว่าง
     if (
       value === "<p></p>" || value === ``
     ) {
@@ -132,7 +74,7 @@ const page = () => {
 
   const handleCancel = () => {
     router.push("/admin/news/activities");
-};
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,30 +129,6 @@ const page = () => {
     <form onSubmit={handleSubmit} className="flex flex-col">
       {/* Input สำหรับชื่อกิจกรรม */}
       <div className="flex flex-col space-y-6 bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
-        {/* <label className="form-control">
-          <div className="label">
-            <span className="label-text">อัปโหลดรูปปกกิจกรรม</span>
-          </div>
-          <input
-            type="file"
-            onChange={handleCoverImageUpload}
-            className="file-input file-input-bordered w-full"
-          />
-          {coverImageUrl && (
-            <Image
-              src={coverImageUrl}
-              width={256}
-              height={256}
-              alt="Preview"
-              className="mt-2 border border-base-300 w-64 h-64 object-cover rounded-lg"
-            />
-          )}
-          {errors.coverImage && (
-            <div className="label">
-              <span className="label-text-alt text-error">{errors.coverImage}</span>
-            </div>
-          )}
-        </label> */}
         <div
           className="relative w-64 h-72 mx-auto cursor-pointer"
           onClick={handleEditClick}
