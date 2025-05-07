@@ -98,7 +98,7 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
             )}
             {ItemType === "NewsItems" && (
                 <>
-                    <td className="px-4 py-2">{(dataItem as NewsItems).title}</td>
+                    <td className="px-4 py-2">{(dataItem as NewsItems).title.length > 50 ? (dataItem as NewsItems).title.slice(0, 50) + "..." : (dataItem as NewsItems).title}</td>
                     <td className="px-4 py-2">{(dataItem as NewsItems).author.firstname} {(dataItem as NewsItems).author.lastname}</td>
                     <td className="px-4 py-2">{(dataItem as NewsItems).author.department}</td>
                     <td className="px-4 py-2">{new Date((dataItem as NewsItems).createdAt).toLocaleDateString("th-TH")}</td>
@@ -107,7 +107,7 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
             )}
             {ItemType === "ActivityItems" && (
                 <>
-                    <td className="px-4 py-2">{(dataItem as ActivityItems).title}</td>
+                    <td className="px-4 py-2">{(dataItem as ActivityItems).title.length > 50 ? (dataItem as ActivityItems).title.slice(0, 50) + "..." : (dataItem as ActivityItems).title}</td>
                     <td className="px-4 py-2">{(dataItem as ActivityItems).author.firstname} {(dataItem as ActivityItems).author.lastname}</td>
                     <td className="px-4 py-2">{(dataItem as ActivityItems).author.department}</td>
                     <td className="px-4 py-2">{new Date((dataItem as ActivityItems).createdAt).toLocaleDateString("th-TH")}</td>

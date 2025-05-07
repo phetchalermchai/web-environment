@@ -50,7 +50,7 @@ const Ruler = ({ editor }: { editor: Editor }) => {
   }
 
   return (
-    <div className='my-3 ps-2 pe-4'>
+    <div className='my-8 ps-2 pe-4'>
       <input
         type="range"
         min={0} max={16}

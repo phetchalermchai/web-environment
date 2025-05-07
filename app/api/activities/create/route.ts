@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     // รับข้อมูลจาก FormData
     const form = await req.formData();
     const title = form.get("title") as string;
-    const descriptionStr = form.get("description") as string; // Delta JSON string (ถ้ามี)
     const htmlContent = form.get("htmlContent") as string; // HTML content จาก editor
     const authorIdStr = form.get("authorId") as string;
     const coverImageFile = form.get("coverImage") as File;
@@ -95,14 +94,6 @@ export async function POST(req: NextRequest) {
       const filename = `${Date.now()}-${coverImageFile.name}`;
       const buffer = Buffer.from(await coverImageFile.arrayBuffer());
       coverImageUrl = await saveFileBuffer(buffer, `${activityFolder}/cover`, filename);
-    }
-
-    // แปลง descriptionStr จาก JSON string เป็น object (ถ้าจำเป็น)
-    let descriptionData = null;
-    try {
-      descriptionData = descriptionStr ? JSON.parse(descriptionStr) : null;
-    } catch (err) {
-      return NextResponse.json({ error: "Invalid description format" }, { status: 400 });
     }
 
     // ในที่นี้ เราจะบันทึก description เป็น finalHtml (ที่มี URL ของรูปแทน Base64)

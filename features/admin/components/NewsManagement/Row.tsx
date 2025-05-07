@@ -27,7 +27,7 @@ const Row = ({ activity, editLink, deleteApi }: ActivityRowProps) => {
     const [deleting, setDeleting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const modalRef = useRef<HTMLDialogElement>(null);
-
+    
     const handleDelete = async () => {
         setDeleting(true);
         try {

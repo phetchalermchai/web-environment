@@ -28,7 +28,7 @@ import { Editor } from '@tiptap/react'
 
 const MenuBar = ({ editor }: { editor: Editor }) => {
     return (
-        <div className="sticky top-16 border input-bordered rounded-md p-2 mb-2 bg-base-100 space-x-2 z-50 overflow-hidden">
+        <div className="sticky top-16 border input-bordered rounded-md p-2 mb-2 bg-base-100 space-x-2 z-50 overflow-hidden md:overflow-visible">
             <div className="flex flex-wrap items-center gap-2">
                 <ButtonUndo editor={editor} />
                 <ButtonRedo editor={editor} />

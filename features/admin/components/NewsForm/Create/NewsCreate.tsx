@@ -17,13 +17,11 @@ interface ContentFormProps {
 
 const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [title, setTitle] = useState("");
     const [detail, setDetail] = useState("");
-    const [value, setValue] = useState("");
     const [htmlContent, setHtmlContent] = useState("<p></p>");
-    const [description, setDescription] = useState<string>("<p></p>");
     const [message, setMessage] = useState<string | null>(null);
     const [errors, setErrors] = useState<{
         title?: string;
@@ -75,14 +73,15 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
 
     const onChange = (content: string) => {
         setHtmlContent(content);
-        setDescription(content)
     }
 
     const handleCancel = () => {
-        router.push("/admin/news/activities");
+        router.push(redirectPath);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        console.log("ส่งข้อมูล");
+        
         e.preventDefault();
         setMessage(null);
         if (!handleValidation()) return;
@@ -175,9 +174,9 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
                 </div>
                 {errors.coverImage && <p className="text-sm text-error text-center">{errors.coverImage}</p>}
                 <InputField
-                    label="ชื่อกิจกรรม"
+                    label={type === "activity" ? "ชื่อกิจกรรม" : "ชื่อข่าวประชาสัมพันธ์"}
                     name="title"
-                    placeholder="ชื่อกิจกรรม"
+                    placeholder={type === "activity" ? "ชื่อกิจกรรม" : "ชื่อข่าวประชาสัมพันธ์"}
                     value={title}
                     error={errors.title}
                     onChange={(e) => setTitle(e.target.value)}

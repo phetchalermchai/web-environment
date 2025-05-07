@@ -25,24 +25,27 @@ const ButtonYoutube = ({ editor }: { editor: Editor }) => {
         }
     }
     return (
-        <div className="dropdown dropdown-end min-w-0 shrink-0">
+        <div className="dropdown min-w-0 shrink-0">
             <div className="tooltip tooltip-bottom" data-tip="ลิงค์ Youtube">
                 <div tabIndex={0} role="button" className={`${editor.isActive('youtube') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}`}><Youtube size={20} /></div>
             </div>
-            <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-64 p-2 shadow">
-                <div className="flex items-center gap-2">
+            <div tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-36 md:w-64 p-2 shadow">
+                <div className="flex flex-col md:flex-row items-center gap-2">
                     <input type="text" placeholder="วางลิงค์" className="input input-sm w-32" value={urlYoutube} onChange={(e) => setUrlYoutube(e.target.value)} />
-                    <div className="tooltip tooltip-bottom" data-tip="เพิ่มลิงค์Youtube">
-                        <button
-                            className="btn btn-sm btn-ghost"
-                            onClick={() => addYoutubeVideo(urlYoutube)}
-                        ><CornerDownLeft size={20} />
-                        </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="ลบลิงค์Youtube">
-                        <button className="btn btn-sm btn-ghost" onClick={() => setUrlYoutube("")}>
-                            <Trash size={20} />
-                        </button>
+                    <div className='flex'>
+                        <div className="tooltip tooltip-bottom" data-tip="เพิ่มลิงค์Youtube">
+                            <button
+                                type='button'
+                                className="btn btn-sm btn-ghost"
+                                onClick={() => addYoutubeVideo(urlYoutube)}
+                            ><CornerDownLeft size={20} />
+                            </button>
+                        </div>
+                        <div className="tooltip tooltip-bottom" data-tip="ลบลิงค์Youtube">
+                            <button type='button' className="btn btn-sm btn-ghost" onClick={() => setUrlYoutube("")}>
+                                <Trash size={20} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

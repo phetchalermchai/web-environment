@@ -59,7 +59,7 @@ const page = async ({ params }: { params: { id: string } }) => {
         <div className="px-10 py-5 xl:px-20 xl:py-10">
             <Breadcrumbs items={breadcrumbs} />
             <div className="mt-3">
-                <h1 className="sm:text-3xl text-2xl font-bold">ชื่อข่าวประชาสัมพันธ์ 17-1-2568</h1>
+                <h1 className="sm:text-3xl text-2xl font-bold">{newsItem.title}</h1>
                 <div className="flex w-full flex-col border-opacity-50">
                     <div className="divider"></div>
                 </div>
@@ -70,8 +70,8 @@ const page = async ({ params }: { params: { id: string } }) => {
                     <ShareButton />
                 </div>
             </div>
-            <div className="ql-editor prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
-                    <div className="[&_img]:max-w-[80%] [&_img]:h-auto [&_img]:rounded-2xl" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+            <div className="editor-content prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
+                    <div className="max-w-[1440px]" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
             </div>
         </div>
     )

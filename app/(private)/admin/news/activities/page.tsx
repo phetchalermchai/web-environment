@@ -1,5 +1,5 @@
 "use client"
-import ManagementPage from "@/features/admin/components/ActivitiesManagement/ManagementPage"
+import ManagementPage from "@/features/admin/components/Management/ManagementPage"
 
 const page = () => {
   return (

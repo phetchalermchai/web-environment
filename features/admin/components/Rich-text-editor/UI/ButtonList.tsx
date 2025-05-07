@@ -17,6 +17,7 @@ const ButtonList = ({ editor }: { editor: Editor }) => {
             <div tabIndex={0} className="dropdown-content flex flex-col gap-1 menu bg-base-100 rounded-box z-[1] w-16 p-2 shadow">
                 <div className="tooltip tooltip-bottom" data-tip="BulletList Ctrl+Shift+8">
                     <button
+                        type='button'
                         onClick={() => editor.chain().focus().toggleBulletList().run()}
                         className={editor.isActive('bulletList') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
                     >
@@ -25,6 +26,7 @@ const ButtonList = ({ editor }: { editor: Editor }) => {
                 </div>
                 <div className="tooltip tooltip-bottom" data-tip="OrderedList Ctrl+Shift+7">
                     <button
+                        type='button'
                         onClick={() => editor.chain().focus().toggleOrderedList().run()}
                         className={editor.isActive('orderedList') ? 'btn btn-sm btn-primary' : 'btn btn-sm'}
                     >

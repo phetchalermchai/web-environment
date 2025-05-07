@@ -58,6 +58,7 @@ const ButtonLineHeight = ({ editor }: { editor: Editor }) => {
       >
         {heights.map(h => (
           <button key={h}
+            type='button'
             className={`btn btn-sm ${label === h.replace(/rem$/, '') ? 'btn-primary' : ''}`}
             onClick={() =>
               editor.chain().focus().setMark('textStyle', { lineHeight: h }).run()

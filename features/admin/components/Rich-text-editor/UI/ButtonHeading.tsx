@@ -37,6 +37,7 @@ const HeadingButton = ({
   return (
     <div className="tooltip tooltip-bottom" data-tip={tooltip}>
       <button
+        type='button'
         onClick={onClick}
         className={`btn btn-sm ${isActive ? 'btn-primary' : ''}`}
       >

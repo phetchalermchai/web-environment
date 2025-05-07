@@ -50,10 +50,11 @@ const ButtonFontSize = ({ editor }: { editor: Editor }) => {
             </div>
             <div
                 tabIndex={0}
-                className="dropdown-content flex flex-col gap-1 menu bg-base-100 rounded-box z-[1] w-20 p-2 shadow"
+                className="dropdown-content flex justify-center flex-row  gap-1 menu bg-base-100 rounded-box z-[1] w-20 h-48 md:h-auto overflow-scroll md:overflow-visible p-2 shadow"
             >
                 {sizes.map(size => (
                     <button key={size}
+                        type='button'
                         className={`btn btn-sm ${label === size ? 'btn-primary' : ''}`}
                         onClick={() =>
                             editor

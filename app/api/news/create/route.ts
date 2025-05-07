@@ -37,8 +37,7 @@ export async function POST(req: NextRequest) {
     // รับข้อมูลจาก FormData
     const form = await req.formData();
     const title = form.get("title") as string;
-    const description = form.get("description") as string;
-    const contentStr = form.get("content") as string; // Delta JSON string (ถ้ามี)
+    const description = form.get("detail") as string;
     const htmlContent = form.get("htmlContent") as string; // HTML content จาก editor
     const authorIdStr = form.get("authorId") as string;
     const coverImageFile = form.get("coverImage") as File;
@@ -95,14 +94,6 @@ export async function POST(req: NextRequest) {
       const filename = `${Date.now()}-${coverImageFile.name}`;
       const buffer = Buffer.from(await coverImageFile.arrayBuffer());
       coverImageUrl = await saveFileBuffer(buffer, `${newsFolder}/cover`, filename);
-    }
-
-    // แปลง contentStr จาก JSON string เป็น object (ถ้าจำเป็น)
-    let contentData = null;
-    try {
-      contentData = contentStr ? JSON.parse(contentStr) : null;
-    } catch (err) {
-      return NextResponse.json({ error: "Invalid content format" }, { status: 400 });
     }
 
     // บันทึกข่าวในฐานข้อมูล
