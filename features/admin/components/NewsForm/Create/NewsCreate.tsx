@@ -2,12 +2,15 @@
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Pencil, X } from "lucide-react";
+import { Pencil, X, Loader2 } from "lucide-react";
 import axios from "axios";
 import Image from "next/image";
 import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap"
 import InputField from "../../InputField";
 import 'tiptap-extension-resizable-image/styles.css';
+import { usePageLoading } from "@/features/admin/hooks/์NewsForm/usePageLoading";
+import { useImageUploader } from "@/features/admin/hooks/์NewsForm/useImageUploader";
+import { useContentForm } from "@/features/admin/hooks/์NewsForm/useContentForm";
 
 interface ContentFormProps {
     type: "activity" | "news";
@@ -17,58 +20,22 @@ interface ContentFormProps {
 
 const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
     const router = useRouter();
-    const { data: session } = useSession();
-    const [isPageLoading, setIsPageLoading] = useState(true);
-    const [title, setTitle] = useState("");
-    const [detail, setDetail] = useState("");
-    const [htmlContent, setHtmlContent] = useState("<p></p>");
-    const [message, setMessage] = useState<string | null>(null);
-    const [errors, setErrors] = useState<{
-        title?: string;
-        detail?: string;
-        description?: string;
-        coverImage?: string;
-    }>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [previewUrl, setPreviewUrl] = useState<string>("");
-    const [imageFile, setImageFile] = useState<File | null>(null);
-
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        if (!file.type.startsWith("image/")) {
-            setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
-            return;
-        }
-        if (file.size > 2048 * 2048) {
-            setMessage("ขนาดไฟล์ต้องไม่เกิน 2 MB");
-            return;
-        }
-        setErrors((e) => ({ ...e, image: undefined }));
-        setImageFile(file);
-        setPreviewUrl(URL.createObjectURL(file));
-    };
+    const { isPageLoading } = usePageLoading()
+    const {
+        title, setTitle,
+        detail, setDetail,
+        htmlContent, setHtmlContent,
+        errors, message, setMessage, isSubmitting,
+        submit
+      } = useContentForm({
+        type: type,
+        apiEndpoint: apiEndpoint,
+        redirectPath: redirectPath
+      });
+    const { fileInputRef, previewUrl, imageFile, onFileChange, clearImage } = useImageUploader({onError: setMessage});
 
     const handleEditClick = () => {
         fileInputRef.current?.click();
-    };
-
-    const handleCancelImage = () => {
-        setImageFile(null);
-        setPreviewUrl("");
-        if (fileInputRef.current) fileInputRef.current.value = "";
-    };
-
-    const handleValidation = () => {
-        const newErr: Record<string, string> = {};
-        let newErrors: { title?: string; detail?: string; description?: string; coverImage?: string } = {};
-        if (!title.trim()) newErrors.title = type === "activity" ? "กรุณากรอกชื่อกิจกรรม" : "กรุณากรอกชื่อข่าวประชาสัมพันธ์";
-        if (type === "news" && !detail.trim()) newErrors.detail = "กรุณากรอกรายละเอียดข่าวประชาสัมพันธ์";
-        if (htmlContent === "<p></p>" || htmlContent.trim() === "") newErr.htmlContent = type === "activity" ? "กรุณากรอกรายละเอียดกิจกรรม" : "กรุณากรอกรายละเอียดเพื่อเผยแพร่";
-        if (!imageFile) newErrors.coverImage = "กรุณาอัปโหลดรูปปกกิจกรรม";
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
     };
 
     const onChange = (content: string) => {
@@ -79,40 +46,6 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
         router.push(redirectPath);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        console.log("ส่งข้อมูล");
-        
-        e.preventDefault();
-        setMessage(null);
-        if (!handleValidation()) return;
-        setIsSubmitting(true);
-        // สร้าง FormData เพื่อส่งข้อมูลไปยัง API
-        const formData = new FormData();
-        formData.append("title", title);
-        if (type === "news") formData.append("detail", detail);
-        formData.append("htmlContent", htmlContent);
-        formData.append("authorId", String(session?.user.id));
-        if (imageFile) formData.append("coverImage", imageFile);
-
-        try {
-            await axios.post(apiEndpoint, formData, { headers: { "Content-Type": "multipart/form-data" } });
-            setMessage("บันทึกข้อมูลสำเร็จ!");
-            router.push(redirectPath);
-        } catch (error) {
-            setMessage("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    useEffect(() => {
-        return () => {
-            if (previewUrl.startsWith("blob:")) {
-                URL.revokeObjectURL(previewUrl);
-            }
-        };
-    }, [previewUrl]);
-
     useEffect(() => {
         if (message) {
             const timer = setTimeout(() => {
@@ -121,8 +54,18 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
             return () => clearTimeout(timer);
         }
     }, [message]);
+
+    if (isPageLoading) {
+        return (
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="animate-spin" size={48} />
+            <span className="ml-2">กำลังโหลดข้อมูล...</span>
+          </div>
+        );
+      }
+
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col">
+        <form onSubmit={e => { e.preventDefault(); submit(imageFile); }} className="flex flex-col">
             {/* Input สำหรับชื่อกิจกรรม */}
             <div className="flex flex-col space-y-6 bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
                 <div
@@ -156,7 +99,7 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
                             type="button"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleCancelImage();
+                                clearImage();
                             }}
                             className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 border border-white tooltip"
                             data-tip="ยกเลิกการเปลี่ยนรูป"
@@ -168,7 +111,7 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
                         type="file"
                         accept="image/*"
                         ref={fileInputRef}
-                        onChange={handleFileChange}
+                        onChange={onFileChange}
                         className="hidden"
                     />
                 </div>
@@ -191,7 +134,7 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
                         onChange={(e) => setDetail(e.target.value)}
                     />
                 )}
-                <Tiptap content={htmlContent} onChange={onChange} errors={errors.description} />
+                <Tiptap content={htmlContent} onChange={onChange} errors={errors.htmlContent} />
                 <div className="flex justify-end gap-4">
                     <button type="submit" className="btn btn-primary">
                         {isSubmitting ? "กำลังบันทึก..." : "ยืนยัน"}
