@@ -22,9 +22,9 @@ const InputField: React.FC<InputFieldProps> = ({
     disabled = false,
 }) => (
     <div className="form-control">
-        <label className="label">
+        <div className="label">
             <span className="label-text">{label}</span>
-        </label>
+        </div>
         <input
             type={type}
             name={name}
@@ -35,7 +35,7 @@ const InputField: React.FC<InputFieldProps> = ({
             disabled={disabled}
             className={`input input-bordered ${error ? "input-error" : ""}`}
         />
-        {error && <span className="text-error label-text-alt">{error}</span>}
+        {error && <div className="label"><span className="text-error label-text-alt">{error}</span></div>}
     </div>
 );
 

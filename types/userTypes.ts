@@ -33,7 +33,7 @@ export interface ActivityItems {
         lastname: string,
         department: string
     };
-    description?: string;
+    content?: string;
     createdAt: string;
     updatedAt: string;
 }

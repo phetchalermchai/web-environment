@@ -31,7 +31,7 @@ const Tiptap = ({ content, onChange, errors }: TiptapProps) => {
                 orderedList: false,
                 codeBlock: {
                     HTMLAttributes: {
-                        class: 'bg-base-200 border input-bordered p-4 rounded-md overflow-x-auto text-sm',
+                        class: 'bg-neutral border input-bordered p-4 rounded-md overflow-x-auto text-sm text-neutral-content',
                     }
                 },
                 code: {

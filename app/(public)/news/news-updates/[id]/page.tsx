@@ -56,7 +56,7 @@ const page = async ({ params }: { params: { id: string } }) => {
     ];
 
     return (
-        <div className="px-10 py-5 xl:px-20 xl:py-10">
+        <div className="px-10 xl:px-20 py-5 xl:py-10">
             <Breadcrumbs items={breadcrumbs} />
             <div className="mt-3">
                 <h1 className="sm:text-3xl text-2xl font-bold">{newsItem.title}</h1>
@@ -64,14 +64,14 @@ const page = async ({ params }: { params: { id: string } }) => {
                     <div className="divider"></div>
                 </div>
             </div>
-            <div className="flex items-center pb-5 px-2 sm:px-4 md:px-5 lg:px-6 xl:px-8">
+            <div className="flex items-center pb-5 max-w-[1480px] mx-auto">
                 <AuthorInfo name={`${newsItem.author.firstname} ${newsItem.author.lastname}`} department={newsItem.author.department} date={newsItem.createdAt} image={newsItem.author.avatar} email={newsItem.author.email} />
                 <div className="px-4">
                     <ShareButton />
                 </div>
             </div>
-            <div className="editor-content prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
-                    <div className="max-w-[1440px]" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+            <div className="editor-content prose prose-sm lg:prose-base max-w-[1480px] mx-auto">
+                    <div className="max-w-[1480px]" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
             </div>
         </div>
     )

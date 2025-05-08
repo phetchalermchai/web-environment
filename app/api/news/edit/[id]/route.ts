@@ -58,9 +58,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const form = await req.formData();
     const { id } = await params
     const title = form.get("title") as string;
-    const description = form.get("description") as string;
-    const contentStr = form.get("content") as string; // Delta JSON string (ถ้ามี)
-    let htmlContent = form.get("htmlContent") as string; // HTML content จาก client
+    const description = form.get("detail") as string;
+    let htmlContent = form.get("htmlContent") as string;
     const authorIdStr = form.get("authorId") as string;
     const coverImageFile = form.get("coverImage") as File | null;
 

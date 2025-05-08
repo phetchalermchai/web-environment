@@ -58,7 +58,6 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const form = await req.formData();
     const { id } = await params;
     const title = form.get("title") as string;
-    const descriptionStr = form.get("description") as string; // Delta JSON string (ถ้ามี)
     let htmlContent = form.get("htmlContent") as string; // HTML content จาก client
     const authorIdStr = form.get("authorId") as string;
     const coverImageFile = form.get("coverImage") as File | null;
@@ -121,9 +120,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     // ดึงรายชื่อรูปใน description เดิม (old HTML)
     const oldHtml =
-      typeof existingActivity.description === "string"
-        ? existingActivity.description
-        : JSON.stringify(existingActivity.description || "");
+      typeof existingActivity.content === "string"
+        ? existingActivity.content
+        : JSON.stringify(existingActivity.content || "");
     const oldImageSrcs = extractImageSrcs(oldHtml);
 
     // Process embedded images in new htmlContent:
@@ -174,7 +173,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     // Prepare update data (ใช้ htmlContent ที่ประมวลผลแล้วเป็น description)
     const updateData = {
       title,
-      description: htmlContent ? htmlContent : undefined,
+      content: htmlContent ? htmlContent : undefined,
       image: coverImageUrl,
     };
 

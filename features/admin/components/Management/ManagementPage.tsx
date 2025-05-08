@@ -8,7 +8,7 @@ import { useState, useMemo } from "react";
 import { DataItem, User, PersonnelItems, NewsItems, ActivityItems, E_ServiceItems } from "@/types/userTypes";
 import Image from "next/image";
 import Link from "next/link";
-import { useDataItems, ItemType } from "../../hooks/useDataItems";
+import { useDataItems, ItemType } from "../../hooks/ManagementPage/useDataItems";
 
 const ManagementPage = ({
   getsApi,
@@ -21,8 +21,11 @@ const ManagementPage = ({
   editLink: string;
   deleteApi: string;
 }) => {
-  const { dataItems, loading, error, itemType, sort, setSort } = useDataItems(getsApi);
+  const { dataItems, setDataItems, loading, error, itemType, sort, setSort } = useDataItems(getsApi);
   const [searchQuery, setSearchQuery] = useState<string>("");
+
+  console.log(itemType);
+  
 
   // กำหนด filter configuration ตาม itemType
   const filterConfig: { [key in ItemType]: string[] } = {
@@ -177,7 +180,7 @@ const ManagementPage = ({
         <CreateButton createLink={createLink} itemType={itemType} />
       </div>
       <div className="overflow-x-auto mt-6 grow">
-        <Table dataItem={sortedFilteredDataItems} ItemType={itemType} sort={sort} editLink={editLink} deleteApi={deleteApi} />
+        <Table dataItem={sortedFilteredDataItems} setDataItems={setDataItems} ItemType={itemType} sort={sort} editLink={editLink} deleteApi={deleteApi} />
       </div>
     </div>
   );

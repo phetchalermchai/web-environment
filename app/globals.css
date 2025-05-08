@@ -289,27 +289,102 @@ p[style*="text-align: right"] .node-imageComponent .image-component img {
     /* margin-bottom ให้เป็นช่องว่างระหว่างย่อหน้า */
 }
 
-.editor-content ul,
-ol {
+.editor-content .custom-bullet-list,
+.custom-bullet-list ul {
     list-style: none;
-    /* หรือ ใช้ list-style-type: none; */
-    padding-left: 0;
-    /* รีเซ็ต padding */
+    padding-inline-start: 1em;
 }
 
-.editor-content li::before {
-    content: '•';
-    /* วางสัญลักษณ์ bullet ที่ต้องการ */
+.editor-content ul .custom-list-item::before {
+    content: '';
     display: inline-block;
-    /* ให้เป็น inline block ร่วมกับข้อความ */
-    width: 1em;
-    /* กำหนดระยะห่างเบื้องหน้า */
+    width: 0.6em;
+    height: 0.6em;
     margin-left: -1em;
-    /* ย้ายตำแหน่ง bullet เข้าใกล้ขอบ */
-    text-align: var(--align, left);
+    margin-right: 0.5em;
+    vertical-align: middle;
+    color: currentColor;
 }
 
-.editor-content .custom-list-item-content {
+.editor-content .custom-bullet-list>li::before {
+    background-color: currentColor;
+    border-radius: 50%;
+}
+
+.editor-content .custom-bullet-list li>span>ul>li::before {
+    background-color: transparent;
+    border: 0.1em solid currentColor;
+    border-radius: 50%;
+}
+
+.editor-content .custom-bullet-list li>span>ul>li>span>ul>li::before {
+    background-color: currentColor;
+    border-radius: 0;
+}
+
+.editor-content .custom-bullet-list li>span>ul>li>span>ul>li>span>ul>li::before {
+    background-color: currentColor;
+    border-radius: 50%;
+}
+
+.editor-content .custom-list-item-content>p {
     display: inline;
-    /* หรือ inline-block ตามต้องการ */
+    margin: 0;
+    padding: 0;
+}
+
+.editor-content .custom-ordered-list {
+    counter-reset: item;
+    list-style: none;
+    padding-inline-start: 0;
+}
+
+/* ชั้นแรก: นับ counter และแสดงเลข */
+.editor-content .custom-ordered-list>.custom-list-item {
+    counter-increment: item;
+    margin-inline-start: 0;
+}
+
+.editor-content .custom-ordered-list>li::before {
+    content: counters(item, ".") ".";
+    display: inline-block;
+    line-height: 1;
+    margin-right: 0.5em;
+}
+
+/* ชั้นสอง: รีเซ็ต counter ภายใน <ol> ย่อย */
+.editor-content .custom-ordered-list li>ol {
+    counter-reset: item;
+}
+
+/* ชั้นสอง: เยื้อง 1em */
+.editor-content .custom-ordered-list>.custom-list-item>span>ol>.custom-list-item {
+    counter-increment: item;
+    margin-inline-start: 1em;
+}
+
+.editor-content .custom-ordered-list>.custom-list-item>ol>.custom-list-item::before {
+    content: counters(item, ".") ".";
+}
+
+/* ชั้นสาม: รีเซ็ต counter อีกครั้ง */
+.editor-content .custom-ordered-list .custom-list-item>ol>.custom-list-item>ol {
+    counter-reset: item;
+}
+
+/* ชั้นสาม: เยื้อง 2em */
+.editor-content .custom-ordered-list>.custom-list-item>span>ol>.custom-list-item>span>ol>.custom-list-item {
+    counter-increment: item;
+    margin-inline-start: 2em;
+}
+
+.editor-content .custom-ordered-list>.custom-list-item>ol>.custom-list-item>ol>.custom-list-item::before {
+    content: counters(item, ".") ".";
+}
+
+/* ปรับขนาด font, spacing ตามต้องการ */
+.editor-content .custom-ordered-list,
+.custom-ordered-list .custom-list-item {
+    font-size: 1rem;
+    /* ฯลฯ */
 }

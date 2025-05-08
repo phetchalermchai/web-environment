@@ -34,7 +34,7 @@ export interface ActivitiesItems {
     id: string;
     title: string;
     slug: string;
-    description: string;
+    content: string;
     image: string;
     author: {
         firstname: string;
@@ -48,7 +48,7 @@ export interface ActivityItem {
     id: string;
     title: string;
     slug: string;
-    description: string;
+    content: string;
     image: string;
     author: {
         firstname: string;

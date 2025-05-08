@@ -1,18 +1,19 @@
 import { EllipsisHorizontalIcon } from "@/config/iconConfig";
 import axios from "axios";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { Dispatch, SetStateAction, useState, useRef, useEffect } from "react";
 import { DataItem, User, PersonnelItems, NewsItems, ActivityItems, E_ServiceItems } from "@/types/userTypes";
 import Image from "next/image";
 
 interface DataItemRowProps {
     dataItem: DataItem;
+    setDataItems: Dispatch<SetStateAction<DataItem[]>>;
     ItemType: "Personnel" | "User" | "NewsItems" | "ActivityItems" | "E_Service" | null;
     editLink: string;
     deleteApi: string;
 }
 
-const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
+const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItemRowProps) => {
     const [deleting, setDeleting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const modalRef = useRef<HTMLDialogElement>(null);
@@ -21,7 +22,7 @@ const Row = ({ dataItem, ItemType, editLink, deleteApi }: DataItemRowProps) => {
         setDeleting(true);
         try {
             await axios.delete(`${deleteApi}${ItemType === "User" ? `${(dataItem as User).email}` : `${dataItem.id}`}`);
-            window.location.reload();
+            setDataItems(prev => prev.filter(item => item.id !== dataItem.id));
         } catch (error: any) {
             setMessage(error.response?.data?.error || "เกิดข้อผิดพลาดในการลบข้อมูลบุคลากร");
         } finally {

@@ -13,7 +13,7 @@ const fetchActivity = async (id: string) => {
             title: data.title,
             slug: data.slug,
             image: data.image,
-            description: data.description || "ไม่มีคำอธิบาย",
+            content: data.content || "ไม่มีคำอธิบาย",
             author: {
                 firstname: data.author.firstname,
                 lastname: data.author.lastname,
@@ -48,8 +48,8 @@ async function page({ params }: { params: { id: string } }) {
 
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
-        { label: "ข้อมูลข่าวสาร", href: "/news/news-updates" },
-        { label: "กิจกรรมของสำนัก", href: "/news/news-updates" },
+        { label: "ข้อมูลข่าวสาร", href: "/news/activities" },
+        { label: "กิจกรรมของสำนัก", href: "/news/activities" },
         { label: activity.title, isCurrent: true },
     ];
 
@@ -63,7 +63,7 @@ async function page({ params }: { params: { id: string } }) {
                         <div className="divider"></div>
                     </div>
                 </div>
-                <div className="flex items-center pb-5 px-2 sm:px-4 md:px-5 lg:px-6 xl:px-8">
+                <div className="flex items-center pb-5 max-w-[1480px] mx-auto">
                     <AuthorInfo name={`${activity.author.firstname} ${activity.author.lastname}`} department={activity.author.department} date={activity.createdAt} image={activity.author.avatar} email={activity.author.email} />
                     <div className="px-4">
                         <ShareButton />
@@ -71,7 +71,7 @@ async function page({ params }: { params: { id: string } }) {
                 </div>
                 <div className="editor-content prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
                     {/* <div className="[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:mx-auto" dangerouslySetInnerHTML={{ __html: activity.description }} /> */}
-                    <div className="max-w-[1440px]" dangerouslySetInnerHTML={{ __html: activity.description }} />
+                    <div className="max-w-[1440px]" dangerouslySetInnerHTML={{ __html: activity.content }} />
                 </div>
             </div>
         </div>

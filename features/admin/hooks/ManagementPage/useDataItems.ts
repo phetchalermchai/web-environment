@@ -10,7 +10,7 @@ function getItemType(item: DataItem): ItemType {
   } else if ("role" in item) {
     return "User";
   } else if ("author" in item) {
-    if ("content" in item && item.content != null) {
+    if ("description" in item && item.description != null) {
       return "NewsItems";
     }
     return "ActivityItems";
@@ -86,6 +86,5 @@ export const useDataItems = (getsApi: string) => {
     loadDataItems();
   }, [getsApi]);
 
-
-  return { dataItems, loading, error, itemType, sort, setSort, getItemType };
+  return { dataItems, setDataItems, loading, error, itemType, sort, setSort, getItemType };
 };

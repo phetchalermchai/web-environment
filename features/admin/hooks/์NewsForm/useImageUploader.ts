@@ -32,6 +32,10 @@ export function useImageUploader({ maxSizeMB = 2, onError }: Options = {}) {
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
+    const editImage = () => {
+        fileInputRef.current?.click();
+    };
+
     // cleanup blob URL on unmount/preview change
     useEffect(() => {
         return () => {
@@ -39,5 +43,5 @@ export function useImageUploader({ maxSizeMB = 2, onError }: Options = {}) {
         };
     }, [previewUrl]);
 
-    return { fileInputRef, imageFile, previewUrl, onFileChange, clearImage };
+    return { fileInputRef, imageFile, previewUrl, onFileChange, clearImage, editImage };
 }

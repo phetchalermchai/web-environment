@@ -1,17 +1,19 @@
 import Row from "./Row";
 import { UserGroupIcon, UserIcon, ArrowDownIcon, NewspaperIcon, CalendarSolidIcon, CpuSolidIcon } from "@/config/iconConfig";
+import { Dispatch, SetStateAction } from "react";
 import { DataItem } from "@/types/userTypes";
 
 
 interface DataItemTableProps {
     dataItem: DataItem[];
+    setDataItems: Dispatch<SetStateAction<DataItem[]>>;
     ItemType: "Personnel" | "User" | "NewsItems" | "ActivityItems" | "E_Service" | null;
     sort: string;
     editLink: string;
     deleteApi: string
 }
 
-const Table = ({ dataItem, ItemType, sort, editLink, deleteApi }: DataItemTableProps) => {
+const Table = ({ dataItem, setDataItems, ItemType, sort, editLink, deleteApi }: DataItemTableProps) => {
     return (
         <table className="table table-sm md:table-md">
             <thead>
@@ -70,7 +72,7 @@ const Table = ({ dataItem, ItemType, sort, editLink, deleteApi }: DataItemTableP
             <tbody>
                 {dataItem.length > 0 ? (
                     dataItem.map((item) => (
-                        <Row key={item.id} ItemType={ItemType} dataItem={item} editLink={editLink} deleteApi={deleteApi} />
+                        <Row key={item.id} ItemType={ItemType} dataItem={item} setDataItems={setDataItems} editLink={editLink} deleteApi={deleteApi} />
                     ))
                 ) : (
                     <tr>

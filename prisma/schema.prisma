@@ -38,7 +38,7 @@ model Activity {
   id          String   @id @default(uuid())
   title       String
   slug        String   @unique @db.VarChar(255) // Slug เพื่อให้ URL อ่านง่าย
-  description Json? // เปลี่ยนเป็น Json เพื่อเก็บ Quill Delta
+  content Json? // เปลี่ยนเป็น Json เพื่อเก็บ Quill Delta
   author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   authorId    Int?
   image       String

@@ -19,7 +19,7 @@ export function validateContentForm(fields: {
     if (htmlContent === "<p></p>" || !htmlContent.trim()) {
         errs.htmlContent = type === "activity"
             ? "กรุณากรอกรายละเอียดกิจกรรม"
-            : "กรุณากรอกรายละเอียดเพื่อเผยแพร่";
+            : "กรุณากรอกรายละเอียดข่าวประชาสัมพันธ์";
     }
     if (!imageFile) {
         errs.coverImage = type === "activity" ? "กรุณาอัปโหลดรูปปกกิจกรรม" : "กรุณาอัปโหลดรูปปกข่าวประชาสัมพันธ์";

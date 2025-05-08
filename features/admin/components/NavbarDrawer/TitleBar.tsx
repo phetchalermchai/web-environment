@@ -3,7 +3,6 @@ import { usePathname } from "next/navigation";
 
 const TitleBar = () => {
     const pathname = usePathname();
-    console.log(pathname);
 
     // แมป path เป็นข้อความภาษาไทย
     const pageTitles: Record<string, string> = {

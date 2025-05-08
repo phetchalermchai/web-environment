@@ -1,5 +1,5 @@
 // features/admin/hooks/useContentForm.ts
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -18,11 +18,15 @@ export function useContentForm({ type, apiEndpoint, redirectPath }: Params) {
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [htmlContent, setHtmlContent] = useState("<p></p>");
-  const [errors, setErrors] = useState<Record<string,string>>({});
-  const [message, setMessage] = useState<string|null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = async (imageFile: File|null) => {
+  const onChange = (content: string) => {
+    setHtmlContent(content);
+  }
+
+  const submit = async (imageFile: File | null) => {
     const errs = validateContentForm({ type, title, detail, htmlContent, imageFile });
     console.log(errs);
     if (Object.keys(errs).length) {
@@ -53,7 +57,7 @@ export function useContentForm({ type, apiEndpoint, redirectPath }: Params) {
       setIsSubmitting(false);
     }
   };
-
+  
   return {
     // state
     title, setTitle,
@@ -61,6 +65,6 @@ export function useContentForm({ type, apiEndpoint, redirectPath }: Params) {
     htmlContent, setHtmlContent,
     errors, message, setMessage, isSubmitting,
     // action
-    submit,
+    onChange, submit
   };
 }
