@@ -2,9 +2,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession({ req, ...authOptions });
     if (!session || !session.user) {
@@ -22,10 +22,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: "EService not found" }, { status: 404 });
     }
     return NextResponse.json(eservice, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching EService by id:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: "Failed to fetch EService", message: error.message || error },
+      { error: "Failed to fetch EService", message: errorMessage },
       { status: 500 }
     );
   }

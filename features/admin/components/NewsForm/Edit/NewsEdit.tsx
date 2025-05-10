@@ -1,13 +1,14 @@
 "use client";
-import { useState, useEffect, ChangeEvent, useRef } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { Pencil, X } from "lucide-react";
 import axios from "axios";
 import Image from "next/image";
-import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap";
-import 'tiptap-extension-resizable-image/styles.css';
-import Alert from "@/features/admin/components/Alert";
+import Loading from "@/features/admin/components/NewsForm/Loading";
 import InputField from "@/features/admin/components/InputField";
+import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap";
+import Alert from "@/features/admin/components/Alert";
+import { useState, useEffect, ChangeEvent } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Pencil, X } from "lucide-react";
+import 'tiptap-extension-resizable-image/styles.css';
 
 interface EditContentPageProps {
     type: "activity" | "news";
@@ -124,18 +125,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
 
     if (isLoading) {
         return (
-            <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="skeleton h-8 lg:h-12 w-[154px] md:w-[201px] lg:w-[296px] rounded-lg"></div>
-                        <div className="skeleton h-8 lg:h-12 w-[105px] lg:w-[168px] rounded-lg m-1 md:mx-3"></div>
-                    </div>
-                    <div className="skeleton h-8 lg:h-12 w-[38px] lg:w-[117px] rounded-lg"></div>
-                </div>
-                <div className="overflow-x-auto mt-6 grow">
-                    <div className="skeleton h-full w-full"></div>
-                </div>
-            </div>
+            <Loading/>
         );
     }
     return (
@@ -144,7 +134,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
             <div className="flex flex-col space-y-6 bg-base-100 rounded-lg shadow m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5">
                 <div className="relative w-64 h-72 mx-auto cursor-pointer">
                     <div
-                        className="w-64 h-72 rounded-lg relative overflow-hidden border border-dashed border-base-300"
+                        className={`w-64 h-72 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.coverImage ? "ring-error" : "ring-primary"}`}
                         onClick={() => document.getElementById("file-input")?.click()}
                     >
                         {(previewUrl || existingImageUrl) ? (

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowRightCircleIcon } from "@/config/iconConfig";
 
 interface AccordionProps {
     title: string;

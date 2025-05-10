@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 export async function GET(req: NextRequest) {
   try {
@@ -31,10 +31,11 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(bannerVideos, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching banner videos:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: "Failed to fetch banner videos", message: error.message || error },
+      { error: "Failed to fetch banner videos", message: errorMessage },
       { status: 500 }
     );
   }

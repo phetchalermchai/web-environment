@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -51,7 +51,7 @@ function deleteFileAndCleanUp(fileUrl: string) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // ตรวจสอบ session
@@ -187,10 +187,10 @@ export async function PUT(
     });
 
     return NextResponse.json({ success: true, banner: updatedBanner }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating banner video:", error);
     return NextResponse.json(
-      { error: "Failed to update banner video", message: error.message || error },
+      { error: "Failed to update banner video", message: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

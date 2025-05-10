@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import Menu from "./Menu";
 import SignOut from "./SignOut";
 import prisma from "@/lib/prisma"

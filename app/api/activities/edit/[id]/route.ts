@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -46,7 +46,7 @@ function extractImageSrcs(html: string): string[] {
   return srcs;
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // ดึง session โดยส่ง req เข้าไปด้วย
     const session = await getServerSession({ req, ...authOptions });
@@ -183,10 +183,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     });
 
     return NextResponse.json(updatedActivity, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Failed to update activity", message: error.message || error },
+      { error: "Failed to update activity", message: (error instanceof Error ? error.message : String(error)) },
       { status: 500 }
     );
   }

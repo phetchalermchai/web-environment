@@ -1,12 +1,12 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { JSDOM } from "jsdom";
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // ดึง session พร้อมกับ req
     const session = await getServerSession({ req, ...authOptions });

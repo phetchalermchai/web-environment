@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // ตรวจสอบ session ว่ามีผู้ใช้หรือไม่
     const session = await getServerSession({ req, ...authOptions });
@@ -70,9 +70,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     });
 
     return NextResponse.json({ success: true, personnel: deletedPersonnel }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
-      { error: "Failed to delete personnel", message: error.message || error },
+      { error: "Failed to delete personnel", message: (error instanceof Error ? error.message : String(error)) },
       { status: 500 }
     );
   }

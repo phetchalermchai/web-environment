@@ -21,7 +21,7 @@ interface FormErrors {
   videoDesktop?: string;
 }
 
-const page = () => {
+const Page = () => {
   const { id } = useParams(); // รับ id จาก URL
   const router = useRouter();
 
@@ -77,7 +77,7 @@ const page = () => {
         const banners = res.data as { sortOrder: number }[];
         const usedOrders: number[] = banners.map((banner) => banner.sortOrder);
         const allOrders = Array.from({ length: 6 }, (_, i) => i + 1);
-        let available = allOrders.filter((order) => !usedOrders.includes(order));
+        const available = allOrders.filter((order) => !usedOrders.includes(order));
         // ถ้าแบนเนอร์ที่แก้ไขมีลำดับอยู่แล้ว ให้เพิ่มกลับเข้าไปใน options
         if (formData.sortOrder && !available.includes(formData.sortOrder)) {
           available.push(formData.sortOrder);
@@ -203,8 +203,8 @@ const page = () => {
       });
       setMessage("แก้ไขแบนเนอร์สำเร็จแล้ว");
       router.push(`${process.env.NEXT_PUBLIC_API_URL}/admin/banner/video`);
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
       } else {
         setMessage("An unexpected error occurred");
@@ -411,4 +411,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

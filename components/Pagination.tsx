@@ -1,69 +1,101 @@
+"use client";
+import { usePagination } from "@/hook/usePagination";
 
-interface PaginationProps {
-    currentPage: number;
-    totalItems: number;
-    itemsPerPage: number;
-    onPageChange: (page: number) => void;
+export interface PaginationProps {
+  currentPage: number;
+  totalItems: number;
+  itemsPerPage: number;
+  siblingCount?: number;
+  onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalItems,
+  itemsPerPage,
+  siblingCount = 1,
+  onPageChange,
+}) => {
+  // คำนวณจำนวนหน้าทั้งหมด
+  const totalPages = itemsPerPage > 0
+    ? Math.ceil(totalItems / itemsPerPage)
+    : 1;
 
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+  // รับ list ของเลขหน้า + ellipsis
+  const pages = usePagination({
+    currentPage,
+    totalItems,
+    itemsPerPage,
+    siblingCount,
+  });
+  
+  // ถ้ามีแค่หน้าเดียว ไม่ต้องแสดง pagination
+  if (totalPages <= 1) {
+    return null;
+  }
 
-    // กำหนดจำนวนปุ่มที่จะแสดงรอบๆหน้าปัจจุบัน
-    const siblingCount = 1;
-    const pagesToShow: (number | string)[] = [];
-
-    // เพิ่มเลขหน้าแรกและ ... หากจำเป็น
-    if (currentPage > siblingCount + 2) {
-        pagesToShow.push(1, "...");
-    } else {
-        for (let i = 1; i <= Math.min(siblingCount + 2, totalPages); i++) {
-        pagesToShow.push(i);
-        }
+  const goTo = (page: number) => {
+    if (page !== currentPage && page >= 1 && page <= totalPages) {
+      onPageChange(page);
     }
+  };
 
-    // เพิ่มเลขหน้าปัจจุบันและรอบๆ
-    for (
-        let i = Math.max(2, currentPage - siblingCount);
-        i <= Math.min(totalPages - 1, currentPage + siblingCount);
-        i++
-    ) {
-        if (!pagesToShow.includes(i)) {
-        pagesToShow.push(i);
-        }
-    }
+  return (
+    <nav
+      className="join w-full justify-center"
+      role="navigation"
+      aria-label="Pagination Navigation"
+    >
+      {/* Prev */}
+      <button
+        type="button"
+        className="join-item btn btn-sm sm:btn-md"
+        onClick={() => goTo(currentPage - 1)}
+        disabled={currentPage === 1}
+        aria-label="Go to previous page"
+      >
+        Prev
+      </button>
 
-    // เพิ่ม ... และเลขหน้าสุดท้าย หากจำเป็น
-    if (currentPage < totalPages - siblingCount - 1) {
-        pagesToShow.push("...", totalPages);
-    } else {
-        for (let i = Math.max(totalPages - siblingCount - 1, 2); i <= totalPages; i++) {
-        if (!pagesToShow.includes(i)) {
-            pagesToShow.push(i);
-        }
-        }
-    }
+      {pages.map((p, idx) =>
+        p === "ellipsis" ? (
+          <span
+            key={`ellipsis-${idx}`}
+            className="join-item btn btn-sm sm:btn-md btn-disabled cursor-default"
+            aria-hidden="true"
+          >
+            …
+          </span>
+        ) : (
+          <button
+            key={`page-${p}`}
+            type="button"
+            className={`join-item btn btn-sm sm:btn-md ${currentPage === p ? "btn-primary" : ""}`}
+            onClick={() => goTo(p)}
+            aria-current={currentPage === p ? "page" : undefined}
+            aria-label={
+              currentPage === p
+                ? `Page ${p}, current page`
+                : `Go to page ${p}`
+            }
+          >
+            {p}
+          </button>
+        )
+      )}
 
-    return (
-        <div className="join w-full justify-center py-6">
-            {pagesToShow.map((page, index) =>
-                typeof page === "number" ? (
-                    <button
-                        key={index}
-                        onClick={() => onPageChange(page)}
-                        className={`join-item btn ${currentPage === page ? "btn-active" : ""}`}
-                    >
-                        {page}
-                    </button>
-                ) : (
-                    <span key={index} className="join-item btn btn-disabled">
-                        {page}
-                    </span>
-                )
-            )}
-        </div>
-    )
-}
+      {/* Next */}
+      <button
+        type="button"
+        className="join-item btn btn-sm sm:btn-md"
+        onClick={() => goTo(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        aria-label="Go to next page"
+      >
+        Next
+      </button>
+    </nav>
+  );
+};
 
-export default Pagination
+export default Pagination;

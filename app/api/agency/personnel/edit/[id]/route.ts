@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -51,7 +51,7 @@ function deleteFileAndCleanUp(fileUrl: string) {
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         // ตรวจสอบ session
@@ -84,9 +84,9 @@ export async function PUT(
         const coverImageFile = form.get("coverImage") as File;
 
         // ตรวจสอบความถูกต้องของข้อมูลที่จำเป็น
-        if (!nameTitle || !firstName || !lastName || !position || !positionName || !department) {
+        if (!nameTitle || !firstName || !lastName || !position || !positionName) {
             return NextResponse.json(
-                { error: "Missing required fields: nameTitle, firstName, lastName, position, positionName, department" },
+                { error: "Missing required fields: nameTitle, firstName, lastName, position, positionName" },
                 { status: 400 }
             );
         }
@@ -144,9 +144,9 @@ export async function PUT(
         });
 
         return NextResponse.json({ success: true, personnel: updatedPersonnel }, { status: 200 });
-    } catch (error: any) {
+    } catch (error) {
         return NextResponse.json(
-            { error: "Failed to update agency personnel", message: error.message || error },
+            { error: "Failed to update agency personnel", message: (error instanceof Error ? error.message : String(error)) },
             { status: 500 }
         );
     }

@@ -40,7 +40,7 @@ const formatDateToThai = (dateString: string): string => {
 };
 
 
-const page = async ({ params }: { params: { id: string } }) => {
+const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params
     const newsItem = await fetchNewById(id);
 

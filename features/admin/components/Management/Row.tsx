@@ -60,7 +60,7 @@ const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItem
                         </div>
                     </td>
                     <td className="px-4 py-2">{(dataItem as PersonnelItems).position}</td>
-                    <td className="px-4 py-2">{(dataItem as PersonnelItems).positionName}</td>
+                    <td className="px-4 py-2">{(dataItem as PersonnelItems).positionName.length > 40 ? (dataItem as PersonnelItems).positionName.slice(0, 40) + "..." : (dataItem as PersonnelItems).positionName}</td>
                     <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).createdAt).toLocaleDateString("th-TH")}</td>
                     <td className="px-4 py-2">{new Date((dataItem as PersonnelItems).updatedAt).toLocaleDateString("th-TH")}</td>
                 </>
@@ -127,7 +127,7 @@ const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItem
                             </div>
                         </div>
                     </td>
-                    <td className="px-4 py-2">{(dataItem as E_ServiceItems).linkURL}</td>
+                    <td className="px-4 py-2">{(dataItem as E_ServiceItems).linkURL.length > 50 ? (dataItem as E_ServiceItems).linkURL.slice(0, 50) + "..." : (dataItem as E_ServiceItems).linkURL}</td>
                     <td className="px-4 py-2">{new Date((dataItem as E_ServiceItems).createdAt).toLocaleDateString("th-TH")}</td>
                     <td className="px-4 py-2">{new Date((dataItem as E_ServiceItems).updatedAt).toLocaleDateString("th-TH")}</td>
                 </>

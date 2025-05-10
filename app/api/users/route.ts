@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 export async function GET(req: NextRequest) {
     try {
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
         }));
 
         return NextResponse.json(responseData, { status: 200 });
-    } catch (error: any) {
+    } catch (error) {
         console.error("เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้:", error);
         return NextResponse.json({ error: "ไม่สามารถดึงข้อมูลผู้ใช้ได้" }, { status: 500 });
     }

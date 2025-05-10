@@ -4,11 +4,12 @@ import CreateButton from "./CreateButton";
 import SearchBar from "./SearchBar";
 import SortDropdown from "./SortDropdown";
 import Table from "./Table";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { DataItem, User, PersonnelItems, NewsItems, ActivityItems, E_ServiceItems } from "@/types/userTypes";
 import Image from "next/image";
 import Link from "next/link";
 import { useDataItems, ItemType } from "../../hooks/ManagementPage/useDataItems";
+import Pagination from "@/components/Pagination";
 
 const ManagementPage = ({
   getsApi,
@@ -24,8 +25,8 @@ const ManagementPage = ({
   const { dataItems, setDataItems, loading, error, itemType, sort, setSort } = useDataItems(getsApi);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  console.log(itemType);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // กำหนด filter configuration ตาม itemType
   const filterConfig: { [key in ItemType]: string[] } = {
@@ -76,7 +77,7 @@ const ManagementPage = ({
         new Date((a as PersonnelItems).updatedAt).getTime() - new Date((b as PersonnelItems).updatedAt).getTime(),
     },
     User: {
-      "ผู้ใช้งาน": (a, b) => 
+      "ผู้ใช้งาน": (a, b) =>
         (a as User).email.localeCompare((b as User).email),
       "ส่วนงาน": (a, b) =>
         ((a as User).department || "").localeCompare(((b as User).department || "")),
@@ -132,6 +133,32 @@ const ManagementPage = ({
     return sorted;
   }, [filteredDataItems, sort, itemType, sortingConfig]);
 
+  // คำนวณตัวเลขสรุป
+  const total = sortedFilteredDataItems.length;
+  const totalPages = Math.max(1, Math.ceil(total / itemsPerPage));
+
+  // ถ้า currentPage เกินหน้า ให้ปรับลงมา
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  // reset หน้าเมื่อ search/sort/type เปลี่ยน
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sort, itemType]);
+
+  // คำนวณ pagedItems
+  const pagedItems = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return sortedFilteredDataItems.slice(start, start + itemsPerPage);
+  }, [sortedFilteredDataItems, currentPage]);
+
+  // คำนวณ startIndex/endIndex
+  const startIndex = total === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, total);
+
   const handleSort = (option: string) => {
     setSort(option);
   };
@@ -179,8 +206,24 @@ const ManagementPage = ({
         </div>
         <CreateButton createLink={createLink} itemType={itemType} />
       </div>
-      <div className="overflow-x-auto mt-6 grow">
-        <Table dataItem={sortedFilteredDataItems} setDataItems={setDataItems} ItemType={itemType} sort={sort} editLink={editLink} deleteApi={deleteApi} />
+      <div className="overflow-x-auto overflow-y-hidden mt-6 grow">
+        <Table dataItem={pagedItems} setDataItems={setDataItems} ItemType={itemType} sort={sort} editLink={editLink} deleteApi={deleteApi} />
+      </div>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="text-sm px-4">
+          {total > 0
+            ? `กำลังแสดง ${startIndex} ถึง ${endIndex} จาก ${total} รายการ`
+            : "ไม่มีรายการให้แสดง"}
+        </div>
+        <div className="px-4 py-6">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={sortedFilteredDataItems.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={page => setCurrentPage(page)}
+            siblingCount={1}
+          />
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import slugify from "slugify";
 import { v4 as uuidv4 } from "uuid";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { JSDOM } from "jsdom";
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     // ตรวจสอบว่า title เป็นภาษาไทยหรือไม่ เพื่อสร้าง slug
     const isThai = /[\u0E00-\u0E7F]/.test(title);
-    let slug = isThai
+    const slug = isThai
       ? `${title.replace(/\s+/g, "-")}-${uuidv4().slice(0, 8)}`
       : slugify(title, { lower: true, strict: true });
 
@@ -109,10 +109,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, news: newNews }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: "Something went wrong", message: error.message || error },
+      { error: "Something went wrong", message: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

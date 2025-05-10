@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params; // ใช้ params.id โดยตรง
 
   try {
@@ -47,6 +47,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     // กรณีที่ไม่มี session ให้ส่งข้อมูลข่าวทั้งหมด (Public)
     return NextResponse.json(news, { status: 200 });
   } catch (error) {
+    console.log(error);
     return NextResponse.json({ message: 'Error fetching news' }, { status: 500 });
   }
 }

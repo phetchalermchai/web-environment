@@ -10,7 +10,7 @@ const fetchActivities = async () => {
             title: item.title,
             slug: item.slug,
             image: item.image,
-            description: item.description || "ไม่มีคำอธิบาย",
+            content: item.content || "ไม่มีคำอธิบาย",
             author: {
                 firstname: item.author.firstname,
                 lastname: item.author.lastname,
@@ -40,7 +40,7 @@ const page = async () => {
         <News
             newsData={activitiesData}
             title="กิจกรรมของสำนัก"
-            itemsPerPage={3}
+            itemsPerPage={6}
             showPagination={true}
             showViewAll={false}
             showBreadcrumbs={true}

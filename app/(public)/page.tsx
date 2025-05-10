@@ -40,7 +40,7 @@ const fetchActivities = async (): Promise<ActivitiesItems[]> => {
             title: item.title,
             slug: item.slug,
             image: item.image,
-            description: item.description || "ไม่มีคำอธิบาย",
+            description: item.content || "ไม่มีคำอธิบาย",
             author: {
                 firstname: item.author.firstname,
                 lastname: item.author.lastname,

@@ -1,14 +1,15 @@
 "use client"
-import { useRouter } from "next/navigation";
-import { Pencil, X } from "lucide-react";
 import Image from "next/image";
 import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap"
-import InputField from "../../InputField";
-import Alert from "../../Alert";
-import 'tiptap-extension-resizable-image/styles.css';
+import InputField from "@/features/admin/components/InputField";
+import Alert from "@/features/admin/components/Alert";
+import Loading from "@/features/admin/components/NewsForm/Loading";
+import { useRouter } from "next/navigation";
+import { Pencil, X } from "lucide-react";
 import { usePageLoading } from "@/features/admin/hooks/์NewsForm/usePageLoading";
 import { useImageUploader } from "@/features/admin/hooks/์NewsForm/useImageUploader";
 import { useContentForm } from "@/features/admin/hooks/์NewsForm/useContentForm";
+import 'tiptap-extension-resizable-image/styles.css';
 
 interface ContentFormProps {
     type: "activity" | "news";
@@ -38,18 +39,7 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
 
     if (isPageLoading) {
         return (
-            <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="skeleton h-8 lg:h-12 w-[154px] md:w-[201px] lg:w-[296px] rounded-lg"></div>
-                        <div className="skeleton h-8 lg:h-12 w-[105px] lg:w-[168px] rounded-lg m-1 md:mx-3"></div>
-                    </div>
-                    <div className="skeleton h-8 lg:h-12 w-[38px] lg:w-[117px] rounded-lg"></div>
-                </div>
-                <div className="overflow-x-auto mt-6 grow">
-                    <div className="skeleton h-full w-full"></div>
-                </div>
-            </div>
+            <Loading/>
         );
     }
 
@@ -61,7 +51,7 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
                     className="relative w-64 h-72 mx-auto cursor-pointer"
                     onClick={editImage}
                 >
-                    <div className="w-64 h-72 rounded-lg relative overflow-hidden border border-dashed border-base-300">
+                    <div className={`w-64 h-72 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.coverImage ? "ring-error" : "ring-primary"}`}>
                         {previewUrl ? (
                             <Image src={previewUrl} alt="Preview" fill className="object-cover" />
                         ) : (

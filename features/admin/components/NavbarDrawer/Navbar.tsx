@@ -1,7 +1,7 @@
 import Theme from "@/components/Theme";
 import NavbarDrawerButton from "@/features/users/components/NavbarDrawer/NavbarDrawerButton";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import TitleBar from "./TitleBar";
 import prisma from "@/lib/prisma"
 import Image from "next/image";

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { PencilIcon, XMarkIcon } from "@/config/iconConfig";
+import { Pencil, X } from "lucide-react";
 
 interface AvatarInputProps {
     email: string;
@@ -96,7 +96,7 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
                     className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border border-white hover:bg-primary-focus focus:outline-none tooltip tooltip-bottom"
                     data-tip="แก้ไขรูป avatar"
                 >
-                    <PencilIcon />
+                    <Pencil size={16}/>
                 </button>
             ) : (
                 <button
@@ -104,7 +104,7 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
                     className="absolute top-0 right-0 bg-error text-white rounded-full p-1 border border-white hover:bg-red-600 focus:outline-none tooltip"
                     data-tip="ยกเลิกการเปลี่ยนรูป"
                 >
-                    <XMarkIcon />
+                    <X size={16}/>
                 </button>
             )}
             <input

@@ -1,17 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { BannerImage, BannerVideo } from "@/types/publicTypes";
-import BannerCard from "./BannerCard"; // คอมโพเนนต์ที่แสดงการ์ดแบนเนอร์ที่มีข้อมูล
+import BannerCard from "@/features/admin/components/BannerManagement/BannerCard";
 
 interface BannerCardsGridProps {
-  management: string;
+  management?: string;
   banners: (BannerImage | BannerVideo)[];
   createLink: string;
   editLink: string;
   deleteApi: string;
 }
-
-
 
 const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ management, banners, createLink, editLink, deleteApi }) => {
   const totalCards = 6;
@@ -27,9 +25,6 @@ const BannerCardsGrid: React.FC<BannerCardsGridProps> = ({ management, banners, 
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-      {/* {banners.map((banner) => (
-        <BannerCard management={management} key={banner.id} banner={banner} editLink={editLink} deleteApi={deleteApi} />
-      ))} */}
       {banners.map((banner) => {
         if (isBannerImage(banner)) {
           return (

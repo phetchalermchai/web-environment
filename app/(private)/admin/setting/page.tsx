@@ -1,6 +1,6 @@
 "use client";
 
-import UserSettingsComponent from "@/features/admin/components/UserForm/Edit/UserSettings";
+import UserSettingsComponent from "@/features/admin/components/SettingForm/UserSettings";
 
 const UserSettingsPage = () => {
   return (

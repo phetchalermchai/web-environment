@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // ตรวจสอบ session ว่าผู้ใช้ล็อกอินหรือไม่
@@ -46,10 +46,10 @@ export async function GET(
     }
 
     return NextResponse.json(bannerVideo, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching banner video:", error);
     return NextResponse.json(
-      { error: "Failed to fetch banner video", message: error.message || error },
+      { error: "Failed to fetch banner video", message: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

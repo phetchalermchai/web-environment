@@ -187,8 +187,8 @@ const CreateBannerVideoPage = () => {
       setVideoMobileUrl("");
       setVideoDesktopUrl("");
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/video`;
-    } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.error) {
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response && error.response.data && error.response.data.error) {
         setMessage(error.response.data.error);
       } else {
         setMessage("An unexpected error occurred");

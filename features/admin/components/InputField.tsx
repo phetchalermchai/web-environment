@@ -5,7 +5,7 @@ interface InputFieldProps {
     placeholder?: string;
     value: string;
     error?: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     readOnly?: boolean;
     disabled?: boolean;
 }
@@ -21,7 +21,7 @@ const InputField: React.FC<InputFieldProps> = ({
     readOnly = false,
     disabled = false,
 }) => (
-    <div className="form-control">
+    <label className="form-control">
         <div className="label">
             <span className="label-text">{label}</span>
         </div>
@@ -36,7 +36,7 @@ const InputField: React.FC<InputFieldProps> = ({
             className={`input input-bordered ${error ? "input-error" : ""}`}
         />
         {error && <div className="label"><span className="text-error label-text-alt">{error}</span></div>}
-    </div>
+    </label>
 );
 
 export default InputField

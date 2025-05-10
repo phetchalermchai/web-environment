@@ -1,6 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
-import NewsImage from "@/features/users/components/News/NewsImage";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { ActivityItem } from "@/types/publicTypes";
 import axios from "axios";
@@ -38,8 +37,8 @@ const formatDateToThai = (dateString: string): string => {
     });
 };
 
-async function page({ params }: { params: { id: string } }) {
-    const { id } = await params
+async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const activity = await fetchActivity(id)
 
     if (!activity) {
@@ -78,4 +77,4 @@ async function page({ params }: { params: { id: string } }) {
     )
 }
 
-export default page
+export default Page

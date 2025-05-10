@@ -1,20 +1,21 @@
 "use client";
 
-import AvatarInput from "./AvatarInput";
-import UserForm from "./UserForm";
+import AvatarInput from "@/features/admin/components/UserForm/Edit/AvatarInput";
+import UserForm from "@/features/admin/components/UserForm/Edit/UserForm";
+import Alert from "@/features/admin/components/Alert";
 import axios from "axios";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useUserData } from "../../../hooks/UserForm/useUserData";
-import ErrorComponent from "@/app/(private)/admin/setting/ErrorComponent";
-import LoadingComponent from "@/app/(private)/admin/setting/LoadingComponent";
+import { useUserData } from "@/features/admin/hooks/UserForm/useUserData";
+import ErrorComponent from "@/features/admin/components/UserForm/ErrorComponent";
+import LoadingComponent from "@/features/admin/components/UserForm/LoadingComponent";
 
 const UserEdit = () => {
     const router = useRouter();
     const params = useParams();
-    const emailEncoded  = params.email as string;
+    const emailEncoded = params.email as string;
     const email = decodeURIComponent(emailEncoded);
-    
+
 
     // ดึงข้อมูลผู้ใช้ด้วย custom hook
     const { userData, setUserData, loading, error, originalAvatarRef, setAvatarPreview } = useUserData(email);
@@ -108,16 +109,6 @@ const UserEdit = () => {
         router.push("/admin/users");
     };
 
-    // useEffect สำหรับซ่อนข้อความ alert หลัง 5 วินาที
-    useEffect(() => {
-        if (message) {
-            const timer = setTimeout(() => {
-                setMessage("");
-            }, 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [message]);
-
     if (error) return <ErrorComponent message={error} />;
     if (loading) return <LoadingComponent />;
 
@@ -154,13 +145,12 @@ const UserEdit = () => {
                 </div>
             </div>
             {message && (
-                <div
-                    role="alert"
-                    className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${message.includes("สำเร็จ") ? "alert-success" : "alert-error"
-                        }`}
-                >
-                    <span>{message}</span>
-                </div>
+                <Alert
+                    message={message}
+                    variant={message === "อัพเดทข้อมูลผู้ใช้งานสำเร็จ" ? "success" : "error"}
+                    duration={5000}
+                    onClose={() => setMessage("")}
+                />
             )}
         </div>
     )

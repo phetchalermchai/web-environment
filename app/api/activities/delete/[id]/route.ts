@@ -1,12 +1,12 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { JSDOM } from "jsdom";
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     // ดึง session พร้อมกับ req
     const session = await getServerSession({ req, ...authOptions });
@@ -49,9 +49,9 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       if (parts.length >= 4) {
         activityFolder = parts[3]; // index 3 คือชื่อโฟลเดอร์สุ่มสำหรับ activity
       }
-    } else if (deletedActivity.description && typeof deletedActivity.description === "string") {
+    } else if (deletedActivity.content && typeof deletedActivity.content === "string") {
       // ถ้าไม่มี cover image ให้ลองสกัดจาก <img> ใน description
-      const dom = new JSDOM(deletedActivity.description);
+      const dom = new JSDOM(deletedActivity.content);
       const document = dom.window.document;
       const img = document.querySelector("img");
       if (img) {
@@ -78,8 +78,8 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       }
     } else {
       // กรณีที่ไม่สามารถสกัดชื่อโฟลเดอร์ได้ ให้ลองลบไฟล์ใน description ทีละไฟล์
-      if (deletedActivity.description && typeof deletedActivity.description === "string") {
-        const dom = new JSDOM(deletedActivity.description);
+      if (deletedActivity.content && typeof deletedActivity.content === "string") {
+        const dom = new JSDOM(deletedActivity.content);
         const document = dom.window.document;
         const imgElements = document.querySelectorAll("img");
         imgElements.forEach((img) => {

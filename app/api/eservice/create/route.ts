@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -81,10 +81,10 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, eService: newEService }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating EService:", error);
     return NextResponse.json(
-      { error: "Failed to create EService", message: error.message || error },
+      { error: "Failed to create EService", message: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

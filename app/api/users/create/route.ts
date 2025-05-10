@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -117,14 +117,15 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        // กรองข้อมูล password ออกก่อนส่งกลับ
-        const { password: _, ...userWithoutPassword } = newUser;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _password, ...userWithoutPassword } = newUser;
 
         return NextResponse.json(userWithoutPassword, { status: 201 });
-    } catch (error: any) {
+    } catch (error) {
         console.error("เกิดข้อผิดพลาดในการสร้างผู้ใช้:", error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
         return NextResponse.json(
-            { error: "เกิดข้อผิดพลาดในการสร้างผู้ใช้งาน", message: error.message || error },
+            { error: "เกิดข้อผิดพลาดในการสร้างผู้ใช้งาน", message: errorMessage },
             { status: 500 }
         );
     }

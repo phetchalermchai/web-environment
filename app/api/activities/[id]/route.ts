@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from "@/lib/authOptions";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
     try {
@@ -46,6 +46,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
         return NextResponse.json(activity, { status: 200 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ message: 'Error fetching activity' }, { status: 500 });
     }
 }

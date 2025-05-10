@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -37,7 +37,7 @@ function deleteFile(fileUrl: string): void {
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { email: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ email: string }> }) {
     try {
         // ตรวจสอบว่า Session ถูกต้องหรือไม่
         const session = await getServerSession(authOptions);
@@ -151,7 +151,7 @@ export async function PUT(req: NextRequest, { params }: { params: { email: strin
 
 
         // สร้าง object สำหรับข้อมูลการอัปเดต
-        const updateData: any = { firstname, lastname, email: email, department };
+        const updateData: { firstname: string; lastname: string; email: string; department: string; password?: string; avatar?: string; role?: "USER" | "SUPERUSER" } = { firstname, lastname, email: email, department };
 
         // หากมีการส่ง password ที่ผ่านการ validate ให้ทำการ hash แล้วบันทึก
         if (password && password.trim() !== "") {
@@ -178,6 +178,7 @@ export async function PUT(req: NextRequest, { params }: { params: { email: strin
         return NextResponse.json(updatedUser, { status: 200 });
 
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: "ไม่สามารถอัพเดตผู้ใช้ได้" }, { status: 500 });
     }
 }

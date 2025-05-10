@@ -1,10 +1,10 @@
-import SearchBar from "./SearchBar"
-import SortDropdown from "./SortDropdown"
-import { useState, useEffect, useMemo } from 'react';
 import axios from "axios";
 import Image from "next/image"
 import Link from "next/link";
-import BannerGrid from "./BannerGrid"
+import SearchBar from "@/features/admin/components/BannerManagement/SearchBar"
+import SortDropdown from "@/features/admin/components/BannerManagement/SortDropdown"
+import BannerGrid from "@/features/admin/components/BannerManagement/BannerGrid"
+import { useState, useEffect, useMemo } from 'react';
 
 interface BannerImage {
     id: string;
@@ -30,7 +30,7 @@ interface BannerVideo {
 
 type Banner = BannerImage | BannerVideo;
 
-const ManagementPage = ({ management, getsApi, createLink, editLink, deleteApi }: { management: string, getsApi: string, createLink: string, editLink: string, deleteApi: string }) => {
+const ManagementPage = ({ management, getsApi, createLink, editLink, deleteApi }: { management?: string, getsApi: string, createLink: string, editLink: string, deleteApi: string }) => {
 
     // กำหนด type ให้กับ state variables
     const [banners, setBanners] = useState<Banner[]>([]);
@@ -128,7 +128,6 @@ const ManagementPage = ({ management, getsApi, createLink, editLink, deleteApi }
     }
 
     return (
-
         <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col bg-base-100 rounded-lg shadow">
             <div className='flex items-center justify-between'>
                 <div className='flex items-center'>

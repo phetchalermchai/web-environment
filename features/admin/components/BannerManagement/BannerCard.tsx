@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 
 interface BannerCardProps {
-    management: string;
+    management?: string;
     banner: BannerImage | BannerVideo;
     editLink: string;
     deleteApi: string;

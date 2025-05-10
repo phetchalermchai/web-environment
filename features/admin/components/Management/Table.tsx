@@ -15,7 +15,7 @@ interface DataItemTableProps {
 
 const Table = ({ dataItem, setDataItems, ItemType, sort, editLink, deleteApi }: DataItemTableProps) => {
     return (
-        <table className="table table-sm md:table-md">
+        <table className="table table-sm ">
             <thead>
                 {ItemType === "Personnel" && (
                     <tr>

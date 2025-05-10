@@ -1,11 +1,10 @@
 "use client";
 
-import useFormLogin from "../../hooks/useFormLogin";
-
+import useFormLogin from "@/features/admin/hooks/Login/useFormLogin";
+import Alert from "@/features/admin/components/Alert";
 
 const FormLogin = () => {
-    const { formData, errors, handleChange, handleSubmit } = useFormLogin();
-
+    const { formData, errors, setErrors, isSubmitting, handleChange, handleSubmit } = useFormLogin();
     return (
         <div className="flex flex-col items-center justify-center min-h-svh lg:w-[40%] w-full">
             <div className="flex flex-col gap-2 justify-center items-center">
@@ -15,10 +14,9 @@ const FormLogin = () => {
                 <h1 className="text-3xl font-bold">Sign In</h1>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full px-[10%]">
-
                 <label className="form-control w-full">
                     <div className="label">
-                        <span className="label-text">Email</span>
+                        <span className="label-text">อีเมล</span>
                     </div>
                     <label className="input input-bordered flex items-center gap-2">
                         <svg
@@ -39,7 +37,7 @@ const FormLogin = () => {
                 </label>
                 <label className="form-control w-full">
                     <div className="label">
-                        <span className="label-text">Password</span>
+                        <span className="label-text">รหัสผ่าน</span>
                     </div>
                     <label className="input input-bordered flex items-center gap-2">
                         <svg
@@ -48,24 +46,28 @@ const FormLogin = () => {
                             fill="currentColor"
                             className="h-4 w-4 opacity-70">
                             <path
-                                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+                                fillRule="evenodd"
+                                d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+                                clipRule="evenodd" />
                         </svg>
-                        <input type="password" name="password" value={formData.password} onChange={handleChange} className="grow" placeholder="Password" />
+                        <input type="password" name="password" value={formData.password} onChange={handleChange} className="grow" placeholder="รหัสผ่าน" />
                     </label>
                     <div className="label">
                         {errors.password && <div className="label"><span className="label-text-alt text-error">{errors.password}</span></div>}
                     </div>
                     {errors.general && (
-                        <div
-                            role="alert"
-                            className={`fixed bottom-4 right-4 shadow-lg w-80 alert ${errors.general === "เข้าสู่ระบบสำเร็จ" ? "alert-success" : "alert-error"
-                                }`}
-                        >
-                            <span>{errors.general}</span>
-                        </div>
+                        <Alert
+                            message={errors.general}
+                            variant={errors.general === "เข้าสู่ระบบสำเร็จ" ? "success" : "error"}
+                            duration={5000}
+                            onClose={() => setErrors((prevErrors) => ({
+                                ...prevErrors,
+                                general: "",
+                            }))}
+                        />
                     )}
                 </label>
-                <button className="btn btn-primary" type="submit">Sign In</button>
+                <button className="btn btn-primary" type="submit" disabled={isSubmitting}>{isSubmitting ? "Sign In..." : "Sign In"}</button>
             </form>
         </div>
     )

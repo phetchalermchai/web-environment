@@ -1,4 +1,4 @@
-import { ArrowUpDownIcon } from "@/config/iconConfig";
+import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 
 interface SortDropdownProps {
@@ -18,7 +18,7 @@ const SortDropdown = ({ onSort }: SortDropdownProps) => {
         <div className="dropdown dropdown-end sm:mx-2">
             <div tabIndex={0} role="button" className="btn btn-sm px-2 lg:btn-md btn-outline m-1">
                 <span className='hidden lg:inline-flex'>เรียงตาม: {sortOption}</span>
-                <span className='flex items-center justify-center lg:hidden'><ArrowUpDownIcon />{sortOption}</span>
+                <span className='flex items-center justify-center lg:hidden'><ArrowUpDown size={16}/>{sortOption}</span>
             </div>
             <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li>
