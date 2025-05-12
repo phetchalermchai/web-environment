@@ -3,10 +3,15 @@ import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { ActivityItem } from "@/types/publicTypes";
 import axios from "axios";
+export const dynamic = "force-dynamic";
 
 const fetchActivity = async (id: string) => {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/activities/${id}`);
+        const { data } = await axios.get(`${baseURL}/api/activities/${id}`);
         const activities: ActivityItem = {
             id: data.id,
             title: data.title,

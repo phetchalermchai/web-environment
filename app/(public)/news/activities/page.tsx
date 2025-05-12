@@ -1,10 +1,15 @@
 import News from "@/features/users/components/News/News"
 import { ActivitiesItems } from "@/types/publicTypes";
 import axios from "axios";
+export const dynamic = "force-dynamic";
 
 const fetchActivities = async () => {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/activities`);
+        const { data } = await axios.get(`${baseURL}/api/activities`);
         const activities = data.map((item: ActivitiesItems) => ({
             id: item.id,
             title: item.title,

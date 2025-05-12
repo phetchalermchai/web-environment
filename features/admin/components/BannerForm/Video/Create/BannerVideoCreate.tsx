@@ -1,144 +1,108 @@
 "use client";
 
 import axios from "axios";
-import Image from "next/image";
-import InputField from "@/features/admin/components/InputField";
 import Alert from "@/features/admin/components/Alert";
-import { useEffect, useState, useRef, ChangeEvent } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Pencil, X, Info } from "lucide-react";
+import InputField from "@/features/admin/components/InputField";
+import { useEffect, useRef, useState, ChangeEvent } from "react";
+import { Info, Pencil, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-interface EditBannerFormData {
+interface CreateBannerVideoFormData {
     title: string;
-    sortOrder: number; // 1 to 6
+    sortOrder: number; // 1 ถึง 6
     isActive: string;
-    imageMobile: string;
-    imageDesktop: string;
 }
 
 interface FormErrors {
     title?: string;
     sortOrder?: string;
     isActive?: string;
-    imageMobile?: string;
-    imageDesktop?: string;
+    videoMobile?: string;
+    videoDesktop?: string;
 }
 
-const page = () => {
-    const { id } = useParams(); // ดึง id ของแบนเนอร์จาก URL
+const CreateBannerVideoPage = () => {
     const router = useRouter();
-
-    const [formData, setFormData] = useState<EditBannerFormData>({
+    const [formData, setFormData] = useState<CreateBannerVideoFormData>({
         title: "",
-        sortOrder: 1,
+        sortOrder: 0,
         isActive: "",
-        imageMobile: "",
-        imageDesktop: "",
     });
     const [availableOrders, setAvailableOrders] = useState<number[]>([]);
     const [errors, setErrors] = useState<FormErrors>({});
-    const [isPageLoading, setIsPageLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
 
-    // States สำหรับ file inputs และ preview URLs สำหรับรูป Desktop และ Mobile
-    const [imageMobileFile, setImageMobileFile] = useState<File | null>(null);
-    const [imageMobileUrl, setImageMobileUrl] = useState<string>("");
-    const [imageDesktopFile, setImageDesktopFile] = useState<File | null>(null);
-    const [imageDesktopUrl, setImageDesktopUrl] = useState<string>("");
+    // States สำหรับ file input และ preview URLs สำหรับวิดีโอ Desktop และ Mobile
+    const [videoMobileFile, setVideoMobileFile] = useState<File | null>(null);
+    const [videoMobileUrl, setVideoMobileUrl] = useState<string>("");
+    const [videoDesktopFile, setVideoDesktopFile] = useState<File | null>(null);
+    const [videoDesktopUrl, setVideoDesktopUrl] = useState<string>("");
 
     const mobileInputRef = useRef<HTMLInputElement>(null);
     const desktopInputRef = useRef<HTMLInputElement>(null);
 
+    const mobileVideoRef = useRef<HTMLVideoElement>(null);
+    const desktopVideoRef = useRef<HTMLVideoElement>(null);
+
     const handleMobileClick = () => mobileInputRef.current?.click();
     const handleDesktopClick = () => desktopInputRef.current?.click();
-    const handleCancel = () => {
-        router.push("/admin/banner/image");
-    };
 
     const handleCancelMobile = () => {
-        setImageMobileFile(null);
-        setImageMobileUrl("");
-        setErrors(e => ({ ...e, imageMobile: undefined }));
+        setVideoMobileFile(null);
+        setVideoMobileUrl("");
+        setErrors(e => ({ ...e, VideoMobile: undefined }));
         if (mobileInputRef.current) mobileInputRef.current.value = "";
     };
 
     const handleCancelDesktop = () => {
-        setImageDesktopFile(null);
-        setImageDesktopUrl("");
-        setErrors(e => ({ ...e, imageDesktop: undefined }));
+        setVideoDesktopFile(null);
+        setVideoDesktopUrl("");
+        setErrors(e => ({ ...e, videoDesktop: undefined }));
         if (desktopInputRef.current) desktopInputRef.current.value = "";
     };
 
     const handleMobileFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (!file.type.startsWith("image/")) {
-            setErrors(e => ({ ...e, imageMobile: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น" }));
+        if (!file.type.startsWith("video/")) {
+            setErrors(e => ({ ...e, videoMobile: "กรุณาอัปโหลดไฟล์วิดีโอเท่านั้น" }));
             return;
         }
-        setErrors(e => ({ ...e, imageMobile: undefined }));
-        setImageMobileFile(file);
-        setImageMobileUrl(URL.createObjectURL(file));
+        setErrors(e => ({ ...e, videoMobile: undefined }));
+        setVideoMobileFile(file);
+        setVideoMobileUrl(URL.createObjectURL(file));
     };
 
     const handleDesktopFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (!file.type.startsWith("image/")) {
-            setErrors(e => ({ ...e, imageDesktop: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น" }));
+        if (!file.type.startsWith("video/")) {
+            setErrors(e => ({ ...e, videoDesktop: "กรุณาอัปโหลดไฟล์วิดีโอเท่านั้น" }));
             return;
         }
-        setErrors(e => ({ ...e, imageDesktop: undefined }));
-        setImageDesktopFile(file);
-        setImageDesktopUrl(URL.createObjectURL(file));
+        setErrors(e => ({ ...e, videoDesktop: undefined }));
+        setVideoDesktopFile(file);
+        setVideoDesktopUrl(URL.createObjectURL(file));
     };
 
-    // ดึงข้อมูลแบนเนอร์เดิมจาก API แล้วตั้งค่าใน state
-    useEffect(() => {
-        const fetchBanner = async () => {
-            try {
-                const res = await axios.get(`/api/banner/image/${id}`);
-                const data = res.data;
-                setFormData({
-                    title: data.title || "",
-                    sortOrder: data.sortOrder || 1,
-                    isActive: data.isActive ? "1" : "0",
-                    imageMobile: data.imageMobile || "",
-                    imageDesktop: data.imageDesktop || "",
-                });
-                setImageMobileUrl(data.imageMobile || "");
-                setImageDesktopUrl(data.imageDesktop || "");
-            } catch (error) {
-                console.error("Error fetching banner:", error);
-                setMessage("ไม่สามารถดึงข้อมูลแบนเนอร์ได้");
-            } finally {
-                setIsPageLoading(false);
-            }
-        };
-        if (id) {
-            fetchBanner();
-        }
-    }, [id]);
-
-    // คำนวณ available orders จากฐานข้อมูล (ในกรณีที่มีการแก้ไข ให้รวมลำดับเดิม)
+    // ดึงข้อมูลแบนเนอร์ทั้งหมดเพื่อคำนวณ available sort orders
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const res = await axios.get("/api/banner/image");
+                const res = await axios.get("/api/banner/video");
                 const banners = res.data as { sortOrder: number }[];
                 const usedOrders: number[] = banners.map((banner) => banner.sortOrder);
-                // ช่วงที่อนุญาตคือ 1 ถึง 6
                 const allOrders = Array.from({ length: 6 }, (_, i) => i + 1);
-                let available = allOrders.filter((order) => !usedOrders.includes(order));
-                // ถ้าแบนเนอร์ที่แก้ไขมีลำดับอยู่แล้ว ให้เพิ่มกลับเข้าไปใน available options
+                const available = allOrders.filter((order) => !usedOrders.includes(order));
+                // ถ้าแก้ไขแบนเนอร์อยู่ (กรณีมีค่า sortOrder ที่มีอยู่) ให้เพิ่มเข้าไปด้วย
                 if (formData.sortOrder && !available.includes(formData.sortOrder)) {
                     available.push(formData.sortOrder);
                     available.sort((a, b) => a - b);
                 }
                 setAvailableOrders(available);
             } catch (error) {
-                console.error("Error fetching banners for sort order:", error);
+                console.error("Error fetching banner videos:", error);
             }
         };
 
@@ -157,27 +121,18 @@ const page = () => {
         if (!formData.isActive) {
             newErrors.isActive = "กรุณาระบุสถานะแบนเนอร์";
         }
-        // สำหรับรูป เราอนุญาตให้แก้ไขได้ (ถ้าไม่มีการเปลี่ยน แสดงรูปเดิม)
-        if (!imageMobileFile && !imageMobileUrl) {
-            newErrors.imageMobile = "กรุณาอัปโหลดรูปแบนเนอร์ (Mobile)";
+        if (!videoMobileFile) {
+            newErrors.videoMobile = "กรุณาอัปโหลดวิดีโอแบนเนอร์ (Mobile)";
         }
-        if (!imageDesktopFile && !imageDesktopUrl) {
-            newErrors.imageDesktop = "กรุณาอัปโหลดรูปแบนเนอร์ (Desktop)";
-        }
-        if (imageMobileFile && !["image/jpeg", "image/png", "image/gif"].includes(imageMobileFile.type)) {
-            newErrors.imageMobile = "ไฟล์ต้องเป็น .jpg, .png หรือ .gif เท่านั้น";
-        }
-        if (imageDesktopFile && !["image/jpeg", "image/png", "image/gif"].includes(imageDesktopFile.type)) {
-            newErrors.imageDesktop = "ไฟล์ต้องเป็น .jpg, .png หรือ .gif เท่านั้น";
+        if (!videoDesktopFile) {
+            newErrors.videoDesktop = "กรุณาอัปโหลดวิดีโอแบนเนอร์ (Desktop)";
         }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
@@ -189,30 +144,42 @@ const page = () => {
         }));
     };
 
+    const handleCancel = () => {
+        router.push("/admin/banner/video");
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!validateForm()) return;
+        setLoading(true);
+        setMessage(null);
 
-        setIsSubmitting(true);
+        if (!validateForm()) {
+            setLoading(false);
+            return;
+        }
 
         try {
             const formDataUpload = new FormData();
             formDataUpload.append("title", formData.title);
             formDataUpload.append("sortOrder", formData.sortOrder.toString());
             formDataUpload.append("isActive", formData.isActive);
-            if (imageMobileFile) {
-                formDataUpload.append("coverImageMobile", imageMobileFile);
+            if (videoMobileFile) {
+                formDataUpload.append("videoDesktop", videoMobileFile);
             }
-            if (imageDesktopFile) {
-                formDataUpload.append("coverImageDesktop", imageDesktopFile);
+            if (videoDesktopFile) {
+                formDataUpload.append("videoMobile", videoDesktopFile);
             }
 
-            // เรียก API update banner image (PUT request)
-            await axios.put(`/api/banner/image/edit/${id}`, formDataUpload, {
+            // ส่งข้อมูลไปยัง API สำหรับสร้าง Banner Video
+            await axios.post("/api/banner/video/create", formDataUpload, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            setMessage("แก้ไขแบนเนอร์สำเร็จแล้ว");
-            router.push(`/admin/banner/image`);
+            setMessage("สร้างแบนเนอร์สำเร็จแล้ว");
+            // รีเซ็ตฟอร์ม
+            setFormData({ title: "", sortOrder: 1, isActive: "" });
+            handleCancelMobile();
+            handleCancelDesktop();
+            router.push("/admin/banner/video");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response && error.response.data && error.response.data.error) {
                 setMessage(error.response.data.error);
@@ -220,37 +187,17 @@ const page = () => {
                 setMessage("An unexpected error occurred");
             }
         } finally {
-            setIsSubmitting(false);
+            setLoading(false);
         }
     };
 
-    if (isPageLoading) {
-        return (
-            <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="skeleton h-8 lg:h-12 w-[154px] md:w-[201px] lg:w-[296px] rounded-lg"></div>
-                        <div className="skeleton h-8 lg:h-12 w-[105px] lg:w-[168px] rounded-lg m-1 md:mx-3"></div>
-                    </div>
-                    <div className="skeleton h-8 lg:h-12 w-[38px] lg:w-[117px] rounded-lg"></div>
-                </div>
-                <div className="overflow-x-auto mt-6 grow">
-                    <div className="skeleton h-full w-full"></div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <form onSubmit={handleSubmit} className="flex flex-col">
-            {/* Left Column */}
             <div className="flex flex-col bg-base-100 m-3 p-5 sm:m-3 lg:m-4 xl:m-5 rounded-lg shadow">
                 <div role="alert" className="alert alert-info text-sm">
-                    <Info size={22}/>
+                    <Info size={22} />
                     <p>
-                        ขนาดรูปแบนเนอร์ (Desktop){" "}
-                        <span className="font-bold underline">1440x824px</span> | ขนาดรูปแบนเนอร์ (Mobile){" "}
-                        <span className="font-bold underline">512x512px</span>
+                        ขนาดวิดีโอแบนเนอร์ (Desktop) <span className="font-bold underline">16:9</span> | ขนาดวิดีโอแบนเนอร์ (Mobile) <span className="font-bold underline">1:1</span>
                     </p>
                 </div>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-2 my-6">
@@ -258,15 +205,16 @@ const page = () => {
                     <div className="my-6 md:mx-6">
                         <div className="relative self-center">
                             <div className="avatar cursor-pointer" onClick={handleMobileClick}>
-                                <div className={`w-40 h-40 md:w-48 md:h-48 2xl:w-56 2xl:h-56 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.imageMobile ? "ring-error" : "ring-primary"
+                                <div className={`w-40 h-40 md:w-48 md:h-48 2xl:w-56 2xl:h-56 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.videoMobile ? "ring-error" : "ring-primary"
                                     }`}>
-                                    {imageMobileUrl ? (
-                                        <Image
-                                            src={imageMobileUrl}
-                                            alt="Banner Mobile Preview"
-                                            fill
-                                            className="object-cover"
-                                        />
+                                    {videoMobileUrl ? (
+                                        <video
+                                            ref={mobileVideoRef}
+                                            className="w-full h-full object-cover"
+                                            controls
+                                        >
+                                            <source src={videoMobileUrl} type="video/mp4" />
+                                        </video>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-base-200">
                                             <span className="text-2xl text-neutral-content">Mobile</span>
@@ -274,12 +222,12 @@ const page = () => {
                                     )}
                                 </div>
                             </div>
-                            {!imageMobileUrl ? (
+                            {!videoMobileUrl ? (
                                 <button
                                     type="button"
                                     onClick={handleMobileClick}
                                     className="absolute bottom-1 right-1 bg-primary text-white rounded-full p-1 border border-white tooltip"
-                                    data-tip="อัปโหลดรูป Mobile"
+                                    data-tip="อัปโหลดวิดีโอ Mobile"
                                 >
                                     <Pencil size={16} />
                                 </button>
@@ -288,36 +236,38 @@ const page = () => {
                                     type="button"
                                     onClick={handleCancelMobile}
                                     className="absolute top-1 right-1 bg-error text-white rounded-full p-1 border border-white tooltip"
-                                    data-tip="ยกเลิกรูป Mobile"
+                                    data-tip="ยกเลิกวิดีโอ Mobile"
                                 >
                                     <X size={16} />
                                 </button>
                             )}
                             <input
                                 type="file"
-                                accept="image/*"
+                                accept="video/*"
                                 ref={mobileInputRef}
                                 onChange={handleMobileFileChange}
                                 className="hidden"
                             />
                         </div>
-                        {errors.imageMobile && (
-                            <p className="text-xs text-error text-center mt-2">{errors.imageMobile}</p>
+                        {errors.videoMobile && (
+                            <p className="text-xs text-error text-center mt-2">{errors.videoMobile}</p>
                         )}
                     </div>
                     {/* Desktop */}
                     <div className="my-6 md:mx-6">
                         <div className="relative self-center">
                             <div className="avatar cursor-pointer" onClick={handleDesktopClick}>
-                                <div className={`w-64 h-36 md:w-72 md:h-40 2xl:w-80 2xl:h-48 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.imageDesktop ? "ring-error" : "ring-primary"
+                                <div className={`w-64 h-36 md:w-72 md:h-40 2xl:w-80 2xl:h-48 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.videoDesktop ? "ring-error" : "ring-primary"
                                     }`}>
-                                    {imageDesktopUrl ? (
-                                        <Image
-                                            src={imageDesktopUrl}
-                                            alt="Banner Desktop Preview"
-                                            fill
-                                            className="object-cover"
-                                        />
+                                    {videoDesktopUrl ? (
+                                        <video
+                                            ref={desktopVideoRef}
+                                            className="w-full h-full object-cover"
+                                            controls
+                                        >
+                                            <source src={videoDesktopUrl} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-base-200">
                                             <span className="text-xl text-neutral-content">Desktop</span>
@@ -325,12 +275,12 @@ const page = () => {
                                     )}
                                 </div>
                             </div>
-                            {!imageDesktopUrl ? (
+                            {!videoDesktopUrl ? (
                                 <button
                                     type="button"
                                     onClick={handleDesktopClick}
                                     className="absolute bottom-1 right-1 bg-primary text-white rounded-full p-1 border border-white tooltip"
-                                    data-tip="อัปโหลดรูป Desktop"
+                                    data-tip="อัปโหลดวิดีโอ Desktop"
                                 >
                                     <Pencil size={16} />
                                 </button>
@@ -339,28 +289,28 @@ const page = () => {
                                     type="button"
                                     onClick={handleCancelDesktop}
                                     className="absolute top-1 right-1 bg-error text-white rounded-full p-1 border border-white tooltip"
-                                    data-tip="ยกเลิกรูป Desktop"
+                                    data-tip="ยกเลิกวิดีโอ Desktop"
                                 >
                                     <X size={16} />
                                 </button>
                             )}
                             <input
                                 type="file"
-                                accept="image/*"
+                                accept="video/*"
                                 ref={desktopInputRef}
                                 onChange={handleDesktopFileChange}
                                 className="hidden"
                             />
                         </div>
-                        {errors.imageDesktop && (
-                            <p className="text-xs text-error text-center mt-2">{errors.imageDesktop}</p>
+                        {errors.videoDesktop && (
+                            <p className="text-xs text-error text-center mt-2">{errors.videoDesktop}</p>
                         )}
                     </div>
                 </div>
                 <div className="md:max-w-lg md:w-full md:self-center">
-                    <InputField label="ชื่อแบนเนอร์" name="title" placeholder="ตัวอย่าง แบนเนอร์รูปภาพ" value={formData.title} error={errors.title} onChange={handleChange} />
+                    <InputField label="ชื่อแบนเนอร์" name="title" placeholder="ตัวอย่าง แบนเนอร์วิดีโอ" value={formData.title} error={errors.title} onChange={handleChange} />
                 </div>
-                <label className="form-control  md:max-w-lg md:w-full md:self-center">
+                <label className="form-control md:max-w-lg md:w-full md:self-center">
                     <div className="label">
                         <span className="label-text">ลำดับแบนเนอร์</span>
                     </div>
@@ -370,6 +320,7 @@ const page = () => {
                         onChange={handleChange}
                         name="sortOrder"
                     >
+                        <option value="">กรุณาเลือก</option>
                         {availableOrders.map((order) => (
                             <option key={order} value={order}>
                                 {order}
@@ -382,7 +333,7 @@ const page = () => {
                         </div>
                     )}
                 </label>
-                <label className="form-control  md:max-w-lg md:w-full md:self-center">
+                <label className="form-control md:max-w-lg md:w-full md:self-center">
                     <div className="label">
                         <span className="label-text">สถานะแบนเนอร์</span>
                     </div>
@@ -403,8 +354,8 @@ const page = () => {
                     )}
                 </label>
                 <div className="flex justify-end gap-4 my-6 md:max-w-lg md:w-full md:self-center">
-                    <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                        {isSubmitting ? "กำลังดำเนินการ..." : "ยืนยัน"}
+                    <button type="submit" className="btn btn-primary" disabled={loading}>
+                        {loading ? "กำลังดำเนินการ..." : "ยืนยัน"}
                     </button>
                     <button
                         type="button"
@@ -418,7 +369,7 @@ const page = () => {
             {message && (
                 <Alert
                     message={message}
-                    variant={message === "แก้ไขแบนเนอร์สำเร็จแล้ว" ? "success" : "error"}
+                    variant={message === "สร้างแบนเนอร์สำเร็จแล้ว" ? "success" : "error"}
                     duration={5000}
                     onClose={() => setMessage(null)}
                 />
@@ -427,4 +378,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default CreateBannerVideoPage;

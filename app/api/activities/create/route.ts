@@ -41,9 +41,13 @@ export async function POST(req: NextRequest) {
     const htmlContent = form.get("htmlContent") as string; // HTML content จาก editor
     const authorIdStr = form.get("authorId") as string;
     const coverImageFile = form.get("coverImage") as File;
-    
+
     if (!title) {
       return NextResponse.json({ error: "Title is required." }, { status: 400 });
+    }
+
+    if (!coverImageFile.type.startsWith("image/")) {
+      return NextResponse.json({ error: "Only image files allowed" }, { status: 400 });
     }
 
     // สร้าง random folder name สำหรับ activity นี้

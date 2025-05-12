@@ -39,7 +39,7 @@ const NewsCreate = ({ type, apiEndpoint, redirectPath }: ContentFormProps) => {
 
     if (isPageLoading) {
         return (
-            <Loading/>
+            <Loading />
         );
     }
 

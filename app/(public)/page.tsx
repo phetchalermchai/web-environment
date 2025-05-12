@@ -7,10 +7,16 @@ import Hero from "@/features/users/components/Hero/Hero";
 import News from "@/features/users/components/News/News";
 import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
 import axios from "axios";
+export const dynamic = "force-dynamic";
 
 const fetchNews = async (): Promise<NewsItems[]> => {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/news`);
+        const { data } = await axios.get(`${baseURL}/api/news`);
         const activities = data.map((item: NewsItems) => ({
             id: item.id,
             title: item.title,
@@ -33,8 +39,12 @@ const fetchNews = async (): Promise<NewsItems[]> => {
 };
 
 const fetchActivities = async (): Promise<ActivitiesItems[]> => {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/activities`);
+        const { data } = await axios.get(`${baseURL}/api/activities`);
         const activities = data.map((item: ActivitiesItems) => ({
             id: item.id,
             title: item.title,

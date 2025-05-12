@@ -3,11 +3,16 @@ import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { NewsItem } from "@/types/publicTypes";
 import axios from "axios";
+export const dynamic = "force-dynamic";
 
 const fetchNewById = async (id: string) => {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
     try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/news/${id}`);
+        const { data } = await axios.get(`${baseURL}/api/news/${id}`);
         const news: NewsItem = {
             id: data.id,
             title: data.title,
@@ -71,7 +76,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
                 </div>
             </div>
             <div className="editor-content prose prose-sm lg:prose-base max-w-[1480px] mx-auto">
-                    <div className="max-w-[1480px]" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+                <div className="max-w-[1480px]" dangerouslySetInnerHTML={{ __html: newsItem.content }} />
             </div>
         </div>
     )

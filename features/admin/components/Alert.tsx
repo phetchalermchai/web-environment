@@ -28,7 +28,7 @@ const Alert = ({ message, variant = "success", duration, onClose, }: AlertProps)
     return (
         <div
             role="alert"
-            className={`fixed bottom-4 right-4 w-80 shadow-lg alert ${variantStyles[variant]} z-[60]`}
+            className={`fixed bottom-4 right-4 w-80 shadow-lg alert ${variantStyles[variant]} z-[60] justify-start`}
         >
             <span>{message}</span>
             {onClose && (

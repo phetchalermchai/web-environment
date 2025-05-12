@@ -213,7 +213,7 @@ const page = () => {
             setImageDesktopFile(null);
             setImageMobileUrl("");
             setImageDesktopUrl("");
-            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/admin/banner/image`;
+            router.push("/admin/banner/image");
         } catch (error: any) {
             if (error.response && error.response.data && error.response.data.error) {
                 setMessage(error.response.data.error);
