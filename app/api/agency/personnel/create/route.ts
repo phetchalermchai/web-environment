@@ -13,7 +13,7 @@ async function saveFileBuffer(
   folderPath: string, // folderPath relative to public/uploads/agency/personnel
   filename: string
 ): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "agency", "personnel", folderPath);
+  const uploadsDir = path.join(process.cwd(), "uploads", "agency", "personnel", folderPath);
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }

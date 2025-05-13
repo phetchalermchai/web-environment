@@ -21,6 +21,13 @@ const page = () => {
     const [message, setMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
+
     useEffect(() => {
         if (!id) return;
         (async () => {
@@ -120,7 +127,7 @@ const page = () => {
                 >
                     <div className={`w-52 h-72 relative overflow-hidden rounded-lg ring-offset-base-100 ring ring-offset-2 ${errors.image ? "ring-error" : "ring-primary"}`}>
                         {previewUrl ? (
-                            <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                            <Image src={resolvePreviewSrc(previewUrl)} alt="Preview" fill className="object-cover" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-base-200">
                                 <span className="text-gray-400">รูปแนวตั้ง</span>

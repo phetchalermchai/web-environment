@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
+import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -13,7 +14,7 @@ async function saveFileBuffer(
     folderPath: string, // folderPath relative to public/uploads/avatar
     filename: string
 ): Promise<string> {
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatar", folderPath);
+    const uploadsDir = path.join(process.cwd(), "uploads", "avatar", folderPath);
     if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
     }
@@ -23,19 +24,28 @@ async function saveFileBuffer(
     return `/uploads/avatar/${folderPath}/${filename}`;
 }
 
-// Helper function สำหรับลบไฟล์ (ถ้ามี)
-function deleteFile(fileUrl: string): void {
+function deleteFileAndFolderIfEmpty(fileUrl: string): void {
     if (!fileUrl || fileUrl.trim() === "") return;
-    const filePath = path.join(process.cwd(), "public", fileUrl);
+  
+    const filePath = path.join(process.cwd(), fileUrl);
     if (fs.existsSync(filePath)) {
-        try {
-            fs.unlinkSync(filePath);
-            console.log("Deleted file:", filePath);
-        } catch (err) {
-            console.error("Failed to delete file:", filePath, err);
+      try {
+        fs.unlinkSync(filePath);
+        console.log("Deleted file:", filePath);
+  
+        // ลองลบโฟลเดอร์ถ้าไม่มีไฟล์เหลืออยู่
+        const folderPath = path.dirname(filePath);
+        const files = fs.readdirSync(folderPath);
+        if (files.length === 0) {
+          fs.rmdirSync(folderPath);
+          console.log("Deleted empty folder:", folderPath);
         }
+      } catch (err) {
+        console.error("Failed to delete file or folder:", err);
+      }
     }
-}
+  }
+  
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ email: string }> }) {
     try {
@@ -137,12 +147,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ emai
             }
             // ลบไฟล์ avatar เก่า ถ้ามี
             if (existingUser.avatar) {
-                deleteFile(existingUser.avatar);
+                deleteFileAndFolderIfEmpty(existingUser.avatar);
             }
             // ดำเนินการประมวลผลต่อ (อ่าน buffer ฯลฯ)
             const buffer = Buffer.from(await avatarField.arrayBuffer());
             // ... สร้าง folder และ filename ตามที่ต้องการ
-            const folder = slugify(email, { lower: true, strict: true });
+            const folder = uuidv4();
             const ext = path.extname(avatarField.name);
             const baseName = slugify(path.basename(avatarField.name, ext), { lower: true, strict: true });
             const filename = `${Date.now()}-${baseName}${ext}`;

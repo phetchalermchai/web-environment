@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 
 function deleteFileAndCleanUp(fileUrl: string) {
-  const filePath = path.join(process.cwd(), "public", fileUrl);
+  const filePath = path.join(process.cwd(), fileUrl);
   if (fs.existsSync(filePath)) {
     try {
       fs.unlinkSync(filePath);

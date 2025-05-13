@@ -8,19 +8,19 @@ import fs from "fs";
 import path from "path";
 import { JSDOM } from "jsdom";
 
-// Helper function สำหรับบันทึกไฟล์ลงในโฟลเดอร์ที่กำหนดภายใต้ public/uploads/activity
+// Helper function สำหรับบันทึกไฟล์ลงในโฟลเดอร์ที่กำหนดภายใต้ uploads/activity
 async function saveFileBuffer(
   buffer: Buffer,
-  folderPath: string, // folderPath relative to public/uploads/activity
+  folderPath: string, // folderPath relative to uploads/activity
   filename: string
 ): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "activities", folderPath);
+  const uploadsDir = path.join(process.cwd(), "uploads", "activities", folderPath);
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
   const filePath = path.join(uploadsDir, filename);
   fs.writeFileSync(filePath, buffer);
-  // คืนค่า URL สำหรับเข้าถึงไฟล์ (relative path จาก public)
+  // คืนค่า URL สำหรับเข้าถึงไฟล์ (relative path จาก uploads)
   return `/uploads/activities/${folderPath}/${filename}`;
 }
 
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
           // บันทึกไฟล์ในโฟลเดอร์ activityFolder/content
           const imageUrl = await saveFileBuffer(buffer, `${activityFolder}/content`, filename);
           // แทนที่ src ด้วย URL ที่แท้จริง
-          img.setAttribute("src", imageUrl);
+          img.setAttribute("src", `/api/uploads${imageUrl}`);
         }
       }
       finalHtml = document.body.innerHTML;

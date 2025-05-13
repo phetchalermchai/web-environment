@@ -7,9 +7,9 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { JSDOM } from "jsdom";
 
-// Helper function สำหรับบันทึกไฟล์ลงในโฟลเดอร์ที่กำหนดภายใต้ public/uploads/activities
+// Helper function สำหรับบันทึกไฟล์ลงในโฟลเดอร์ที่กำหนดภายใต้ uploads/activities
 async function saveFileBuffer(buffer: Buffer, folderPath: string, filename: string): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "activities", folderPath);
+  const uploadsDir = path.join(process.cwd(), "uploads", "activities", folderPath);
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
@@ -20,7 +20,7 @@ async function saveFileBuffer(buffer: Buffer, folderPath: string, filename: stri
 
 // Helper function เพื่อลบไฟล์จากระบบไฟล์
 function deleteFile(fileUrl: string) {
-  const filePath = path.join(process.cwd(), "public", fileUrl);
+  const filePath = path.join(process.cwd(), fileUrl);
   if (fs.existsSync(filePath)) {
     try {
       fs.unlinkSync(filePath);
@@ -31,6 +31,15 @@ function deleteFile(fileUrl: string) {
   }
 }
 
+function mapUrlToRealPath(url: string): string | null {
+  const prefix = "/api/uploads/";
+  if (url.startsWith(prefix)) {
+    const relative = url.replace(prefix, ""); // "uploads/activities/..."
+    return path.join(process.cwd(), "uploads", relative.replace(/^uploads\//, ""));
+  }
+  return null;
+}
+
 // Helper function สำหรับดึง src ของ <img> จาก HTML
 function extractImageSrcs(html: string): string[] {
   const dom = new JSDOM(html);
@@ -39,7 +48,7 @@ function extractImageSrcs(html: string): string[] {
   const srcs: string[] = [];
   imgElements.forEach((img) => {
     const src = img.getAttribute("src");
-    if (src && src.startsWith("/uploads/activities/")) {
+    if (src && src.startsWith("/api/uploads/")) {
       srcs.push(src);
     }
   });
@@ -155,7 +164,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         const filename = `${Date.now()}-${uuidv4()}.${ext}`;
         const buffer = Buffer.from(base64Data, "base64");
         const imageUrl = await saveFileBuffer(buffer, `${activityFolder}/content`, filename);
-        img.setAttribute("src", imageUrl);
+        img.setAttribute("src", `/api/uploads${imageUrl}`);
       }
     }
     // ปรับปรุง htmlContent หลังจากประมวลผล embedded images
@@ -166,8 +175,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // คำนวณความแตกต่าง: รูปที่มีใน oldImageSrcs แต่ไม่อยู่ใน newImageSrcs (ไฟล์ที่ถูกลบออกโดยผู้ใช้)
     const filesToDelete = oldImageSrcs.filter(src => !newImageSrcs.includes(src));
-    filesToDelete.forEach(src => {
-      deleteFile(src);
+    filesToDelete.forEach((src) => {
+      const realPath = mapUrlToRealPath(src);
+      if (realPath && fs.existsSync(realPath)) {
+        try {
+          fs.unlinkSync(realPath);
+          console.log(`🗑️ Deleted: ${realPath}`);
+        } catch (err) {
+          console.error("❌ Failed to delete:", err);
+        }
+      }
     });
 
     // Prepare update data (ใช้ htmlContent ที่ประมวลผลแล้วเป็น description)

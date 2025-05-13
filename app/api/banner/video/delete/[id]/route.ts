@@ -8,7 +8,7 @@ import path from "path";
 // Helper function สำหรับลบไฟล์และลบโฟลเดอร์หากว่างเปล่า สำหรับวิดีโอ (Banner Video)
 function deleteFileAndCleanUp(fileUrl: string) {
   // fileUrl คาดว่าอยู่ในรูปแบบ: /uploads/banner/video/{bannerFolder}/cover/filename.ext
-  const filePath = path.join(process.cwd(), "public", fileUrl);
+  const filePath = path.join(process.cwd(), fileUrl);
   if (fs.existsSync(filePath)) {
     try {
       fs.unlinkSync(filePath);

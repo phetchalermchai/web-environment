@@ -27,6 +27,13 @@ const BannerCard: React.FC<BannerCardProps> = ({ management, banner, editLink, d
         }
     };
 
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
+
     const openModal = () => modalRef.current?.showModal();
     const closeModal = () => modalRef.current?.close();
 
@@ -37,14 +44,14 @@ const BannerCard: React.FC<BannerCardProps> = ({ management, banner, editLink, d
             </div>
             {management === "video" ? (
                 <video className="w-full h-48 object-cover rounded-t-[14px]" autoPlay muted playsInline loop>
-                    <source src={(banner as BannerVideo).videoDesktop} type="video/mp4" />
+                    <source src={resolvePreviewSrc((banner as BannerVideo).videoDesktop)} type="video/mp4" />
                 </video>
             ) : (
                 <figure>
                     <Image
                         height={824}
                         width={1440}
-                        src={(banner as BannerImage).imageDesktop}
+                        src={resolvePreviewSrc((banner as BannerImage).imageDesktop)}
                         alt={banner.title}
                         className="w-full h-48 object-cover rounded-t-[14px]"
                     />

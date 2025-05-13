@@ -33,6 +33,13 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
     const [message, setMessage] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
+
     // Fetch existing data
     useEffect(() => {
         const fetchData = async () => {
@@ -139,7 +146,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
                     >
                         {(previewUrl || existingImageUrl) ? (
                             <Image
-                                src={previewUrl || existingImageUrl}
+                                src={previewUrl || resolvePreviewSrc(existingImageUrl)}
                                 alt="Preview"
                                 fill
                                 className="object-cover"

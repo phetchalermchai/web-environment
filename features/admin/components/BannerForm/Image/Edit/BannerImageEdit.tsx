@@ -50,6 +50,13 @@ const page = () => {
     const mobileInputRef = useRef<HTMLInputElement>(null);
     const desktopInputRef = useRef<HTMLInputElement>(null);
 
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
+
     const handleMobileClick = () => mobileInputRef.current?.click();
     const handleDesktopClick = () => desktopInputRef.current?.click();
     const handleCancel = () => {
@@ -262,7 +269,7 @@ const page = () => {
                                     }`}>
                                     {imageMobileUrl ? (
                                         <Image
-                                            src={imageMobileUrl}
+                                            src={resolvePreviewSrc(imageMobileUrl)}
                                             alt="Banner Mobile Preview"
                                             fill
                                             className="object-cover"
@@ -313,7 +320,7 @@ const page = () => {
                                     }`}>
                                     {imageDesktopUrl ? (
                                         <Image
-                                            src={imageDesktopUrl}
+                                            src={resolvePreviewSrc(imageDesktopUrl)}
                                             alt="Banner Desktop Preview"
                                             fill
                                             className="object-cover"

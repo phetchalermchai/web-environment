@@ -30,6 +30,7 @@ interface FormErrors {
 
 const page = () => {
     const router = useRouter();
+    const ImgPath = "/api/uploads"
     const { id } = useParams();
     const [formData, setFormData] = useState<CreateUserFormData>({
         nametitle: "",
@@ -48,6 +49,13 @@ const page = () => {
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const originalPreviewRef = useRef('')
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
 
     useEffect(() => {
         const fetchPersonnel = async () => {
@@ -215,7 +223,7 @@ const page = () => {
                         <div className={`w-24 h-24 relative rounded-full overflow-hidden ring-primary ring-offset-base-100 ring ring-offset-2 ${errors.image ? "ring-error" : ""}`}>
                             {previewUrl ? (
                                 <Image
-                                    src={previewUrl}
+                                    src={resolvePreviewSrc(previewUrl)}
                                     alt="Avatar"
                                     fill
                                     sizes="(max-width: 768px) 100px, 150px"

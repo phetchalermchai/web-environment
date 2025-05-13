@@ -24,6 +24,8 @@ const UserCreate = () => {
     handleSubmit,
   } = useCreateUserForm();
 
+  const ImgPath = "/api/uploads"
+
   return (
     <div className="m-5 p-16 bg-base-100 rounded-lg shadow">
       <form onSubmit={handleSubmit} className="flex flex-col gap-10">
@@ -33,7 +35,7 @@ const UserCreate = () => {
             <div className="w-24 h-24 relative rounded-full overflow-hidden ring-primary ring-offset-base-100 ring ring-offset-2">
               {previewUrl ? (
                 <Image
-                  src={previewUrl}
+                  src={`${previewUrl}`}
                   alt="Avatar"
                   fill
                   sizes="(max-width: 768px) 100px, 150px"

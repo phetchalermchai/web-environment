@@ -11,7 +11,7 @@ function isNodeError(err: unknown): err is NodeJS.ErrnoException {
 
 // ลบไฟล์ และถ้าโฟลเดอร์ว่างให้ลบโฟลเดอร์ด้วย
 function deleteFileIfExists(fileUrl: string) {
-  const filePath = path.join(process.cwd(), "public", fileUrl);
+  const filePath = path.join(process.cwd(), fileUrl);
   if (!fs.existsSync(filePath)) return;
   // 1) ลบไฟล์
   try {

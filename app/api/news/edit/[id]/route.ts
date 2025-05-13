@@ -9,7 +9,7 @@ import { JSDOM } from "jsdom";
 
 // Helper function สำหรับบันทึกไฟล์ลงในโฟลเดอร์ที่กำหนดภายใต้ public/uploads/news
 async function saveFileBuffer(buffer: Buffer, folderPath: string, filename: string): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "news", folderPath);
+  const uploadsDir = path.join(process.cwd(), "uploads", "news", folderPath);
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
@@ -20,7 +20,7 @@ async function saveFileBuffer(buffer: Buffer, folderPath: string, filename: stri
 
 // Helper function เพื่อลบไฟล์จากระบบไฟล์
 function deleteFile(fileUrl: string) {
-  const filePath = path.join(process.cwd(), "public", fileUrl);
+  const filePath = path.join(process.cwd(), fileUrl);
   if (fs.existsSync(filePath)) {
     try {
       fs.unlinkSync(filePath);
@@ -31,6 +31,15 @@ function deleteFile(fileUrl: string) {
   }
 }
 
+function mapUrlToRealPath(url: string): string | null {
+  const prefix = "/api/uploads/";
+  if (url.startsWith(prefix)) {
+    const relative = url.replace(prefix, ""); 
+    return path.join(process.cwd(), "uploads", relative.replace(/^uploads\//, ""));
+  }
+  return null;
+}
+
 // Helper function สำหรับดึง src ของ <img> จาก HTML
 function extractImageSrcs(html: string): string[] {
   const dom = new JSDOM(html);
@@ -39,10 +48,11 @@ function extractImageSrcs(html: string): string[] {
   const srcs: string[] = [];
   imgElements.forEach((img) => {
     const src = img.getAttribute("src");
-    if (src && src.startsWith("/uploads/news/")) {
+    if (src && src.startsWith("/api/uploads/")) {
       srcs.push(src);
     }
   });
+  console.log("รูป",srcs);
   return srcs;
 }
 
@@ -87,7 +97,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     // ดึงข้อมูล news เดิมจากฐานข้อมูล
-    const existingNews  = await prisma.news.findUnique({
+    const existingNews = await prisma.news.findUnique({
       where: { id },
     });
     if (!existingNews) {
@@ -111,7 +121,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       if (existingNews.image) {
         const parts = existingNews.image.split("/");
         if (parts.length >= 4) {
-            newsFolder = parts[3];
+          newsFolder = parts[3];
         }
       }
       if (!newsFolder) {
@@ -139,7 +149,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       }
     }
     if (!newsFolder) {
-        newsFolder = uuidv4();
+      newsFolder = uuidv4();
     }
     const dom = new JSDOM(htmlContent);
     const document = dom.window.document;
@@ -159,7 +169,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         const filename = `${Date.now()}-${uuidv4()}.${ext}`;
         const buffer = Buffer.from(base64Data, "base64");
         const imageUrl = await saveFileBuffer(buffer, `${newsFolder}/content`, filename);
-        img.setAttribute("src", imageUrl);
+        img.setAttribute("src", `/api/uploads${imageUrl}`);
       }
     }
     // ปรับปรุง htmlContent หลังจากประมวลผล embedded images
@@ -170,8 +180,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // คำนวณความแตกต่าง: รูปที่มีใน oldImageSrcs แต่ไม่อยู่ใน newImageSrcs (ไฟล์ที่ถูกลบออกโดยผู้ใช้)
     const filesToDelete = oldImageSrcs.filter(src => !newImageSrcs.includes(src));
-    filesToDelete.forEach(src => {
-      deleteFile(src);
+    filesToDelete.forEach((src) => {
+      const realPath = mapUrlToRealPath(src);
+      if (realPath && fs.existsSync(realPath)) {
+        try {
+          fs.unlinkSync(realPath);
+          console.log(`🗑️ Deleted: ${realPath}`);
+        } catch (err) {
+          console.error("❌ Failed to delete:", err);
+        }
+      }
     });
 
     // Prepare update data (ใช้ htmlContent ที่ประมวลผลแล้วเป็น description)

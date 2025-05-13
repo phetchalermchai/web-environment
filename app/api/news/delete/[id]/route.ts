@@ -67,7 +67,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     // ลบโฟลเดอร์ newsFolder หากได้ระบุไว้
     if (newsFolder) {
-      const folderPath = path.join(process.cwd(), "public", "uploads", "news", newsFolder);
+      const folderPath = path.join(process.cwd(), "uploads", "news", newsFolder);
       if (fs.existsSync(folderPath)) {
         try {
           fs.rmSync(folderPath, { recursive: true, force: true });
@@ -85,7 +85,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         imgElements.forEach((img) => {
           const src = img.getAttribute("src");
           if (src && src.startsWith("/uploads/news/")) {
-            const filePath = path.join(process.cwd(), "public", src);
+            const filePath = path.join(process.cwd(), src);
             if (fs.existsSync(filePath)) {
               try {
                 fs.unlinkSync(filePath);

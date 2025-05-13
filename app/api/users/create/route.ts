@@ -16,7 +16,7 @@ async function saveAvatarFile(
     folderPath: string, // folderPath relative to public/uploads/avatar
     filename: string
 ): Promise<string> {
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatar", folderPath);
+    const uploadsDir = path.join(process.cwd(), "uploads", "avatar", folderPath);
     if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
     }
@@ -82,27 +82,26 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "มีผู้ใช้งานที่ใช้ email นี้อยู่แล้ว" }, { status: 400 });
         }
 
-        // หากมี avatarFile ให้ตรวจสอบชนิดของไฟล์และขนาด (ไม่เกิน 500 KB)
-        if (avatarFile && avatarFile.size > 0) {
-            if (!avatarFile.type.startsWith("image/")) {
-                return NextResponse.json({ error: "ไฟล์ avatar ต้องเป็นรูปภาพ" }, { status: 400 });
-            }
-            const maxSizeInBytes = 500 * 1024; // 500 KB
-            if (avatarFile.size > maxSizeInBytes) {
-                return NextResponse.json({ error: "ขนาดไฟล์ avatar ต้องไม่เกิน 500 KB" }, { status: 400 });
-            }
-        }
-
         // แปลงรหัสผ่านก่อนเก็บลงฐานข้อมูล
         const hashedPassword = await hash(password, SALT_ROUNDS);
 
         // บันทึกไฟล์ avatar ลงในโฟลเดอร์: สร้าง random folder ด้วย uuid
-        const folderName = uuidv4();
-        const ext = path.extname(avatarFile.name);
-        const baseName = slugify(path.basename(avatarFile.name, ext), { lower: true, strict: true });
-        const filename = `${Date.now()}-${baseName}${ext}`;
-        const buffer = Buffer.from(await avatarFile.arrayBuffer());
-        const avatarUrl = await saveAvatarFile(buffer, folderName, filename);
+        let avatarUrl = "";
+        if (avatarFile && avatarFile.size > 0) {
+            if (!avatarFile.type.startsWith("image/")) {
+                return NextResponse.json({ error: "ไฟล์ avatar ต้องเป็นรูปภาพ" }, { status: 400 });
+            }
+            const maxSizeInBytes = 500 * 1024;
+            if (avatarFile.size > maxSizeInBytes) {
+                return NextResponse.json({ error: "ขนาดไฟล์ avatar ต้องไม่เกิน 500 KB" }, { status: 400 });
+            }
+
+            const ext = path.extname(avatarFile.name);
+            const baseName = slugify(path.basename(avatarFile.name, ext), { lower: true, strict: true });
+            const filename = `${Date.now()}-${baseName}${ext}`;
+            const buffer = Buffer.from(await avatarFile.arrayBuffer());
+            avatarUrl = await saveAvatarFile(buffer, uuidv4(), filename);
+        }
 
         // สร้าง record ผู้ใช้งานใหม่ในฐานข้อมูลโดยเก็บ avatarUrl ที่ได้จากการอัปโหลด
         const newUser = await prisma.user.create({

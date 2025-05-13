@@ -13,7 +13,7 @@ async function saveFileBuffer(
   folderPath: string, // folderPath relative to public/uploads/banner/video
   filename: string
 ): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "banner", "video", folderPath);
+  const uploadsDir = path.join(process.cwd(), "uploads", "banner", "video", folderPath);
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
@@ -26,7 +26,7 @@ async function saveFileBuffer(
 // Helper function สำหรับลบไฟล์และลบโฟลเดอร์หากว่างเปล่า
 function deleteFileAndCleanUp(fileUrl: string) {
   // fileUrl คาดว่าอยู่ในรูปแบบ: /uploads/banner/video/{bannerFolder}/cover/filename.ext
-  const filePath = path.join(process.cwd(), "public", fileUrl);
+  const filePath = path.join(process.cwd(), fileUrl);
   if (fs.existsSync(filePath)) {
     try {
       fs.unlinkSync(filePath);

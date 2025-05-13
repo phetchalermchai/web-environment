@@ -14,7 +14,7 @@ async function saveFileBuffer(
   folderPath: string,
   filename: string
 ): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", "news", folderPath);
+  const uploadsDir = path.join(process.cwd(), "uploads", "news", folderPath);
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
               // บันทึกไฟล์ในโฟลเดอร์ activityFolder/content
               const imageUrl = await saveFileBuffer(buffer, `${newsFolder}/content`, filename);
               // แทนที่ src ด้วย URL ที่แท้จริง
-              img.setAttribute("src", imageUrl);
+              img.setAttribute("src", `/api/uploads${imageUrl}`);
             }
           }
           finalHtml = document.body.innerHTML;

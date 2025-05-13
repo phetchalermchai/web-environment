@@ -16,6 +16,13 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
+
     // Cleanup URL.createObjectURL เมื่อ component unmount
     useEffect(() => {
         return () => {
@@ -31,13 +38,13 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
 
     const validateAvatarFile = (file: File): string | null => {
         if (!file.type.startsWith("image/")) {
-          return "กรุณาเลือกไฟล์รูปภาพเท่านั้น";
+            return "กรุณาเลือกไฟล์รูปภาพเท่านั้น";
         }
         if (file.size > 500 * 1024) {
-          return "ไฟล์ avatar ต้องมีขนาดไม่เกิน 500 KB";
+            return "ไฟล์ avatar ต้องมีขนาดไม่เกิน 500 KB";
         }
         return null;
-      };
+    };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -77,7 +84,7 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
                 <div className="w-24 h-24 relative rounded-full overflow-hidden ring-primary ring-offset-base-100 ring ring-offset-2">
                     {previewUrl && previewUrl.trim() !== "" ? (
                         <Image
-                            src={previewUrl}
+                            src={resolvePreviewSrc(previewUrl)}
                             alt="Avatar"
                             fill
                             sizes="(max-width: 768px) 100px, 150px"
@@ -96,7 +103,7 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
                     className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1 border border-white hover:bg-primary-focus focus:outline-none tooltip tooltip-bottom"
                     data-tip="แก้ไขรูป avatar"
                 >
-                    <Pencil size={16}/>
+                    <Pencil size={16} />
                 </button>
             ) : (
                 <button
@@ -104,7 +111,7 @@ const AvatarInput: React.FC<AvatarInputProps> = ({ email, originalAvatar, onChan
                     className="absolute top-0 right-0 bg-error text-white rounded-full p-1 border border-white hover:bg-red-600 focus:outline-none tooltip"
                     data-tip="ยกเลิกการเปลี่ยนรูป"
                 >
-                    <X size={16}/>
+                    <X size={16} />
                 </button>
             )}
             <input

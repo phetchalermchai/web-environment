@@ -53,6 +53,13 @@ const Page = () => {
     const mobileVideoRef = useRef<HTMLVideoElement>(null);
     const desktopVideoRef = useRef<HTMLVideoElement>(null);
 
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
+
     const handleMobileClick = () => mobileInputRef.current?.click();
     const handleDesktopClick = () => desktopInputRef.current?.click();
 
@@ -271,7 +278,7 @@ const Page = () => {
                                             className="w-full h-full object-cover"
                                             controls
                                         >
-                                            <source src={videoMobileUrl} type="video/mp4" />
+                                            <source src={resolvePreviewSrc(videoMobileUrl)} type="video/mp4" />
                                         </video>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-base-200">
@@ -323,7 +330,7 @@ const Page = () => {
                                             className="w-full h-full object-cover"
                                             controls
                                         >
-                                            <source src={videoDesktopUrl} type="video/mp4" />
+                                            <source src={resolvePreviewSrc(videoDesktopUrl)} type="video/mp4" />
                                             Your browser does not support the video tag.
                                         </video>
                                     ) : (

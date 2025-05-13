@@ -14,6 +14,7 @@ interface DataItemRowProps {
 }
 
 const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItemRowProps) => {
+    const ImgPath = "/api/uploads"
     const [deleting, setDeleting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
     const modalRef = useRef<HTMLDialogElement>(null);
@@ -49,7 +50,7 @@ const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItem
                             <div className="avatar">
                                 <div className="mask mask-squircle h-12 w-12 bg-base-300">
                                     <Image
-                                        src={`${(dataItem as PersonnelItems).image}`}
+                                        src={`${ImgPath}${(dataItem as PersonnelItems).image}`}
                                         className="object-top"
                                         width={48}
                                         height={48}
@@ -74,7 +75,7 @@ const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItem
                                     <div className="avatar">
                                         <div className="mask mask-circle h-12 w-12 bg-base-300">
                                             <Image
-                                                src={`${(dataItem as User).avatar}`}
+                                                src={`${ImgPath}${(dataItem as User).avatar}`}
                                                 width={48}
                                                 height={48}
                                                 alt={`${(dataItem as User).email}`} />
@@ -121,8 +122,10 @@ const Row = ({ dataItem, setDataItems, ItemType, editLink, deleteApi }: DataItem
                     <td className="px-4 py-2">
                         <div className="avatar">
                             <div className="mask mask-squircle h-12 w-12">
-                                <img
-                                    src={`${(dataItem as E_ServiceItems).image}`}
+                                <Image
+                                    src={`${ImgPath}${(dataItem as E_ServiceItems).image}`}
+                                    width={48}
+                                    height={48}
                                     alt={`${(dataItem as E_ServiceItems).title}`} />
                             </div>
                         </div>

@@ -38,7 +38,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (personnel.image) {
       // สมมุติว่า personnel.image เก็บเป็น URL แบบ relative จาก public เช่น
       // "/uploads/agency/personnel/{folder}/cover/filename.jpg"
-      const filePath = path.join(process.cwd(), "public", personnel.image);
+      const filePath = path.join(process.cwd(),  personnel.image);
       if (fs.existsSync(filePath)) {
         try {
           // ลบไฟล์
