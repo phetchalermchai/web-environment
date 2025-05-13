@@ -1,30 +1,35 @@
 import AvatarCard from "./AvatarCard";
+import { Personnel } from "@/types/publicTypes";
 
 type AvatarGridProps = {
-  personnel: Array<{
-    level: number;
-    image: string;
-    name: string;
-    position: string;
-  }>;
-  level: number; // ระดับที่ต้องการแสดงผล
-  columns?: string; // รูปแบบ grid column เช่น "grid-cols-1"
+  personnel: (Personnel & { level: number })[];
+  level: number;
+  columns?: string;
 };
 
 const AvatarGrid = ({ personnel, level, columns = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" }: AvatarGridProps) => {
+  const filtered = personnel.filter((person) => person.level === level);
+  if (filtered.length === 0) return null;
+
+  const resolveImagePath = (img: string | null | undefined) => {
+    if (!img) return "/default-avatar.png";
+    if (img.startsWith("/uploads")) {
+      return `/api/uploads${img}`;
+    }
+    return img;
+  };
+
   return (
     <div className={`py-10 grid ${columns} gap-5`}>
-      {personnel
-        .filter((person) => person.level === level) // กรองเฉพาะระดับที่ต้องการ
-        .map((person, index) => (
-            <AvatarCard
-            key={index}
-            image={person.image}
-            name={person.name}
-            position={person.position}
-            colSpan={level === 1 ? "col-span-4" : "col-span-1"} // ระดับ 1 ใช้ col-span-4
-          />
-        ))}
+      {filtered.map((person, index) => (
+        <AvatarCard
+          key={index}
+          image={`${resolveImagePath(person.image)}`} // แปลงให้ใช้ API uploads
+          name={`${person.nameTitle}${person.firstName} ${person.lastName}`}
+          position={person.position}
+          colSpan={level === 1 ? "col-span-4" : "col-span-1"}
+        />
+      ))}
     </div>
   );
 };

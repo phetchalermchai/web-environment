@@ -1,7 +1,35 @@
 import Breadcrumbs from "@/components/Breadcrumbs"
 import AvatarGrid from "@/features/users/components/Management/AvatarGrid";
+import axios from "axios";
+import { Personnel } from "@/types/publicTypes";
+export const dynamic = "force-dynamic";
 
-const ManagementSection = () => {
+const resolveLevel = (position: string): number => {
+    if (/ผู้อำนวยการสำนัก/i.test(position)) return 1;
+    if (/ผู้อำนวยการส่วน/i.test(position)) return 2;
+    if (/หัวหน้าฝ่าย/i.test(position)) return 3;
+    return 0; // ไม่ตรงเงื่อนไขใด ๆ
+};
+
+async function getPersonnel(): Promise<(Personnel & { level: number })[]> {
+    const baseURL = process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : process.env.NEXT_PUBLIC_API_URL;
+
+    const res = await axios.get(`${baseURL}/api/agency/personnel`, {
+        headers: {
+            "Cache-Control": "no-store", // ป้องกันการแคช
+        },
+    });
+    const raw: Personnel[] = res.data;
+
+    return raw.map((item) => ({
+        ...item,
+        level: resolveLevel(item.position),
+    })).filter(p => p.level > 0);
+}
+
+const ManagementSection = async () => {
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },
         { label: "ข้อมูลหน่วยงาน" },
@@ -9,20 +37,8 @@ const ManagementSection = () => {
         { label: "ผู้บริหาร", isCurrent: true },
     ];
 
-    // ข้อมูลบุคลากร (ตัวอย่าง)
-    const personnel = [
-        { image: "/personnel/นายสมศักดิ์ ศรีเพ็ง.png", name: "นายสมศักดิ์ ศรีเพ็ง", position: "ผู้อำนวยการสำนักสาธารณสุขและสิ่งแวดล้อม", level: 1 },
-        { image: "/personnel/นายปลายพิสุทธิ์ ปกาศิตอนันต์.png", name: "นายปลายพิสุทธิ์ ปกาศิตอนันต์", position: "หัวหน้าฝ่ายควบคุมและจัดการคุณภาพสิ่งแวดล้อมรักษาราชการแทนผู้อำนวยการส่วนส่งเสริมอนามัยสิ่งแวดล้อม", level: 2 },
-        { image: "/personnel/นางธันยธร ประลามุข.png", name: "นางธันยธร ประลามุข", position: "ผู้อำนวยการส่วนส่งเสริมสาธารณสุข", level: 2 },
-        { image: "/personnel/นายสุบิน โพธิ์ใจพระ.png", name: "นายสุบิน โพธิ์ใจพระ", position: "นักวิชาการสุขาภิบาลชำนาญการ รักษาราชการแทนผู้อำนวยการส่วนบริการอนามัยสิ่งแวดล้อม", level: 2 },
-        { image: "/personnel/นายฉลองชัย กองแก้ว.png", name: "นายฉลองชัย กองแก้ว", position: "เจ้าพนักงานธุรการชำนาญงาน รักษาการในตำแหน่งหัวหน้าฝ่ายบริหารงานทั่วไป", level: 3 },
-        { image: "/personnel/นายศาศวัต คำทอง.png", name: "นายศาศวัต คำทอง", position: "นักวิชาการและสุขาภิบาลชำนาญการ รักษาการในตำแหน่งหัวหน้าฝ่ายวิชาการประเมินผล", level: 3 },
-        { image: "/personnel/นางชาระวี ศรีนนท์.png", name: "นางชาระวี ศรีนนท์", position: "พยาบาลวิชาชีพชำนาญการ รักษาการในตำแหน่งหัวหน้าฝ่ายส่งเสริมการสาธารณสุข", level: 3 },
-        { image: "/personnel/นายปลายพิสุทธิ์ ปกาศิตอนันต์.png", name: "นายปลายพิสุทธิ์ ปกาศิตอนันต์", position: "หัวหน้าฝ่ายควบคุมและจัดการคุณภาพสิ่งแวดล้อม", level: 3 },
-        { image: "/personnel/นายฐิติวัฒน์ พัฒนใหญ่ยิ่ง.png", name: "นายฐิติวัฒน์ พัฒนใหญ่ยิ่ง", position: "นักวิชาการสุขาภิบาลปฏิบัติการ รักษาการในตำแหน่งหัวหน้าฝ่ายจัดการมูลฝอยและสิ่งปฏิกูล", level: 3 },
+    const personnel = await getPersonnel();
 
-        // เพิ่มข้อมูลบุคลากรอื่นๆ ที่นี่
-    ];
     return (
         <>
             <Breadcrumbs items={breadcrumbs} />
