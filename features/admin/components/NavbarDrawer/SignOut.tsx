@@ -1,13 +1,12 @@
 "use client";
-import { SignOutIcon } from "@/config/iconConfig";
 import { signOut } from "next-auth/react";
+import { LogIn } from "lucide-react";
 
 const SignOut = () => {
-    
     return (
         <button className="justify-center text-base" onClick={() => signOut({ callbackUrl: `/auth/secure/gateway/login`})}>
-            <SignOutIcon />
-            SignOut
+            <LogIn size={18}/>
+            ออกจากระบบ
         </button>
     )
 }

@@ -256,7 +256,7 @@ const page = () => {
                     <Info size={22}/>
                     <p>
                         ขนาดรูปแบนเนอร์ (Desktop){" "}
-                        <span className="font-bold underline">1440x824px</span> | ขนาดรูปแบนเนอร์ (Mobile){" "}
+                        <span className="font-bold underline">1440x720px</span> | ขนาดรูปแบนเนอร์ (Mobile){" "}
                         <span className="font-bold underline">512x512px</span>
                     </p>
                 </div>

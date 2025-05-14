@@ -1,30 +1,14 @@
 "use client"
-import { useCarousel } from '../../hooks/useCarousel';
-// import component
-import NavigationButtons from './NavigationButtons';
-import Slide from './Slide';
+import NavigationButtons from '@/features/users/components/Carousel/NavigationButtons';
+import Slide from '@/features/users/components/Carousel/Slide';
+import { useCarousel } from '@/features/users/hooks/useCarousel';
+import { BannerVideo } from "@/types/publicTypes";
 
-// import react hook
-// set type data
-interface Slide {
-    id: number;
-    iframe: string;
-    title: string;
-    description: string;
+interface CarouselProps {
+    carousel: BannerVideo[]
 }
 
-
-const Carousel = () => {
-
-    // mock up data slides
-    const slidesData: Slide[] = [
-        { id: 1, iframe: '/Carousel/Carousel 1.mp4', title: 'Slide 1', description: 'Description for slide 1' },
-        { id: 2, iframe: '/Carousel/Carousel 2.mp4', title: 'Slide 2', description: 'Description for slide 2' },
-        { id: 3, iframe: '/Carousel/Carousel 3.mp4', title: 'Slide 3', description: 'Description for slide 3' },
-        { id: 4, iframe: '/Carousel/Carousel 4.mp4', title: 'Slide 4', description: 'Description for slide 4' },
-        { id: 5, iframe: '/Carousel/Carousel 5.mp4', title: 'Slide 5', description: 'Description for slide 5' },
-        // ... เพิ่มข้อมูล slide อื่นๆ ได้
-    ];
+const Carousel = ({ carousel }: CarouselProps) => {
 
     const {
         activeIndex,
@@ -33,17 +17,18 @@ const Carousel = () => {
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
-    } = useCarousel({ slidesData });
-
+    } = useCarousel({ carousel });
+    
     return (
-        <div className="relative w-full h-[210px] md:h-96 lg:h-[484px] xl:h-[650px] overflow-hidden bg-neutral" onTouchStart={handleTouchStart}
+        <div className="relative w-full h-[450px] xl:h-[650px] overflow-hidden bg-neutral"
+            onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}>
             {/* Slides */}
-            {slidesData.map((slide, index) => (
+            {carousel.map((carousel, index) => (
                 <Slide
-                    key={slide.id}
-                    slide={slide}
+                    key={index}
+                    slide={carousel}
                     isActive={index === activeIndex}
                     isPrev={index < activeIndex}
                 />

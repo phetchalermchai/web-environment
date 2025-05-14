@@ -18,7 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menu }) => {
 
   // Recursive function สำหรับ Render เมนู Dropdown
   const renderMenu = (items: MenuItem[]) => (
-    <ul>
+    <ul className="flex flex-col gap-3">
       {items.map((item, index) =>
         item.isDropdown && item.dropdownItems ? (
           <li key={index}>

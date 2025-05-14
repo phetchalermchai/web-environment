@@ -26,6 +26,13 @@ export async function middleware(request: NextRequest) {
   ];
 
   if (protectedRoutes.some(route => pathname.startsWith(route))) {
+    const role = token?.role as string;
+    const userRestrictedRoutes = [
+      "/admin/agency/personnel",
+      "/admin/users",
+      "/admin/e-service",
+      "/admin/banner",
+    ];
     // ถ้าไม่มี Token ให้ส่งไปหน้า Login
     if (!token) {
       return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
@@ -33,13 +40,25 @@ export async function middleware(request: NextRequest) {
 
     // ตรวจสอบ Role: อนุญาตเฉพาะ SUPERUSER และ USER
     const allowedRoles = ["SUPERUSER", "USER"];
-    if (token && typeof token.role === "string" && !allowedRoles.includes(token.role)) {
+    if (!allowedRoles.includes(role)) {
       return NextResponse.redirect(new URL("/auth/secure/gateway/login", request.url));
+    }
+
+    if (role === "USER" && userRestrictedRoutes.some(route => pathname.startsWith(route))) {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
   }
 
   // 🔹 ตรวจสอบ API อื่นๆ (ยกเว้น `/api/auth/*` และ `/api/activities`)
-  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth") && !pathname.startsWith("/api/activities") && !pathname.startsWith("/api/news") && !pathname.startsWith("/api/agency/personnel")) {
+  if (pathname.startsWith("/api") &&
+    !pathname.startsWith("/api/auth") &&
+    !pathname.startsWith("/api/uploads") &&
+    !pathname.startsWith("/api/activities") &&
+    !pathname.startsWith("/api/news") &&
+    !pathname.startsWith("/api/agency/personnel") &&
+    !pathname.startsWith("/api/eservice") &&
+    !pathname.startsWith("/api/banner/image") &&
+    !pathname.startsWith("/api/banner/video")) {
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -1,5 +1,5 @@
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
+import Sidebar from "@/features/admin/components/NavbarDrawer/Sidebar";
+import Navbar from "@/features/admin/components/NavbarDrawer/Navbar";
 
 const Drawer = ({ children }: { children: React.ReactNode }) => {
 

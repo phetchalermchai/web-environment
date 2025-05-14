@@ -2,7 +2,7 @@ import Theme from "@/components/Theme";
 import NavbarDrawerButton from "@/features/users/components/NavbarDrawer/NavbarDrawerButton";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
-import TitleBar from "./TitleBar";
+import TitleBar from "@/features/admin/components/NavbarDrawer/TitleBar";
 import prisma from "@/lib/prisma"
 import Image from "next/image";
 
@@ -19,6 +19,13 @@ const Navbar = async () => {
         where: { email: session.user.email },
         select: { firstname: true, lastname: true, email: true, role: true, avatar: true },
     });
+
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
 
     // ตรวจสอบว่าพบ user หรือไม่
     if (!user) {
@@ -38,7 +45,7 @@ const Navbar = async () => {
                         <div className="avatar">
                             <div className="mask mask-circle h-10 w-10 bg-base-300">
                                 <Image
-                                    src={user.avatar}
+                                    src={resolvePreviewSrc(user.avatar)}
                                     width={40}
                                     height={40}
                                     alt={`${user.firstname} ${user.lastname} Avatar`} />

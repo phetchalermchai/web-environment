@@ -29,6 +29,7 @@ async function getPersonnel(): Promise<(Personnel & { level: number })[]> {
     })).filter(p => p.level > 0);
 }
 
+
 const ManagementSection = async () => {
     const breadcrumbs = [
         { label: "หน้าแรก", href: "/" },

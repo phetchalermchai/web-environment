@@ -68,8 +68,6 @@ export const useDataItems = (getsApi: string) => {
             default:
               break;
           }
-        } else {
-          setError(new Error("ไม่มีข้อมูลให้แสดง กรุณาติดต่อผู้ดูแลระบบ"));
         }
       } catch (error) {
         console.error(error);

@@ -7,6 +7,14 @@ interface CardProps<T> {
   cardType: string;
 }
 
+const resolveImagePath = (img: string | null | undefined) => {
+  if (!img) return "/default-news.png";
+  if (img.startsWith("/uploads")) {
+    return `/api/uploads${img}`;
+  }
+  return img;
+};
+
 const Card = <T extends NewsItems | ActivitiesItems>({
   news,
   cardType,
@@ -25,7 +33,7 @@ const Card = <T extends NewsItems | ActivitiesItems>({
       <div className="card bg-base-200 w-full shadow-md">
         <figure>
           <Image
-            src={newsItem.image}
+            src={resolveImagePath(newsItem.image)}
             alt={newsItem.title}
             width={800}
             height={600}
@@ -67,7 +75,7 @@ const Card = <T extends NewsItems | ActivitiesItems>({
         <div className="w-full shadow-md rounded-2xl relative overflow-hidden group">
           <figure>
             <Image
-              src={activityItem.image}
+              src={resolveImagePath(activityItem.image)}
               alt={activityItem.title}
               width={800}
               height={600}

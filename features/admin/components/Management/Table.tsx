@@ -1,4 +1,4 @@
-import Row from "./Row";
+import Row from "@/features/admin/components/Management/Row";
 import { UserGroupIcon, UserIcon, ArrowDownIcon, NewspaperIcon, CalendarSolidIcon, CpuSolidIcon } from "@/config/iconConfig";
 import { Dispatch, SetStateAction } from "react";
 import { DataItem } from "@/types/userTypes";
@@ -85,7 +85,9 @@ const Table = ({ dataItem, setDataItems, ItemType, sort, editLink, deleteApi }: 
                                 {ItemType === "E_Service" && <CpuSolidIcon />}
                             </div>
                             <p className="text-lg py-2">{`ไม่พบข้อมูล${ItemType === "Personnel" ? "บุคลากร" : ""}${ItemType === "User" ? "ผู้ใช้งาน" : ""}${ItemType === "NewsItems" ? "ข่าวประชาสัมพันธ์" : ""}${ItemType === "ActivityItems" ? "ข่าวกิจกรรม" : ""}${ItemType === "E_Service" ? " E_Service" : ""}`}</p>
-                            <p className="mb-16">ลองเปลี่ยนคำค้นหาของคุณ</p>
+                            <p className="mb-16">
+                                {`${ItemType === null ? "กรุณาสร้างข้อมูล" : "ลองเปลี่ยนคำค้นหาของคุณ"}`}
+                            </p>
                         </td>
                     </tr>
                 )}

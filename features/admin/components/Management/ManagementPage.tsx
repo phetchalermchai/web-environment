@@ -1,14 +1,14 @@
 "use client";
 
-import CreateButton from "./CreateButton";
-import SearchBar from "./SearchBar";
-import SortDropdown from "./SortDropdown";
-import Table from "./Table";
+import CreateButton from "@/features/admin/components/Management/CreateButton";
+import SearchBar from "@/features/admin/components/Management/SearchBar";
+import SortDropdown from "@/features/admin/components/Management/SortDropdown";
+import Table from "@/features/admin/components/Management/Table";
 import { useState, useMemo, useEffect } from "react";
 import { DataItem, User, PersonnelItems, NewsItems, ActivityItems, E_ServiceItems } from "@/types/userTypes";
 import Image from "next/image";
 import Link from "next/link";
-import { useDataItems, ItemType } from "../../hooks/ManagementPage/useDataItems";
+import { useDataItems, ItemType } from "@/features/admin/hooks/ManagementPage/useDataItems";
 import Pagination from "@/components/Pagination";
 
 const ManagementPage = ({

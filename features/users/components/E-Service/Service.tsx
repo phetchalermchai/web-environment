@@ -1,22 +1,23 @@
 "use client";
-import { CpuIcon } from "@/config/iconConfig";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { CpuIcon } from "@/config/iconConfig";
+import { E_Service } from "@/types/publicTypes";
 
-const Service = () => {
+interface ServiceProps {
+  service: E_Service[]
+}
+
+const Service = ({ service }: ServiceProps) => {
   const carouselRef = useRef<HTMLDivElement | null>(null);
-
-  // Mock data slides
-  const slides = [
-    { src: "ชำระค่าเก็บขยะ.png", href: "https://nakornnont.go.th/onestopservice/member/login_page?link=s_garbage" },
-    { src: "แจ้งดูดสิ่งปฏิกูล.png", href: "https://nakornnont.go.th/onestopservice/sewage_suction" },
-    { src: "จองคิวสุขาเคลื่อนที่.png", href: "https://nakornnont.go.th/onestopservice/toiletcar" },
-    { src: "บริการรถลอกท่อระบายน้ำ.png", href: "https://nakornnont.go.th/onestopservice/stripping_pipe" },
-    { src: "ระบบออกใบอนุญาตสถานประกอบการ.png", href: "/" },
-    { src: "บริการภูมิสารสนเทศ GIS.png", href: "https://nkndatamap.nakornnont.go.th/public" },
-    { src: "ระบบคำนวณค่าขยะ.png", href: "/" },
-  ];
+  const resolveImagePath = (img: string | null | undefined) => {
+    if (!img) return "/default-news.png";
+    if (img.startsWith("/uploads")) {
+      return `/api/uploads${img}`;
+    }
+    return img;
+  };
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -73,13 +74,13 @@ const Service = () => {
         ref={carouselRef}
         className="carousel bg-base-300 space-x-4 p-4 w-full"
       >
-        {slides.map((slide, index) => (
+        {service.map((service, index) => (
           <div
             key={index}
             className="carousel-item"
           >
-            <Link href={slide.href} target="_blank">
-              <Image src={`/E-Service/${slide.src}`} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400} style={{ width: "auto", height: "auto" }} />
+            <Link href={service.linkURL} target="_blank">
+              <Image src={resolveImagePath(String(service.image))} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400} style={{ width: "auto", height: "auto" }} />
             </Link>
           </div>
         ))}

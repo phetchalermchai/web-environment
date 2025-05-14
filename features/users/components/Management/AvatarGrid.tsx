@@ -26,7 +26,7 @@ const AvatarGrid = ({ personnel, level, columns = "grid-cols-1 sm:grid-cols-2 lg
           key={index}
           image={`${resolveImagePath(person.image)}`} // แปลงให้ใช้ API uploads
           name={`${person.nameTitle}${person.firstName} ${person.lastName}`}
-          position={person.position}
+          position={person.positionName}
           colSpan={level === 1 ? "col-span-4" : "col-span-1"}
         />
       ))}

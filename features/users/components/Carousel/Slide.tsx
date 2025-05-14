@@ -1,40 +1,52 @@
+import { BannerVideo } from "@/types/publicTypes";
 interface SlideProps {
-    slide: {
-      id: number;
-      iframe: string;
-      title: string;
-      description: string;
-    };
-    isActive: boolean;
-    isPrev: boolean; // ถ้าสไลด์อยู่ก่อนหน้า activeIndex
-  }
-  
-  const Slide: React.FC<SlideProps> = ({ slide, isActive, isPrev }) => {
-    return (
-      <div
-        className={`absolute top-0 left-0 w-full h-full transition-transform duration-700 ease-in-out ${
-          isActive
-            ? "translate-x-0"
-            : isPrev
-            ? "-translate-x-full"
-            : "translate-x-full"
-        }`}
-      >
-        {/* <img
-          src={slide.iframe}
-          alt={slide.title}
-          className="w-full h-full object-cover"
-        /> */}
-        <div className="relative w-full h-full overflow-hidden">
-          <video className="absolute top-0 left-0 w-full h-full object-cover" autoPlay muted playsInline loop><source src={slide.iframe} type="video/mp4"/></video>
-        </div>
-        {/* <div className="absolute bottom-0 left-0 right-0 flex flex-col justify-center items-center w-full text-white bg-black bg-opacity-50 p-4">
-          <h1 className="text-6xl font-bold">{slide.title}</h1>
-          <p className="text-xl">{slide.description}</p>
-        </div> */}
-      </div>
-    );
+  slide: BannerVideo;
+  isActive: boolean;
+  isPrev: boolean; // ถ้าสไลด์อยู่ก่อนหน้า activeIndex
+}
+
+const Slide: React.FC<SlideProps> = ({ slide, isActive, isPrev }) => {
+
+  const resolveVideoPath = (video: string | null | undefined) => {
+    if (!video) return "/default-carousel.mp4";
+    if (video.startsWith("/uploads")) {
+      return `/api/uploads${video}`;
+    }
+    return video;
   };
-  
-  export default Slide;
-  
+
+  return (
+    <div
+      className={`absolute top-0 left-0 w-full h-full transition-transform duration-700 ease-in-out ${isActive
+        ? "translate-x-0"
+        : isPrev
+          ? "-translate-x-full"
+          : "translate-x-full"
+        }`}
+    >
+      <div className="relative w-full h-full overflow-hidden">
+        <video className="absolute top-0 left-0 w-full h-full object-cover"
+          autoPlay
+          muted
+          playsInline
+          loop>
+          {/* Mobile video source (แสดงเมื่อหน้าจอเล็ก) */}
+          <source
+            src={resolveVideoPath(slide.videoMobile)}
+            type="video/mp4"
+            media="(max-width: 768px)"
+          />
+
+          {/* Desktop video source (แสดงเมื่อหน้าจอใหญ่) */}
+          <source
+            src={resolveVideoPath(slide.videoDesktop)}
+            type="video/mp4"
+            media="(min-width: 769px)"
+          />
+        </video>
+      </div>
+    </div>
+  );
+};
+
+export default Slide;

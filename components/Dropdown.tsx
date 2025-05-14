@@ -30,7 +30,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, items }) => {
       </div>
       <ul
         tabIndex={0}
-        className="menu dropdown-content bg-base-200 rounded-box z-[1] mt-5 w-52 p-2 shadow"
+        className="menu dropdown-content gap-2 bg-base-200 rounded-box z-[1] mt-5 w-52 p-2 shadow"
       >
         {items.map((item, index) =>
           item.isDropdown ? (

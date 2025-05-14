@@ -48,34 +48,40 @@ const Menu = ({ role }: MenuProps) => {
                     แดชบอร์ด
                 </Link>
             </li>
-            <li>
-                <details>
-                    <summary>
-                        <DocumentIcon />
-                        จัดการแบนเนอร์
-                    </summary>
-                    <ul className="py-2">
-                        <li className="py-2">
-                            <Link href={`/admin/banner/video`} className={isActive(`/admin/banner/video`)}>
-                                <BanknotesIcon />
-                                แบนเนอร์ส่วนที่ 1
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href={`/admin/banner/image`} className={isActive(`/admin/banner/image`)}>
-                                <PhotoIcon />
-                                แบนเนอร์ส่วนที่ 2
-                            </Link>
-                        </li>
-                    </ul>
-                </details>
-            </li>
-            <li>
-                <Link href={`/admin/e-service`} className={isActive(`/admin/e-service`)}>
-                    <CpuSolidIcon />
-                    จัดการระบบ E-Service
-                </Link>
-            </li>
+            {role === "SUPERUSER"
+                &&
+                <li>
+                    <details>
+                        <summary>
+                            <DocumentIcon />
+                            จัดการแบนเนอร์
+                        </summary>
+                        <ul className="py-2">
+                            <li className="py-2">
+                                <Link href={`/admin/banner/video`} className={isActive(`/admin/banner/video`)}>
+                                    <BanknotesIcon />
+                                    แบนเนอร์ส่วนที่ 1
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/admin/banner/image`} className={isActive(`/admin/banner/image`)}>
+                                    <PhotoIcon />
+                                    แบนเนอร์ส่วนที่ 2
+                                </Link>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            }
+            {role === "SUPERUSER"
+                &&
+                <li>
+                    <Link href={`/admin/e-service`} className={isActive(`/admin/e-service`)}>
+                        <CpuSolidIcon />
+                        จัดการระบบ E-Service
+                    </Link>
+                </li>
+            }
             <li>
                 <details>
                     <summary>
@@ -98,22 +104,25 @@ const Menu = ({ role }: MenuProps) => {
                     </ul>
                 </details>
             </li>
-            <li>
-                <details>
-                    <summary>
-                        <OfficeIcon />
-                        จัดการข้อมูลหน่วยงาน
-                    </summary>
-                    <ul className="py-2">
-                        <li className="py-2">
-                            <Link href={`/admin/agency/personnel`} className={isActive(`/admin/agency/personnel`)}>
-                                <UserGroupIcon />
-                                บุคลากร
-                            </Link>
-                        </li>
-                    </ul>
-                </details>
-            </li>
+            {role === "SUPERUSER"
+                &&
+                <li>
+                    <details>
+                        <summary>
+                            <OfficeIcon />
+                            จัดการข้อมูลหน่วยงาน
+                        </summary>
+                        <ul className="py-2">
+                            <li className="py-2">
+                                <Link href={`/admin/agency/personnel`} className={isActive(`/admin/agency/personnel`)}>
+                                    <UserGroupIcon />
+                                    บุคลากร
+                                </Link>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            }
             {role === "SUPERUSER"
                 &&
                 <li>

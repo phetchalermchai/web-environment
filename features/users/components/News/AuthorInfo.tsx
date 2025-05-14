@@ -9,12 +9,22 @@ interface AuthorInfoProps {
 }
 
 const AuthorInfo = ({ name, department, date, image, email }: AuthorInfoProps) => {
+    const resolvePreviewSrc = (previewUrl: string): string => {
+        if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
+            return previewUrl; // สำหรับ preview ชั่วคราว
+        }
+        return `/api/uploads${previewUrl}`; // เช่น originalAvatar = "/avatar/xxx.png"
+    };
     return (
         <div className="flex gap-3 sm:gap-5 items-center">
             {image ?
                 <div className="avatar py-2">
                     <div className="ring-primary ring-offset-base-100 w-10 rounded-full ring ring-offset-2">
-                        <img src={image} />
+                        <Image
+                            src={resolvePreviewSrc(image)}
+                            width={40}
+                            height={40}
+                            alt={`${name} Avatar`} />
                     </div>
                 </div>
                 :

@@ -5,7 +5,7 @@ import Carousel from "@/features/users/components/Carousel/Carousel";
 import Service from "@/features/users/components/E-Service/Service";
 import Hero from "@/features/users/components/Hero/Hero";
 import News from "@/features/users/components/News/News";
-import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
+import { NewsItems, ActivitiesItems, E_Service, BannerVideo, BannerImage } from "@/types/publicTypes";
 import axios from "axios";
 export const dynamic = "force-dynamic";
 
@@ -65,6 +65,65 @@ const fetchActivities = async (): Promise<ActivitiesItems[]> => {
     }
 };
 
+async function fetchService(): Promise<E_Service[]> {
+    const baseURL = process.env.NODE_ENV === "development"
+        ? "http://localhost:3000"
+        : process.env.NEXT_PUBLIC_API_URL;
+
+    try {
+        const res = await axios.get(`${baseURL}/api/eservice`, {
+            headers: {
+                "Cache-Control": "no-store",
+            },
+        });
+        const service = res.data
+        return service;
+    } catch (error) {
+        console.error("Error fetching E-Service data:", error);
+        return [];
+    }
+}
+
+async function fetchCarousel(): Promise<BannerVideo[]> {
+  const baseURL = process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const res = await axios.get(`${baseURL}/api/banner/video`, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
+    const raw: BannerVideo[] = res.data;
+    const activeOnly = raw.filter(item => item.isActive === true);
+    return activeOnly;
+  } catch (error) {
+    console.error("Error fetching Carousel data:", error);
+    return [];
+  }
+}
+
+async function fetcHero(): Promise<BannerImage[]> {
+  const baseURL = process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const res = await axios.get(`${baseURL}/api/banner/image`, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
+    const raw: BannerImage[] = res.data;
+    const activeOnly = raw.filter(item => item.isActive === true);
+    return activeOnly;
+  } catch (error) {
+    console.error("Error fetching Carousel data:", error);
+    return [];
+  }
+}
+
 const formatDateToThai = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString("th-TH", {
@@ -75,13 +134,17 @@ const formatDateToThai = (dateString: string): string => {
 };
 
 const page = async () => {
+    const carousel = await fetchCarousel();
+    const hero = await fetcHero();
+    const service = await fetchService();
     const newsData = await fetchNews();
     const activitiesData = await fetchActivities();
+
     return (
         <>
-            <Carousel />
-            <Hero />
-            <Service />
+            <Carousel carousel={carousel}/>
+            <Hero hero={hero}/>
+            <Service service={service}/>
             <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/news-updates" icon={newsIcon()} cardType="type1" />
             <Divider />
             <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/activities" icon={Megaphone()} cardType="type2" />

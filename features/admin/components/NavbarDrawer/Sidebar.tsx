@@ -1,4 +1,4 @@
-import SideMenu from "./SideMenu";
+import SideMenu from "@/features/admin/components/NavbarDrawer/SideMenu";
 
 const Sidebar = async () => {
 

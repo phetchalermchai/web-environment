@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -11,9 +12,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
+  const theme = (await cookies()).get("theme")?.value || "light";
   return (
-    <html lang="en" data-theme="light">
+    <html lang="en" data-theme={theme}>
       <body className={`antialiased bg-base-300/30`}>
         {children}
       </body>

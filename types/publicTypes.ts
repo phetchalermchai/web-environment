@@ -65,7 +65,7 @@ export interface BannerImage {
     title: string;
     imageMobile: string;
     imageDesktop: string;
-    isActive: string;
+    isActive: Boolean;
     sortOrder: string;
     createdAt: string;
     updatedAt: string;
@@ -76,7 +76,7 @@ export interface BannerVideo {
     title: string;
     videoMobile: string;
     videoDesktop: string;
-    isActive: string;
+    isActive: Boolean;
     sortOrder: string;
     createdAt: string;
     updatedAt: string;

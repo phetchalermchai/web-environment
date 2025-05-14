@@ -11,7 +11,7 @@ interface BannerImage {
     title: string;
     imageMobile: string;
     imageDesktop: string;
-    isActive: string;
+    isActive: boolean;
     sortOrder: string;
     createdAt: string;
     updatedAt: string;
@@ -22,7 +22,7 @@ interface BannerVideo {
     title: string;
     videoMobile: string;
     videoDesktop: string;
-    isActive: string;
+    isActive: boolean;
     sortOrder: string;
     createdAt: string;
     updatedAt: string;

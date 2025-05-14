@@ -1,94 +1,100 @@
+"use client";
+import { SwatchBook, ChevronDown, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const themes = [
+  "light",
+  "dark",
+  "cupcake",
+  "bumblebee",
+  "emerald",
+  "corporate",
+  "synthwave",
+  "retro",
+  "cyberpunk",
+  "valentine",
+  "halloween",
+  "garden",
+  "forest",
+  "aqua",
+  "lofi",
+  "pastel",
+  "fantasy",
+  "wireframe",
+  "black",
+  "luxury",
+  "dracula",
+  "cmyk",
+  "autumn",
+  "business",
+  "acid",
+  "lemonade",
+  "night",
+  "coffee",
+  "winter",
+  "dim",
+  "nord",
+  "sunset",
+];
+
 const Theme = () => {
+  const [currentTheme, setCurrentTheme] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const themeFromCookie = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("theme="))
+        ?.split("=")[1];
+      setCurrentTheme(themeFromCookie || "light"); // fallback
+    }
+  }, []);
+
+  const handleThemeChange = (theme: string) => {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.cookie = `theme=${theme}; path=/; max-age=86400`; // อายุ 1 วัน
+    setCurrentTheme(theme);
+  };
+
   return (
     <div className="dropdown dropdown-end">
       <div tabIndex={0} role="button" className="btn btn-ghost font-normal px-2 xl:mx-2">
-        <svg
-          width="20"
-          height="20"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          className="h-5 w-5 stroke-current xl:hidden"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-          ></path>
-        </svg>
-        <span className="hidden font-normal xl:inline xl:text-base">Theme</span>
-        <svg
-          width="12px"
-          height="12px"
-          className="hidden h-2 w-2 fill-current opacity-60 xl:inline-block"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 2048 2048"
-        >
-          <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
-        </svg>
+        <SwatchBook size={20} />
+        <ChevronDown size={14} />
       </div>
-      <ul
+      <div
         tabIndex={0}
-        className="dropdown-content bg-base-200 rounded-box z-[1] top-px h-[28.6rem] max-h-[calc(100vh-10rem)] mt-[60px] lg:mt-[67px] w-52 p-2 shadow-2xl overflow-y-auto"
+        className="dropdown-content bg-base-200 text-base-content rounded-box z-[1] top-px h-[28.6rem] max-h-[calc(100vh-10rem)] w-56 overflow-y-auto border border-white/5 shadow-2xl outline outline-1 outline-black/5 mt-16"
       >
         <div className="grid grid-cols-1 gap-3 p-3">
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Light"
-              value="light"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Dark"
-              value="dark"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Valentine"
-              value="valentine"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Halloween"
-              value="halloween"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Winter"
-              value="winter"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Fantasy"
-              value="fantasy"
-            />
-          </li>
+          {themes.map((theme) => (
+            <button
+              key={theme}
+              className={`outline-base-content text-start outline-offset-4 ${currentTheme === theme ? '[&_svg]:visible' : ''}`}
+              data-set-theme={theme}
+              onClick={() => handleThemeChange(theme)}
+            >
+              <span className="bg-base-100 rounded-btn text-base-content block w-full cursor-pointer font-sans" data-theme={theme}>
+                <span className="grid grid-cols-5 grid-rows-3">
+                  <span className="col-span-5 row-span-3 row-start-1 flex items-center gap-2 px-4 py-3">
+
+                    <span>
+                      <Check className={`shrink-0 ${currentTheme === theme ? '' : 'invisible'}`} size={16} />
+                    </span>
+                    <span className="flex-grow text-sm">{theme}</span>
+                    <span className="flex h-full shrink-0 flex-wrap gap-1">
+                      <span className="bg-primary rounded-badge w-2 h-2"></span>
+                      <span className="bg-secondary rounded-badge w-2 h-2"></span>
+                      <span className="bg-accent rounded-badge w-2 h-2"></span>
+                      <span className="bg-neutral rounded-badge w-2 h-2"></span>
+                    </span>
+                  </span>
+                </span>
+              </span>
+            </button>
+          ))}
         </div>
-      </ul>
+      </div>
     </div>
   );
 };

@@ -1,20 +1,13 @@
 "use client"
 import { useState, useEffect } from "react"
 import { getNextIndex, getPrevIndex, handleSwipe } from "../utils/carouselUtils";
-
-//set type slide data
-interface Slide {
-  id: number;
-  iframe: string;
-  title: string;
-  description: string;
-}
+import { BannerVideo } from "@/types/publicTypes";
 
 interface UseCarouselProps {
-  slidesData: Slide[];
+  carousel: BannerVideo[];
 }
 
-export const useCarousel = ({ slidesData }: UseCarouselProps) => {
+export const useCarousel = ({ carousel }: UseCarouselProps) => {
 
   // set activeIndex by id & set touch screen
   const [activeIndex, setActiveIndex] = useState(0);
@@ -24,20 +17,20 @@ export const useCarousel = ({ slidesData }: UseCarouselProps) => {
   // validation Slide
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setActiveIndex((prevIndex) => getNextIndex(prevIndex, slidesData.length));
+      setActiveIndex((prevIndex) => getNextIndex(prevIndex, carousel.length));
     }, 20000); // Change slide every 20 seconds
 
     return () => clearInterval(intervalId);
-  }, [slidesData.length]);
+  }, [carousel.length]);
 
 
 
   const handleNext = (): void => {
-    setActiveIndex((prevIndex) => getNextIndex(prevIndex, slidesData.length));
+    setActiveIndex((prevIndex) => getNextIndex(prevIndex, carousel.length));
   };
 
   const handlePrev = (): void => {
-    setActiveIndex((prevIndex) => getPrevIndex(prevIndex, slidesData.length));
+    setActiveIndex((prevIndex) => getPrevIndex(prevIndex, carousel.length));
   };
 
   const handleTouchStart = (e: React.TouchEvent): void => {
