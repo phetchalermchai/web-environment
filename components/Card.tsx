@@ -31,19 +31,19 @@ const Card = <T extends NewsItems | ActivitiesItems>({
 
     return (
       <div className="card bg-base-200 w-full shadow-md">
-        <figure>
+        <figure className="w-full h-[250px] lg:h-[300px] xl:h-[350px] 2xl:h-[400px] overflow-hidden">
           <Image
             src={resolveImagePath(newsItem.image)}
             alt={newsItem.title}
             width={800}
             height={600}
-            className="w-full h-auto object-cover"
-          />
+            className="w-full h-full object-cover"
+          />  
         </figure>
         <div className="card-body">
           <h2 className="card-title">{newsItem.title}</h2>
           <p>{truncatedDescription}</p>
-          <p className="flex flex-col text-sm">
+          <p className="flex flex-col justify-end text-sm">
             <span>
               โดย: {newsItem.author.firstname} {newsItem.author.lastname}
             </span>
@@ -73,13 +73,12 @@ const Card = <T extends NewsItems | ActivitiesItems>({
         href={`/news/activities/${activityItem.id}`}
       >
         <div className="w-full shadow-md rounded-2xl relative overflow-hidden group">
-          <figure>
+          <figure className="w-full h-[345px] lg:h-[450px] 2xl:h-[550px] overflow-hidden">
             <Image
               src={resolveImagePath(activityItem.image)}
               alt={activityItem.title}
-              width={800}
-              height={600}
-              className="rounded-2xl block w-full object-cover"
+              fill
+              className="rounded-2xl block w-full h-full object-cover"
             />
           </figure>
           <div className="absolute bottom-0 left-0 w-full bg-base-300/90 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-5 xl:p-8">
