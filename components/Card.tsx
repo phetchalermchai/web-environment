@@ -37,7 +37,7 @@ const Card = <T extends NewsItems | ActivitiesItems>({
             alt={newsItem.title}
             width={800}
             height={600}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
           />  
         </figure>
         <div className="card-body">
@@ -78,7 +78,7 @@ const Card = <T extends NewsItems | ActivitiesItems>({
               src={resolveImagePath(activityItem.image)}
               alt={activityItem.title}
               fill
-              className="rounded-2xl block w-full h-full object-cover"
+              className="rounded-2xl block w-full h-full object-cover object-top"
             />
           </figure>
           <div className="absolute bottom-0 left-0 w-full bg-base-300/90 flex flex-col justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-5 xl:p-8">

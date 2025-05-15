@@ -1,7 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
-
-const ErrorComponent = () => {
+import Image from "next/image";
+const Page = () => {
   return (
     <main className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-6 py-16 text-center">
       <div className="w-full max-w-2xl">
@@ -20,20 +19,20 @@ const ErrorComponent = () => {
         {/* Message */}
         <div className="mb-6">
           <h1 className="text-3xl sm:text-4xl font-bold text-error mb-2">
-            ไม่พบข้อมูลผู้ใช้งานนี้
+            ไม่พบข้อมูลE-Serviceนี้
           </h1>
           <p className="text-base text-base-content/80">
-            ขออภัย! ไม่พบผู้ใช้งานที่คุณค้นหา หรือผู้ใช้งานนี้อาจถูกลบออกจากระบบแล้ว
+            ขออภัย! ไม่พบE-Serviceที่คุณค้นหา หรือE-Serviceนี้อาจถูกลบออกจากระบบแล้ว
           </p>
         </div>
 
         {/* Back Button */}
-        <Link href="/admin/users" className="btn btn-primary btn-wide">
-          กลับไปหน้าผู้ใช้งาน
+        <Link href="/admin/e-service" className="btn btn-primary btn-wide">
+          กลับไปหน้าE-Service
         </Link>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default ErrorComponent;
+export default Page

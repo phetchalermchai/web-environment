@@ -1,8 +1,9 @@
+import axios from "axios";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { ActivityItem } from "@/types/publicTypes";
-import axios from "axios";
+import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 const fetchActivity = async (id: string) => {
@@ -47,7 +48,7 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
     const activity = await fetchActivity(id)
 
     if (!activity) {
-        return null;
+        return notFound();
     }
 
     const breadcrumbs = [

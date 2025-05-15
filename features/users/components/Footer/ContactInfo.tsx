@@ -46,7 +46,7 @@ const ContactInfo = () => {
         </ul>
 
       </div>
-      <div className="flex flex-col items-center xl:inline-flex p-8 flex-1">
+      <div className="flex flex-col items-center xl:inline-flex p-8 flex-1 w-full">
         <Image
           src="/mobile/mobile-logo.png"
           width={120}

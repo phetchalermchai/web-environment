@@ -3,7 +3,7 @@ import Image from "next/image";
 import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap"
 import InputField from "@/features/admin/components/InputField";
 import Alert from "@/features/admin/components/Alert";
-import Loading from "@/features/admin/components/NewsForm/Loading";
+import Loading from "@/features/admin/components/Loading";
 import { useRouter } from "next/navigation";
 import { Pencil, X } from "lucide-react";
 import { usePageLoading } from "@/features/admin/hooks/์NewsForm/usePageLoading";

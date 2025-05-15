@@ -2,8 +2,9 @@
 
 import axios from "axios";
 import Alert from "@/features/admin/components/Alert";
-import Link from "next/link";
 import InputField from "@/features/admin/components/InputField";
+import Loading from "@/features/admin/components/Loading";
+import ErrorPage from "@/features/admin/components/BannerForm/Video/Edit/404";
 import { Info, Pencil, X } from "lucide-react";
 import { useEffect, useState, useRef, ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -40,6 +41,7 @@ const Page = () => {
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [fetchError, setFetchError] = useState(false)
 
     // States สำหรับ file inputs และ preview URLs สำหรับวิดีโอ Mobile และ Desktop
     const [videoMobileFile, setVideoMobileFile] = useState<File | null>(null);
@@ -117,8 +119,7 @@ const Page = () => {
                 setVideoMobileUrl(data.videoMobile || "");
                 setVideoDesktopUrl(data.videoDesktop || "");
             } catch (error) {
-                setMessage("ไม่สามารถดึงข้อมูลแบนเนอร์วิดีโอได้");
-                router.replace("/404");
+                setFetchError(true)
             } finally {
                 setIsPageLoading(false);
             }
@@ -240,20 +241,11 @@ const Page = () => {
     };
 
     if (isPageLoading) {
-        return (
-            <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="skeleton h-8 lg:h-12 w-[154px] md:w-[201px] lg:w-[296px] rounded-lg"></div>
-                        <div className="skeleton h-8 lg:h-12 w-[105px] lg:w-[168px] rounded-lg m-1 md:mx-3"></div>
-                    </div>
-                    <div className="skeleton h-8 lg:h-12 w-[38px] lg:w-[117px] rounded-lg"></div>
-                </div>
-                <div className="overflow-x-auto mt-6 grow">
-                    <div className="skeleton h-full w-full"></div>
-                </div>
-            </div>
-        );
+        return <Loading/>;
+    }
+
+    if (fetchError) {
+        return <ErrorPage/>
     }
 
     return (

@@ -1,8 +1,9 @@
+import axios from "axios";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { NewsItem } from "@/types/publicTypes";
-import axios from "axios";
+import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 const fetchNewById = async (id: string) => {
@@ -50,7 +51,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const newsItem = await fetchNewById(id);
 
     if (!newsItem) {
-        return null;
+        return notFound();
     }
 
     const breadcrumbs = [

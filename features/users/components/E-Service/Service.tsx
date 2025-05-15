@@ -80,7 +80,14 @@ const Service = ({ service }: ServiceProps) => {
             className="carousel-item"
           >
             <Link href={service.linkURL} target="_blank">
-              <Image src={resolveImagePath(String(service.image))} alt={`Slide ${index + 1}`} className="rounded-box" width={300} height={400} style={{ width: "auto", height: "auto" }} />
+              <figure className="w-full h-[360px] sm:h-[420px] md:h-[480px] lg:h-[540px] overflow-hidden rounded-box">
+                <Image 
+                src={resolveImagePath(String(service.image))} 
+                alt={`Slide ${index + 1}`} 
+                className="block w-full h-full object-cover" 
+                width={300} 
+                height={540} />
+              </figure>
             </Link>
           </div>
         ))}

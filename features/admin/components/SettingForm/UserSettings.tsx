@@ -116,7 +116,7 @@ const UserSettings = () => {
         }
     }, [message]);
 
-    if (error) return <ErrorComponent message={error} />;
+    if (error) return <ErrorComponent/>;
     if (loading) return <LoadingComponent />;
 
     return (

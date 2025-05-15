@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({ menu, pathname }) => {
             src="/mobile/mobile-logo.png"
             width={48}
             height={48}
-            alt="Picture of the author"
+            alt="nakornnont logo"
             className="object-contain"
           />
           <div className="text-start text-xs md:text-sm xl:text-base">

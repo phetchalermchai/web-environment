@@ -33,6 +33,7 @@ const ButtonLinkImage = ({ editor }: { editor: Editor }) => {
                                                 .run();
                                         };
                                         img.src = urlImg;
+                                        editor.chain().focus().setTextAlign('left').run()
                                     }
                                 }}
                             ><CornerDownLeft size={20} />

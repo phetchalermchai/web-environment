@@ -231,7 +231,7 @@ const page = () => {
             <div className="flex flex-col bg-base-100 m-3 p-5 sm:m-3 lg:m-4 xl:m-5 rounded-lg shadow">
                 <div role="alert" className="alert alert-info text-sm">
                     <Info size={22}/>
-                    <p>ขนาดรูปแบนเนอร์ (Desktop) <span className="font-bold underline">1440x720px</span> | ขนาดรูปแบนเนอร์ (Mobile) <span className="font-bold underline">512x512px</span></p>
+                    <p>ขนาดรูปแบนเนอร์ (Desktop) <span className="font-bold underline">1440x720px</span> | ขนาดรูปแบนเนอร์ (Mobile) <span className="font-bold underline">1100x1490px</span></p>
                 </div>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-2 my-6">
                     {/* Mobile */}

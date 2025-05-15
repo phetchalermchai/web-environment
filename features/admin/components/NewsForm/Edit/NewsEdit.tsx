@@ -1,10 +1,11 @@
 "use client";
 import axios from "axios";
 import Image from "next/image";
-import Loading from "@/features/admin/components/NewsForm/Loading";
+import Loading from "@/features/admin/components/Loading";
 import InputField from "@/features/admin/components/InputField";
 import Tiptap from "@/features/admin/components/Rich-text-editor/Tiptap";
 import Alert from "@/features/admin/components/Alert";
+import ErrorPage from "@/features/admin/components/NewsForm/Edit/404";
 import { useState, useEffect, ChangeEvent } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Pencil, X } from "lucide-react";
@@ -32,6 +33,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [message, setMessage] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fetchError, setFetchError] = useState(false)
 
     const resolvePreviewSrc = (previewUrl: string): string => {
         if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
@@ -53,7 +55,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
                     setExistingImageUrl(data.image);
                 }
             } catch (error) {
-                setMessage("ไม่พบข้อมูล");
+                setFetchError(true)
             } finally {
                 setIsLoading(false);
             }
@@ -124,7 +126,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
             setMessage("แก้ไขข้อมูลสำเร็จ!");
             router.push(redirectPath);
         } catch (error) {
-            setMessage("เกิดข้อผิดพลาดในการแก้ไข");
+            setMessage((error as any)?.response?.data?.error);
         } finally {
             setIsSubmitting(false);
         }
@@ -132,8 +134,12 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
 
     if (isLoading) {
         return (
-            <Loading/>
+            <Loading />
         );
+    }
+
+    if (fetchError) {
+        return <ErrorPage type={type}/>
     }
     return (
         <form onSubmit={handleSubmit} className="flex flex-col">

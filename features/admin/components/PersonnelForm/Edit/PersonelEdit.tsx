@@ -5,6 +5,7 @@ import Alert from "@/features/admin/components/Alert";
 import Image from "next/image";
 import InputField from "@/features/admin/components/InputField";
 import Loading from "@/features/admin/components/PersonnelForm/Edit/Loading";
+import ErrorPage from "@/features/admin/components/PersonnelForm/Edit/404";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Pencil, X } from "lucide-react";
@@ -30,7 +31,6 @@ interface FormErrors {
 
 const page = () => {
     const router = useRouter();
-    const ImgPath = "/api/uploads"
     const { id } = useParams();
     const [formData, setFormData] = useState<CreateUserFormData>({
         nametitle: "",
@@ -43,6 +43,7 @@ const page = () => {
     const [errors, setErrors] = useState<FormErrors>({});
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [fetchError, setFetchError] = useState(false)
 
     // เก็บไฟล์ avatar ใน hook
     const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -77,8 +78,8 @@ const page = () => {
                     setPreviewUrl(personnel.image || "");
                     originalPreviewRef.current = personnel.image || "";
                 }
-            } catch (error: any) {
-                setMessage("เกิดข้อผิดพลาดในการดึงข้อมูล");
+            } catch (error) {
+                setFetchError(true)
             } finally {
                 setLoading(false);
             }
@@ -212,6 +213,10 @@ const page = () => {
         return (
             <Loading/>
         );
+    }
+
+    if (fetchError) {
+        return <ErrorPage/>;
     }
 
     return (

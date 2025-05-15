@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // ดึงข้อมูล banner video จากฐานข้อมูล (สมมุติว่า model ของคุณชื่อว่า bannerVideo)
     const bannerVideos = await prisma.bannerVideo.findMany({

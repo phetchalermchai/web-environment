@@ -4,6 +4,8 @@ import axios from "axios";
 import Alert from "@/features/admin/components/Alert";
 import Image from "next/image";
 import InputField from "@/features/admin/components/InputField";
+import Loading from "@/features/admin/components/Loading";
+import ErrorPage from "@/features/admin/components/E-ServiceForm/Edit/404";
 import { useRouter, useParams } from "next/navigation";
 import { Pencil, X } from "lucide-react";
 import { useState, useEffect, useRef, ChangeEvent } from "react";
@@ -19,7 +21,9 @@ const page = () => {
     const [link, setLink] = useState("");
     const [errors, setErrors] = useState<{ image?: string; name?: string; link?: string }>({});
     const [message, setMessage] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [fetchError, setFetchError] = useState(false)
 
     const resolvePreviewSrc = (previewUrl: string): string => {
         if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
@@ -42,8 +46,9 @@ const page = () => {
                 setName(data.title || "");
                 setLink(data.linkURL || "");
             } catch (err) {
-                console.error(err);
-                setMessage("ไม่สามารถโหลดข้อมูล E-Service ได้");
+                setFetchError(true)
+            } finally {
+                setIsLoading(false);
             }
         })();
     }, [id]);
@@ -86,7 +91,7 @@ const page = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
-        setLoading(true);
+        setIsSubmitting(true);
         setMessage(null);
 
         const form = new FormData();
@@ -105,7 +110,7 @@ const page = () => {
         } catch (err: any) {
             setMessage(err?.response?.data?.error || "เกิดข้อผิดพลาดในการสร้าง E‑Service");
         } finally {
-            setLoading(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -116,6 +121,14 @@ const page = () => {
             }
         };
     }, [previewUrl]);
+
+    if (fetchError) {
+        return <ErrorPage/>;
+    }
+
+    if (isLoading) {
+        return <Loading/>;
+    }
 
     return (
         <div className="m-5 px-8 md:px-16 py-16 bg-base-100 rounded-lg shadow">
@@ -175,7 +188,7 @@ const page = () => {
                 {/* Submit */}
                 <div className="flex justify-end gap-4">
                     <button type="submit" className="btn btn-primary">
-                        {loading ? "กำลังแก้ไข..." : "แก้ไข E‑Service"}
+                        {isSubmitting ? "กำลังแก้ไข..." : "แก้ไข E‑Service"}
                     </button>
                     <button
                         type="button"

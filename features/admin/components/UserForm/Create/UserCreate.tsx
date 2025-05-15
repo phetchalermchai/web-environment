@@ -86,7 +86,7 @@ const UserCreate = () => {
           <InputField label="นามสกุล" name="lastname" placeholder="นามสกุล" value={formData.lastname} error={errors.lastname} onChange={handleChange} />
           <InputField label="อีเมล" name="email" type="email" placeholder="อีเมล" value={formData.email} error={errors.email} onChange={handleChange} />
           <InputField label="รหัสผ่าน" name="password" type="password" placeholder="รหัสผ่านใหม่" value={formData.password} error={errors.password} onChange={handleChange} />
-          <InputField label="แผนก" name="department" placeholder="แผนกของคุณ" value={formData.department} error={errors.department} onChange={handleChange} />
+          <InputField label="ส่วนงาน" name="department" placeholder="แผนกของคุณ" value={formData.department} error={errors.department} onChange={handleChange} />
           <label className="form-control">
             <div className="label">
               <span className="label-text">ระดับผู้ใช้งาน</span>

@@ -27,6 +27,7 @@ const ButtonImage = ({ editor }: { editor: Editor }) => {
             img.src = src;
         };
         reader.readAsDataURL(file);
+        editor.chain().focus().setTextAlign('left').run()
     };
     
     return (

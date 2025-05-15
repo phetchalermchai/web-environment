@@ -4,6 +4,8 @@ import axios from "axios";
 import Image from "next/image";
 import InputField from "@/features/admin/components/InputField";
 import Alert from "@/features/admin/components/Alert";
+import Loading from "@/features/admin/components/Loading";
+import ErrorPage from "@/features/admin/components/BannerForm/Image/Edit/404";
 import { useEffect, useState, useRef, ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Pencil, X, Info } from "lucide-react";
@@ -40,6 +42,7 @@ const page = () => {
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [fetchError, setFetchError] = useState(false)
 
     // States สำหรับ file inputs และ preview URLs สำหรับรูป Desktop และ Mobile
     const [imageMobileFile, setImageMobileFile] = useState<File | null>(null);
@@ -117,8 +120,7 @@ const page = () => {
                 setImageMobileUrl(data.imageMobile || "");
                 setImageDesktopUrl(data.imageDesktop || "");
             } catch (error) {
-                console.error("Error fetching banner:", error);
-                setMessage("ไม่สามารถดึงข้อมูลแบนเนอร์ได้");
+                setFetchError(true)
             } finally {
                 setIsPageLoading(false);
             }
@@ -232,20 +234,11 @@ const page = () => {
     };
 
     if (isPageLoading) {
-        return (
-            <div className="m-3 p-2 sm:m-3 sm:p-3 lg:m-4 lg:p-3 xl:m-5 xl:p-5 flex flex-col h-[calc(100vh-106px)] bg-base-100 rounded-lg shadow">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="skeleton h-8 lg:h-12 w-[154px] md:w-[201px] lg:w-[296px] rounded-lg"></div>
-                        <div className="skeleton h-8 lg:h-12 w-[105px] lg:w-[168px] rounded-lg m-1 md:mx-3"></div>
-                    </div>
-                    <div className="skeleton h-8 lg:h-12 w-[38px] lg:w-[117px] rounded-lg"></div>
-                </div>
-                <div className="overflow-x-auto mt-6 grow">
-                    <div className="skeleton h-full w-full"></div>
-                </div>
-            </div>
-        );
+        return <Loading />;
+    }
+
+    if (fetchError) {
+        return <ErrorPage/>;
     }
 
     return (
@@ -253,11 +246,11 @@ const page = () => {
             {/* Left Column */}
             <div className="flex flex-col bg-base-100 m-3 p-5 sm:m-3 lg:m-4 xl:m-5 rounded-lg shadow">
                 <div role="alert" className="alert alert-info text-sm">
-                    <Info size={22}/>
+                    <Info size={22} />
                     <p>
                         ขนาดรูปแบนเนอร์ (Desktop){" "}
                         <span className="font-bold underline">1440x720px</span> | ขนาดรูปแบนเนอร์ (Mobile){" "}
-                        <span className="font-bold underline">512x512px</span>
+                        <span className="font-bold underline">1100x1490px</span>
                     </p>
                 </div>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-2 my-6">
