@@ -42,6 +42,7 @@ const page = () => {
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [hasAnotherActiveBanner, setHasAnotherActiveBanner] = useState(false);
     const [fetchError, setFetchError] = useState(false)
 
     // States สำหรับ file inputs และ preview URLs สำหรับรูป Desktop และ Mobile
@@ -137,6 +138,8 @@ const page = () => {
                 const res = await axios.get("/api/banner/image");
                 const banners = res.data as { sortOrder: number }[];
                 const usedOrders: number[] = banners.map((banner) => banner.sortOrder);
+                const anotherActive = banners.find((b: any) => b.isActive && b.id !== id);
+                setHasAnotherActiveBanner(Boolean(anotherActive));
                 // ช่วงที่อนุญาตคือ 1 ถึง 6
                 const allOrders = Array.from({ length: 6 }, (_, i) => i + 1);
                 let available = allOrders.filter((order) => !usedOrders.includes(order));
@@ -238,7 +241,7 @@ const page = () => {
     }
 
     if (fetchError) {
-        return <ErrorPage/>;
+        return <ErrorPage />;
     }
 
     return (
@@ -393,7 +396,7 @@ const page = () => {
                         name="isActive"
                     >
                         <option value="" disabled hidden>กรุณาเลือก</option>
-                        <option value="1">แสดงแบนเนอร์</option>
+                        {!hasAnotherActiveBanner && <option value="1">แสดงแบนเนอร์</option>}
                         <option value="0">ไม่แสดงแบนเนอร์</option>
                     </select>
                     {errors.isActive && (

@@ -1,10 +1,8 @@
-import axios from "axios";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { ActivityItem } from "@/types/publicTypes";
 import { notFound } from "next/navigation";
-export const dynamic = "force-dynamic";
 
 const fetchActivity = async (id: string) => {
     const baseURL =
@@ -12,7 +10,10 @@ const fetchActivity = async (id: string) => {
             ? "http://localhost:3000"
             : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     try {
-        const { data } = await axios.get(`${baseURL}/api/activities/${id}`);
+        const res = await fetch(`${baseURL}/api/activities/${id}`, {
+            next: { revalidate: 30 }
+        });
+        const data = await res.json()
         const activities: ActivityItem = {
             id: data.id,
             title: data.title,

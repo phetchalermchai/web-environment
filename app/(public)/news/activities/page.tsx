@@ -1,7 +1,5 @@
 import News from "@/features/users/components/News/News"
 import { ActivitiesItems } from "@/types/publicTypes";
-import axios from "axios";
-export const dynamic = "force-dynamic";
 
 const fetchActivities = async () => {
     const baseURL =
@@ -9,7 +7,10 @@ const fetchActivities = async () => {
             ? "http://localhost:3000"
             : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     try {
-        const { data } = await axios.get(`${baseURL}/api/activities`);
+        const res = await fetch(`${baseURL}/api/activities`, {
+            next: { revalidate: 30 }
+        });
+        const data = await res.json();
         const activities = data.map((item: ActivitiesItems) => ({
             id: item.id,
             title: item.title,

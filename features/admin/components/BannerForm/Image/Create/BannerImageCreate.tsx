@@ -37,6 +37,7 @@ const page = () => {
     const [errors, setErrors] = useState<FormErrors>({});
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [hasActiveBanner, setHasActiveBanner] = useState(false);
 
     // States for file inputs and preview URLs for desktop and mobile images
     const [imageMobileFile, setImageMobileFile] = useState<File | null>(null);
@@ -93,20 +94,17 @@ const page = () => {
         const fetchBanners = async () => {
             try {
                 const res = await axios.get("/api/banner/image"); // Adjust endpoint if needed
-                const banners = res.data as { sortOrder: number }[];
-                // Extract used sort orders from the database
+                const banners = res.data as { sortOrder: number; isActive: boolean }[];
                 const usedOrders: number[] = banners.map((banner) => banner.sortOrder);
-                // Allowed orders: 1 through 6
                 const allOrders = Array.from({ length: 6 }, (_, i) => i + 1);
-                // Available orders are those that are not used
                 let available = allOrders.filter((order) => !usedOrders.includes(order));
-                // If editing an existing banner, include its current sortOrder in the options.
-                // (Assuming formData.sortOrder > 0 if editing)
                 if (formData.sortOrder && !available.includes(formData.sortOrder)) {
                     available.push(formData.sortOrder);
                     available.sort((a, b) => a - b);
                 }
                 setAvailableOrders(available);
+                const activeExists = banners.some(b => b.isActive);
+                setHasActiveBanner(activeExists);
             } catch (error) {
                 console.error("Error fetching banners:", error);
             }
@@ -230,7 +228,7 @@ const page = () => {
             {/* Left Column */}
             <div className="flex flex-col bg-base-100 m-3 p-5 sm:m-3 lg:m-4 xl:m-5 rounded-lg shadow">
                 <div role="alert" className="alert alert-info text-sm">
-                    <Info size={22}/>
+                    <Info size={22} />
                     <p>ขนาดรูปแบนเนอร์ (Desktop) <span className="font-bold underline">1440x720px</span> | ขนาดรูปแบนเนอร์ (Mobile) <span className="font-bold underline">1100x1490px</span></p>
                 </div>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-2 my-6">
@@ -374,7 +372,7 @@ const page = () => {
                         name="isActive"
                     >
                         <option value="" disabled hidden>กรุณาเลือก</option>
-                        <option value="1">แสดงแบนเนอร์</option>
+                        {!hasActiveBanner && <option value="1">แสดงแบนเนอร์</option>}
                         <option value="0">ไม่แสดงแบนเนอร์</option>
                     </select>
                     {errors.isActive && (

@@ -5,6 +5,7 @@ import SearchBar from "@/features/admin/components/BannerManagement/SearchBar"
 import SortDropdown from "@/features/admin/components/BannerManagement/SortDropdown"
 import BannerGrid from "@/features/admin/components/BannerManagement/BannerGrid"
 import { useState, useEffect, useMemo } from 'react';
+import { Info } from "lucide-react";
 
 interface BannerImage {
     id: string;
@@ -134,6 +135,13 @@ const ManagementPage = ({ management, getsApi, createLink, editLink, deleteApi }
                     <SearchBar onSearch={handleSearch} />
                     <SortDropdown onSort={handleSort} />
                 </div>
+            </div>
+            <div role="alert" className="alert alert-info text-sm mt-3">
+                <Info size={22} />
+                <p>
+                    ไม่สามารถเปิดใช้งานสถานะ {" "}
+                    <span className="font-bold underline">แสดงแบนเนอร์</span> มากกว่า 1 รายการได้
+                </p>
             </div>
             <div className="overflow-x-auto mt-6 grow">
                 <BannerGrid management={management} banners={sortedFilteredBanner} createLink={createLink} editLink={editLink} deleteApi={deleteApi} />

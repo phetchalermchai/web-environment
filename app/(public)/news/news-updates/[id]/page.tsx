@@ -1,10 +1,8 @@
-import axios from "axios";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import AuthorInfo from "@/features/users/components/News/AuthorInfo";
 import ShareButton from "@/features/users/components/News/ShareButton";
 import { NewsItem } from "@/types/publicTypes";
 import { notFound } from "next/navigation";
-export const dynamic = "force-dynamic";
 
 const fetchNewById = async (id: string) => {
     const baseURL =
@@ -13,7 +11,10 @@ const fetchNewById = async (id: string) => {
             : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
     try {
-        const { data } = await axios.get(`${baseURL}/api/news/${id}`);
+        const res = await fetch(`${baseURL}/api/news/${id}`, {
+            next: { revalidate: 30 }
+        });
+        const data = await res.json()
         const news: NewsItem = {
             id: data.id,
             title: data.title,

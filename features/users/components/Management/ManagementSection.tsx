@@ -1,8 +1,6 @@
 import Breadcrumbs from "@/components/Breadcrumbs"
 import AvatarGrid from "@/features/users/components/Management/AvatarGrid";
-import axios from "axios";
 import { Personnel } from "@/types/publicTypes";
-export const dynamic = "force-dynamic";
 
 const resolveLevel = (position: string): number => {
     if (/ผู้อำนวยการสำนัก/i.test(position)) return 1;
@@ -16,12 +14,13 @@ async function getPersonnel(): Promise<(Personnel & { level: number })[]> {
         ? "http://localhost:3000"
         : process.env.NEXT_PUBLIC_API_URL;
 
-    const res = await axios.get(`${baseURL}/api/agency/personnel`, {
-        headers: {
-            "Cache-Control": "no-store", // ป้องกันการแคช
+    const res = await fetch(`${baseURL}/api/agency/personnel`, {
+        next: {
+            revalidate: 30
         },
     });
-    const raw: Personnel[] = res.data;
+    const data = await res.json()
+    const raw: Personnel[] = data;
 
     return raw.map((item) => ({
         ...item,
