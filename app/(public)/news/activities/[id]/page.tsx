@@ -4,6 +4,83 @@ import ShareButton from "@/features/users/components/News/ShareButton";
 import { ActivityItem } from "@/types/publicTypes";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+    const canonicalUrl = `${baseURL}/news/activities/${params.id}`;
+    const defaultImage = `${baseURL}/default-news.png`;
+
+    try {
+        const res = await fetch(`${baseURL}/api/activities/${params.id}`, {
+            next: { revalidate: 30 },
+        });
+
+        if (!res.ok) {
+            return {
+                title: "ไม่พบข้อมูลกิจกรรม",
+                description: "กิจกรรมที่คุณค้นหาอาจไม่มีอยู่หรือถูกลบไปแล้ว",
+                alternates: { canonical: canonicalUrl },
+                keywords: ["กิจกรรม", "เทศบาล", "สาธารณสุข", "ข่าวสาร"],
+            };
+        }
+
+        const data = await res.json();
+
+        const imageUrl = data.image?.startsWith("/uploads")
+            ? `${baseURL}/api/uploads${data.image}`
+            : `${baseURL}${data.image || defaultImage}`;
+
+        const description = data.content
+            ?.replace(/<[^>]*>?/gm, "") // ลบ HTML tag
+            ?.slice(0, 160) || "ไม่มีคำอธิบายสำหรับกิจกรรมนี้";
+
+        const title = `${data.title} | กิจกรรมของสำนัก`;
+
+        return {
+            title,
+            description,
+            keywords: [
+                data.title,
+                "กิจกรรม",
+                "ข่าวสาร",
+                "เทศบาล",
+                "นครนนท์",
+                "สาธารณสุข",
+                data.author?.department || "",
+            ],
+            alternates: {
+                canonical: canonicalUrl,
+            },
+            openGraph: {
+                title,
+                description,
+                url: canonicalUrl,
+                images: [{ url: imageUrl, width: 1200, height: 630 }],
+                siteName: "เว็บไซต์เทศบาล",
+                type: "article",
+                locale: "th_TH",
+            },
+            twitter: {
+                card: "summary_large_image",
+                title,
+                description,
+                images: [imageUrl],
+            },
+        };
+    } catch (error) {
+        console.error("generateMetadata (activities) error:", error);
+        return {
+            title: "เกิดข้อผิดพลาด",
+            description: "ไม่สามารถโหลดข้อมูล metadata ได้",
+            alternates: { canonical: canonicalUrl },
+            keywords: ["กิจกรรม", "เทศบาล", "เกิดข้อผิดพลาด"],
+        };
+    }
+}
+
 const fetchActivity = async (id: string) => {
     const baseURL =
         process.env.NODE_ENV === "development"
@@ -76,7 +153,6 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
                     </div>
                 </div>
                 <div className="editor-content prose prose-sm lg:prose-base max-w-[1440px] mx-auto">
-                    {/* <div className="[&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-2xl [&_img]:mx-auto" dangerouslySetInnerHTML={{ __html: activity.description }} /> */}
                     <div className="max-w-[1440px]" dangerouslySetInnerHTML={{ __html: activity.content }} />
                 </div>
             </div>

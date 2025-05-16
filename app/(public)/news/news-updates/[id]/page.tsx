@@ -4,6 +4,80 @@ import ShareButton from "@/features/users/components/News/ShareButton";
 import { NewsItem } from "@/types/publicTypes";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }: { params: { id: string } }) {
+    const baseURL =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+    const defaultImage = `${baseURL}/default-news.png`; // fallback image
+    const canonicalUrl = `${baseURL}/news/news-updates/${params.id}`;
+
+    try {
+        const res = await fetch(`${baseURL}/api/news/${params.id}`, {
+            next: { revalidate: 30 }
+        });
+
+        if (!res.ok) {
+            return {
+                title: "ไม่พบข้อมูลข่าว",
+                description: "ข่าวที่คุณกำลังค้นหาอาจถูกลบหรือไม่มีอยู่จริง",
+                alternates: {
+                    canonical: canonicalUrl,
+                },
+                keywords: ["ข่าว", "ข่าวประชาสัมพันธ์", "เทศบาล", "สาธารณสุข", "กิจกรรม"],
+            };
+        }
+
+        const data = await res.json();
+        const imageUrl = data.image?.startsWith("/uploads")
+            ? `${baseURL}/api/uploads${data.image}`
+            : `${baseURL}${data.image || defaultImage}`;
+        const description = data.description?.replace(/<[^>]*>?/gm, "")?.slice(0, 160) || "ไม่มีคำอธิบายสำหรับข่าวนี้";
+
+        return {
+            title: `${data.title} | ข่าวประชาสัมพันธ์`,
+            description: description,
+            keywords: [
+                data.title,
+                "ข่าวประชาสัมพันธ์",
+                "เทศบาล",
+                "นครนนท์",
+                "สาธารณสุข",
+                data.author?.department || "",
+            ],
+            alternates: {
+                canonical: canonicalUrl,
+            },
+            openGraph: {
+                title: `${data.title} | ข่าวประชาสัมพันธ์`,
+                description: description,
+                images: [{ url: imageUrl, width: 1200, height: 630 }],
+                url: canonicalUrl,
+                siteName: "เว็บไซต์เทศบาล",
+                type: "article",
+                locale: "th_TH",
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: `${data.title}`,
+                description: description,
+                images: [imageUrl],
+            },
+        };
+    } catch (error) {
+        console.error("generateMetadata error:", error);
+        return {
+            title: "เกิดข้อผิดพลาด",
+            description: "ไม่สามารถโหลดข้อมูล metadata ได้",
+            alternates: {
+                canonical: canonicalUrl,
+            },
+            keywords: ["ข่าว", "เทศบาล", "เกิดข้อผิดพลาด"],
+        };
+    }
+}
+
 const fetchNewById = async (id: string) => {
     const baseURL =
         process.env.NODE_ENV === "development"
@@ -45,7 +119,6 @@ const formatDateToThai = (dateString: string): string => {
         day: "numeric",
     });
 };
-
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params
