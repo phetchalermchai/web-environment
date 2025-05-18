@@ -73,7 +73,7 @@ const Card = <T extends NewsItems | ActivitiesItems>({
         href={`/news/activities/${activityItem.id}`}
       >
         <div className="w-full shadow-md rounded-2xl relative overflow-hidden group">
-          <figure className="w-full h-[345px] lg:h-[450px] 2xl:h-[550px] overflow-hidden">
+          <figure className="w-full h-[450px] lg:h-[550px] 2xl:h-[650px] overflow-hidden">
             <Image
               src={resolveImagePath(activityItem.image)}
               alt={activityItem.title}

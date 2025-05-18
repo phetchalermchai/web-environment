@@ -1,6 +1,40 @@
 import News from "@/features/users/components/News/News"
 import { NewsItems } from "@/types/publicTypes";
 
+export const metadata = {
+  title: "ข่าวประชาสัมพันธ์ | สำนักสาธารณสุขและสิ่งแวดล้อม เทศบาลนครนนทบุรี",
+  description:
+    "ติดตามข่าวสาร กิจกรรมสำคัญ และประกาศจากสำนักสาธารณสุขและสิ่งแวดล้อม เทศบาลนครนนทบุรี เพื่อประชาชนในพื้นที่ได้รับข้อมูลที่ถูกต้องและทันเหตุการณ์",
+  keywords: [
+    "ข่าวประชาสัมพันธ์",
+    "ข่าวสารราชการ",
+    "เทศบาล",
+    "กิจกรรมสาธารณสุข",
+    "ข้อมูลข่าวสาร",
+    "เทศบาลนครนนทบุรี",
+  ],
+  alternates: {
+    canonical: "/news/news-updates",
+  },
+  openGraph: {
+    title: "ข่าวประชาสัมพันธ์ | สำนักสาธารณสุขและสิ่งแวดล้อม",
+    description:
+      "อัปเดตข่าวสารและกิจกรรมจากหน่วยงานด้านสาธารณสุขของเทศบาลนครนนทบุรี ทั้งข่าวทั่วไปและประกาศทางราชการ",
+    url: "/news/news-updates",
+    siteName: "เว็บไซต์เทศบาลนครนนทบุรี",
+    locale: "th_TH",
+    type: "website",
+    images: ["/logo-nonthaburi.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ข่าวประชาสัมพันธ์ | สำนักสาธารณสุขและสิ่งแวดล้อม",
+    description:
+      "รวมข่าวสารและกิจกรรมจากเทศบาลนครนนทบุรี สำหรับประชาชนในพื้นที่",
+    images: ["/logo-nonthaburi.jpg"],
+  },
+};
+
 const fetchNews = async () => {
     const baseURL =
         process.env.NODE_ENV === "development"

@@ -4,6 +4,14 @@ import { authOptions } from "@/lib/authOptions";
 import ImageLogin from "@/features/admin/components/Login/ImageLogin";
 import FormLogin from "@/features/admin/components/Login/FormLogin";
 
+export const metadata = {
+  title: "เข้าสู่ระบบ | แดชบอร์ดผู้ดูแลระบบ",
+  description: "เข้าสู่ระบบเพื่อจัดการและดูแลระบบเว็บไซต์อย่างปลอดภัย",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const page = async () => {
   // ดึงข้อมูลเซสชันจากเซิร์ฟเวอร์

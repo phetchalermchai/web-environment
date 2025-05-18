@@ -6,7 +6,7 @@ const TitleBar = () => {
 
     // แมป path เป็นข้อความภาษาไทย
     const pageTitles: Record<string, string> = {
-        "dashboard": "แดชบอร์ด",
+        "dashboard": "แดชบอร์ดภาพรวมระบบ",
         "banner": "จัดการแบนเนอร์",
         "e-service": "จัดการระบบ E-Service",
         "news/news-update": "ข่าวประชาสัมพันธ์",

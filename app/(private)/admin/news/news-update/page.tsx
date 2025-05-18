@@ -1,5 +1,13 @@
-"use client"
 import ManagementPage from "@/features/admin/components/Management/ManagementPage"
+
+export const metadata = {
+  title: "จัดการข่าวประชาสัมพันธ์ | แดชบอร์ดผู้ดูแลระบบ",
+  description: "ดูและจัดการข่าวประชาสัมพันธ์ทั้งหมดของหน่วยงาน",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const page = () => {
   return (

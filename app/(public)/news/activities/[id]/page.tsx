@@ -4,17 +4,16 @@ import ShareButton from "@/features/users/components/News/ShareButton";
 import { ActivityItem } from "@/types/publicTypes";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const baseURL =
         process.env.NODE_ENV === "development"
             ? "http://localhost:3000"
             : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
-    const canonicalUrl = `${baseURL}/news/activities/${params.id}`;
-    const defaultImage = `${baseURL}/default-news.png`;
-
+    const canonicalUrl = `/news/activities/${id}`;
+    const defaultImage = `/logo-nonthaburi.jpg`;
     try {
-        const res = await fetch(`${baseURL}/api/activities/${params.id}`, {
+        const res = await fetch(`${baseURL}/api/activities/${id}`, {
             next: { revalidate: 30 },
         });
 
@@ -23,21 +22,19 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
                 title: "ไม่พบข้อมูลกิจกรรม",
                 description: "กิจกรรมที่คุณค้นหาอาจไม่มีอยู่หรือถูกลบไปแล้ว",
                 alternates: { canonical: canonicalUrl },
-                keywords: ["กิจกรรม", "เทศบาล", "สาธารณสุข", "ข่าวสาร"],
+                keywords: ["กิจกรรม", "เทศบาล", "สาธารณสุข", "นครนนท์"],
             };
         }
 
         const data = await res.json();
 
         const imageUrl = data.image?.startsWith("/uploads")
-            ? `${baseURL}/api/uploads${data.image}`
-            : `${baseURL}${data.image || defaultImage}`;
+            ? `/api/uploads${data.image}`
+            : `${data.image || defaultImage}`;
 
-        const description = data.content
-            ?.replace(/<[^>]*>?/gm, "") // ลบ HTML tag
-            ?.slice(0, 160) || "ไม่มีคำอธิบายสำหรับกิจกรรมนี้";
+        const description = data.title || "ไม่มีคำอธิบายสำหรับกิจกรรมนี้";
 
-        const title = `${data.title} | กิจกรรมของสำนัก`;
+        const title = `${data.title} | สำนักสาธารณสุขและสิ่งแวดล้อม เทศบาลนครนนทบุรี`;
 
         return {
             title,
@@ -59,7 +56,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
                 description,
                 url: canonicalUrl,
                 images: [{ url: imageUrl, width: 1200, height: 630 }],
-                siteName: "เว็บไซต์เทศบาล",
+                siteName: "เว็บไซต์เทศบาลนครนนทบุรี",
                 type: "article",
                 locale: "th_TH",
             },

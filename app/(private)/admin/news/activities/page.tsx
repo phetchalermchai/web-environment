@@ -1,5 +1,13 @@
-"use client"
 import ManagementPage from "@/features/admin/components/Management/ManagementPage"
+
+export const metadata = {
+  title: "จัดการกิจกรรมของสำนัก | แดชบอร์ดผู้ดูแลระบบ",
+  description: "ดูและจัดการข้อมูลกิจกรรมของสำนักทั้งหมด",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const page = () => {
   return (

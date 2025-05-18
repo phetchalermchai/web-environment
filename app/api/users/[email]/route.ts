@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ email: string }>}) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ email: string }> }) {
     try {
         // ตรวจสอบ session และ role ของผู้ใช้
         const session = await getServerSession({ req, ...authOptions });
@@ -27,16 +27,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ emai
         // ค้นหา user ตาม normalized email
         const user = await prisma.user.findUnique({
             where: { email: normalizedEmail },
-            select: {
-                id: true,
-                firstname: true,
-                lastname: true,
-                email: true,
-                department: true,
-                role: true,
-                avatar: true,
-                createdAt: true,
-                updatedAt: true,
+            include: {
+                news: {
+                    select: {
+                        id: true,
+                        title: true,
+                        createdAt: true,
+                    },
+                },
+                activities: {
+                    select: {
+                        id: true,
+                        title: true,
+                        createdAt: true,
+                    },
+                },
             },
         });
 
@@ -44,11 +49,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ emai
             return NextResponse.json({ error: "ไม่พบผู้ใช้" }, { status: 404 });
         }
 
-        // (Optional) แปลงค่า timestamp เป็น ISO string
         const responseData = {
-            ...user,
+            id: user.id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            department: user.department,
+            role: user.role,
+            avatar: user.avatar,
             createdAt: user.createdAt.toISOString(),
             updatedAt: user.updatedAt.toISOString(),
+
+            news: user.news,
+            activities: user.activities,
+            updated: [...user.news, ...user.activities]
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                .slice(0, 5)
+                .map((item) => ({
+                    type: user.news.some(n => n.id === item.id) ? "ข่าว" : "กิจกรรม",
+                    title: item.title,
+                    date: new Date(item.createdAt).toLocaleDateString("th-TH", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                    }),
+                })),
         };
 
         return NextResponse.json(responseData, { status: 200 });

@@ -1,6 +1,40 @@
 import News from "@/features/users/components/News/News"
 import { ActivitiesItems } from "@/types/publicTypes";
 
+export const metadata = {
+  title: "กิจกรรมของสำนัก | สำนักสาธารณสุขและสิ่งแวดล้อม เทศบาลนครนนทบุรี",
+  description:
+    "รวมภาพกิจกรรม กิจกรรมรณรงค์ และการดำเนินงานต่าง ๆ ของสำนักสาธารณสุขและสิ่งแวดล้อม เทศบาลนครนนทบุรี เพื่อส่งเสริมสุขภาพและสิ่งแวดล้อมในชุมชน",
+  keywords: [
+    "กิจกรรมสาธารณสุข",
+    "เทศบาลนครนนทบุรี",
+    "งานรณรงค์",
+    "สิ่งแวดล้อม",
+    "ข่าวกิจกรรม",
+    "หน่วยงานราชการ",
+  ],
+  alternates: {
+    canonical: "/news/activities",
+  },
+  openGraph: {
+    title: "กิจกรรมของสำนัก | สำนักสาธารณสุขและสิ่งแวดล้อม",
+    description:
+      "ติดตามกิจกรรมและโครงการต่าง ๆ ที่จัดขึ้นโดยสำนักสาธารณสุขและสิ่งแวดล้อม เทศบาลนครนนทบุรี เพื่อพัฒนาคุณภาพชีวิตของประชาชน",
+    url: "/news/activities",
+    siteName: "เว็บไซต์เทศบาลนครนนทบุรี",
+    locale: "th_TH",
+    type: "website",
+    images: ["/logo-nonthaburi.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "กิจกรรมของสำนัก | สำนักสาธารณสุขและสิ่งแวดล้อม",
+    description:
+      "ชมภาพและรายละเอียดกิจกรรมเพื่อสังคมจากเทศบาลนครนนทบุรี ที่จัดโดยสำนักสาธารณสุขและสิ่งแวดล้อม",
+    images: ["/logo-nonthaburi.jpg"],
+  },
+};
+
 const fetchActivities = async () => {
     const baseURL =
         process.env.NODE_ENV === "development"

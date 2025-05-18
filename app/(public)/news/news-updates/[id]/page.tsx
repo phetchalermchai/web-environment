@@ -4,17 +4,18 @@ import ShareButton from "@/features/users/components/News/ShareButton";
 import { NewsItem } from "@/types/publicTypes";
 import { notFound } from "next/navigation";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const baseURL =
         process.env.NODE_ENV === "development"
             ? "http://localhost:3000"
             : process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-    const defaultImage = `${baseURL}/default-news.png`; // fallback image
-    const canonicalUrl = `${baseURL}/news/news-updates/${params.id}`;
+    const defaultImage = `/logo-nonthaburi.jpg`; 
+    const canonicalUrl = `/news/news-updates/${id}`;
 
     try {
-        const res = await fetch(`${baseURL}/api/news/${params.id}`, {
+        const res = await fetch(`${baseURL}/api/news/${id}`, {
             next: { revalidate: 30 }
         });
 
@@ -25,18 +26,18 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
                 alternates: {
                     canonical: canonicalUrl,
                 },
-                keywords: ["ข่าว", "ข่าวประชาสัมพันธ์", "เทศบาล", "สาธารณสุข", "กิจกรรม"],
+                keywords: ["ข่าวประชาสัมพันธ์", "เทศบาล", "นครนนท์", "สาธารณสุข"],
             };
         }
 
         const data = await res.json();
         const imageUrl = data.image?.startsWith("/uploads")
-            ? `${baseURL}/api/uploads${data.image}`
-            : `${baseURL}${data.image || defaultImage}`;
+            ? `/api/uploads${data.image}`
+            : `${data.image || defaultImage}`;
         const description = data.description?.replace(/<[^>]*>?/gm, "")?.slice(0, 160) || "ไม่มีคำอธิบายสำหรับข่าวนี้";
 
         return {
-            title: `${data.title} | ข่าวประชาสัมพันธ์`,
+            title: `${data.title} | สำนักสาธารณสุขและสิ่งแวดล้อมเทศบาลนครนนทบุรี`,
             description: description,
             keywords: [
                 data.title,
@@ -54,7 +55,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
                 description: description,
                 images: [{ url: imageUrl, width: 1200, height: 630 }],
                 url: canonicalUrl,
-                siteName: "เว็บไซต์เทศบาล",
+                siteName: "สำนักสาธารณสุขและสิ่งแวดล้อมเทศบาลนครนนทบุรี",
                 type: "article",
                 locale: "th_TH",
             },
