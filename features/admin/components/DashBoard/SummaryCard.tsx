@@ -1,4 +1,4 @@
-import { BarChart } from "lucide-react"; // หรือเปลี่ยนเป็น icon อื่นตามหมวด
+import { BarChart } from "lucide-react";
 
 interface SummaryCardProps {
   label: string;

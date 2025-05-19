@@ -13,7 +13,7 @@ const Drawer = ({ children }: { children: React.ReactNode }) => {
                 {children}
             </div>
             {/* Sidebar content here */}
-                <Sidebar />
+            <Sidebar />
         </div>
     )
 }
