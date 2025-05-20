@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { NewsItems, ActivitiesItems } from "@/types/publicTypes";
+import { NewsItems, ActivitiesItems, E_Service } from "@/types/publicTypes";
 
 interface CardProps<T> {
   news: T;
@@ -15,7 +15,7 @@ const resolveImagePath = (img: string | null | undefined) => {
   return img;
 };
 
-const Card = <T extends NewsItems | ActivitiesItems>({
+const Card = <T extends NewsItems | ActivitiesItems | E_Service>({
   news,
   cardType,
 }: CardProps<T>) => {
@@ -38,7 +38,7 @@ const Card = <T extends NewsItems | ActivitiesItems>({
             width={800}
             height={600}
             className="w-full h-full object-cover object-top"
-          />  
+          />
         </figure>
         <div className="card-body">
           <h2 className="card-title">{newsItem.title}</h2>
@@ -100,6 +100,37 @@ const Card = <T extends NewsItems | ActivitiesItems>({
           </div>
         </div>
       </Link>
+    );
+  }
+
+  if (cardType === "type3") {
+    const service = news as E_Service;
+
+    return (
+      <div className="card bg-base-100 shadow-md hover:shadow-lg transition-shadow duration-300">
+        <figure className="w-full h-[300px] sm:h-[550px] md:h-[320px] lg:h-[340px] xl:h-[400px] 2xl:h-[450px] overflow-hidden">
+          <Image
+            src={resolveImagePath(service.image as string)}
+            alt={service.title}
+            width={300}
+            height={540}
+            className="object-cover w-full h-full"
+          />
+        </figure>
+        <div className="card-body">
+          <h2 className="card-title text-base-content">{service.title}</h2>
+          <div className="mt-2">
+            <Link
+              href={service.linkURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-sm btn-primary w-full"
+            >
+              เข้าสู่ระบบบริการ
+            </Link>
+          </div>
+        </div>
+      </div>
     );
   }
 

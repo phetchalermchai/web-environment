@@ -5,7 +5,7 @@ import Alert from "@/features/admin/components/Alert";
 import Image from "next/image";
 import InputField from "@/features/admin/components/InputField";
 import { ChangeEvent, useRef, useState, useEffect } from "react";
-import { Pencil, X } from "lucide-react";
+import { Pencil, X, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const CreateEServiceForm: React.FC = () => {
@@ -100,6 +100,10 @@ const CreateEServiceForm: React.FC = () => {
     return (
         <div className="m-5 px-8 md:px-16 py-16 bg-base-100 rounded-lg shadow">
             <form onSubmit={handleSubmit} className="max-w-xl mx-auto space-y-6">
+                <div role="alert" className="alert alert-info text-sm">
+                    <Info size={22} />
+                    <p>ขนาดรูปแนวตั้ง <span className="font-bold underline">1100x1490px</span></p>
+                </div>
                 {/* Image section */}
                 <div
                     className="relative w-52 h-72 mx-auto cursor-pointer"

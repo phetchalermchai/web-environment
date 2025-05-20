@@ -50,7 +50,7 @@ model News {
   id          String   @id @default(uuid())
   title       String
   slug        String   @unique @db.VarChar(255) // Slug เพื่อให้ URL อ่านง่าย
-  description String
+  description String   @db.VarChar(255)
   content     Json?
   author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   authorId    Int?

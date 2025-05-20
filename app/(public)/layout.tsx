@@ -55,7 +55,7 @@ export default function PublicLayout({
         },
       ],
     },
-    { label: "บริการประชาชน", href: "/public-services", isDropdown: false },
+    { label: "E-SERVICE", href: "/public-services", isDropdown: false },
     { label: "ติดต่อเรา", href: "/contact", isDropdown: false },
   ];
 

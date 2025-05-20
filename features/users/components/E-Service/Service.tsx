@@ -80,7 +80,7 @@ const Service = ({ service }: ServiceProps) => {
             className="carousel-item"
           >
             <Link href={service.linkURL} target="_blank">
-              <figure className="w-full h-[360px] sm:h-[420px] md:h-[480px] lg:h-[540px] overflow-hidden rounded-box">
+              <figure className="w-full h-[360px] sm:h-[420px] md:h-[480px] lg:h-[540px] overflow-hidden">
                 <Image 
                 src={resolveImagePath(String(service.image))} 
                 alt={`Slide ${index + 1}`} 
