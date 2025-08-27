@@ -66,7 +66,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ emai
                 .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                 .slice(0, 5)
                 .map((item) => ({
-                    type: user.news.some(n => n.id === item.id) ? "ข่าว" : "กิจกรรม",
+                    type: user.news.some((n: { id: string; }) => n.id === item.id) ? "ข่าว" : "กิจกรรม",
                     title: item.title,
                     date: new Date(item.createdAt).toLocaleDateString("th-TH", {
                         year: "numeric",

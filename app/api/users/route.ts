@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
         });
 
         // แปลงค่า timestamp ให้อยู่ในรูปแบบ ISO string (ถ้าต้องการ)
-        const responseData = users.map(user => ({
+        const responseData = users.map((user: { createdAt: { toISOString: () => string; }; updatedAt: { toISOString: () => string; }; }) => ({
             ...user,
             createdAt: user.createdAt.toISOString(),
             updatedAt: user.updatedAt.toISOString(),
