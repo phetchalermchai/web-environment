@@ -5,14 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate",
-    "migrate:deploy": "prisma migrate deploy",
     "seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "node prisma/seed.mjs"
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
@@ -45,7 +43,6 @@
     "apexcharts": "^4.7.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
-    "dotenv": "^17.2.1",
     "jsdom": "^26.0.0",
     "lucide-react": "^0.503.0",
     "next": "^15.2.2",
