@@ -36,8 +36,8 @@ const useFormLogin = () => {
         if (!formData.password) {
             newErrors.password = "กรุณาระบุพาสเวิร์ด";
             isValid = false;
-        } else if (formData.password.length < 12) {
-            newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
+        } else if (formData.password.length < 6) {
+            newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
             isValid = false;
         } else if (
             !/(?=.*[A-Z])/.test(formData.password) ||
