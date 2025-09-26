@@ -159,9 +159,9 @@ const page = async () => {
       <Carousel carousel={carousel} />
       <Hero hero={hero} />
       <Service service={service} />
-      <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/news-updates" icon={newsIcon()} cardType="type1" />
+      <News newsData={newsData} title="ข่าวประชาสัมพันธ์" itemsPerPage={8} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/news-updates" icon={newsIcon()} cardType="type1" />
       <Divider />
-      <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={6} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/activities" icon={Megaphone()} cardType="type2" />
+      <News newsData={activitiesData} title="กิจกรรมของสำนัก" itemsPerPage={8} showPagination={false} showViewAll={true} showBreadcrumbs={false} viewAllLink="/news/activities" icon={Megaphone()} cardType="type2" />
       <CalendarSection />
     </>
   )

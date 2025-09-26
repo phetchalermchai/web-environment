@@ -53,7 +53,7 @@ const useCreateUserForm = () => {
         else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง";
 
         if (!formData.password) newErrors.password = "กรุณาระบุพาสเวิร์ด";
-        else if (formData.password.length < 12) newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 12 ตัวอักษร";
+        else if (formData.password.length < 6) newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
         else if (
             !/(?=.*[A-Z])/.test(formData.password) ||
             !/(?=.*[a-z])/.test(formData.password) ||
