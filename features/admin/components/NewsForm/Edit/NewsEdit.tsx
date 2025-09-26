@@ -39,7 +39,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
         if (previewUrl.startsWith("blob:") || previewUrl.startsWith("data:")) {
             return previewUrl; // สำหรับ preview ชั่วคราว
         }
-        return previewUrl;
+        return `/api/uploads${previewUrl}`;
     };
 
     // Fetch existing data
@@ -156,7 +156,6 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
                                 alt="Preview"
                                 fill
                                 className="object-cover"
-                                unoptimized
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-base-200">
