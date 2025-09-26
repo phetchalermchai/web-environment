@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "prisma db seed"
+    "db:generate": "npx prisma generate",
+    "seed": "prisma db seed",
+    "migrate:deploy": "npx prisma migrate deploy" 
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
