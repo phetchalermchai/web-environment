@@ -127,6 +127,7 @@ const page = ({ type, apiFetchBase, apiUpdateBase, redirectPath }: EditContentPa
             router.push(redirectPath);
         } catch (error) {
             setMessage((error as any)?.response?.data?.error);
+            console.log(error);
         } finally {
             setIsSubmitting(false);
         }
